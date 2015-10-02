@@ -15,6 +15,10 @@
  */
 package com.sandsoft.acefx;
 
+import java.util.HashMap;
+import java.util.Map;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker.State;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebEngine;
@@ -22,11 +26,174 @@ import javafx.scene.web.WebView;
 
 /**
  *
- * uthor Sudipto Chandra
+ * Author Sudipto Chandra
  */
 public class EditorCore extends BorderPane {
 
     private final String ACE_URL = "http://dipu-bd.github.io/AceFX/";
+
+    //<editor-fold defaultstate="collapsed" desc="Useful Editor Commands">
+    public enum EditorCommand {
+
+        /**
+         * Input: theme name
+         */
+        SetTheme,
+        /**
+         * Output: string
+         */
+        GetTheme,
+        /**
+         * Input: language mode name
+         */
+        SetMode,
+        /**
+         * Input: formated content
+         */
+        SetContent,
+        /**
+         * Output: String
+         */
+        GetContent,
+        /**
+         * Output: String
+         */
+        GetSelectedText,
+        /**
+         * Input: formated content
+         */
+        InsertAtCursor,
+        /**
+         * Output: ?
+         */
+        GetCursor,
+        /**
+         * Input: integer
+         */
+        SetTabSize,
+        /**
+         * Input: integer
+         */
+        GoToLine,
+        /**
+         * Output: integer
+         */
+        GetNumberOfLines,
+        /**
+         * Input true or false
+         */
+        SetUseSoftTab,
+        /**
+         * Input: integer
+         */
+        SetFontSize,
+        /**
+         * Input true or false
+         */
+        SetUseWrapMode,
+        /**
+         * Input true or false
+         */
+        SetHighlightMode,
+        /**
+         * Input true or false
+         */
+        SetMargin,
+        /**
+         * Input true or false
+         */
+        SetReadOnly,
+        /**
+         * Input: <br/>
+         * needle, backwards, wrap, caseSenitive, wholeWord, regExp. <br/>
+         * neddle: formated string.<br/>
+         * rest of parameters: true or false.
+         */
+        Find,
+        /**
+         * No input output
+         */
+        FindNext,
+        /**
+         * No input output
+         */
+        FindPrevious,
+        /**
+         * Only use after a find command. Input: formated string.
+         */
+        Replace,
+        /**
+         * Only use after a find command. Input: formated string.
+         */
+        ReplaceAll,
+        /**
+         * No input output
+         */
+        Resize,
+        /**
+         * Empty Command
+         */
+        DUMMY
+    }
+
+    private static final Map<EditorCommand, String> mEditorScripts;
+
+    static {
+        Map<EditorCommand, String> map = mEditorScripts = new HashMap<>();
+        map.put(EditorCommand.SetTheme,
+                "editor.setTheme(\"ace/theme/%s\");"); //theme name
+        map.put(EditorCommand.GetTheme,
+                "editor.getTheme();");
+        map.put(EditorCommand.SetMode,
+                "editor.getSession().setMode(\"ace/mode/%s\");"); //language mode
+        map.put(EditorCommand.SetContent,
+                "editor.setValue(\"%s\", 1);"); //formated string content
+        map.put(EditorCommand.GetContent,
+                "editor.getValue();");
+        map.put(EditorCommand.GetSelectedText,
+                "editor.session.getTextRange(editor.getSelectionRange());");
+        map.put(EditorCommand.InsertAtCursor,
+                "editor.insert(\"%s\");"); //formated string content
+        map.put(EditorCommand.GetCursor,
+                "editor.selection.getCursor();");
+        map.put(EditorCommand.SetTabSize,
+                "editor.getSession().setTabSize(%d);"); //tab size
+        map.put(EditorCommand.GoToLine,
+                "editor.gotoLine(%d);"); //line number
+        map.put(EditorCommand.GetNumberOfLines,
+                "editor.session.getLength();");
+        map.put(EditorCommand.SetUseSoftTab,
+                "editor.getSession().setUseSoftTabs(%s);"); // true or false
+        map.put(EditorCommand.SetFontSize,
+                "document.getElementById('editor').style.fontSize='%dpx';"); //size in pixel
+        map.put(EditorCommand.SetUseWrapMode,
+                "editor.getSession().setUseWrapMode(%s);"); //true or false
+        map.put(EditorCommand.SetHighlightMode,
+                "editor.setHighlightActiveLine(%s);"); //true or false
+        map.put(EditorCommand.SetMargin,
+                "editor.setShowPrintMargin(%s);"); //true or false
+        map.put(EditorCommand.SetReadOnly,
+                "editor.setReadOnly(%s);");  // true or false
+        map.put(EditorCommand.Find,
+                "editor.find(\"%s\",{n" //formated needle string
+                + "    backwards: %s,\n" //true or false
+                + "    wrap: %s,\n" //true or false
+                + "    caseSensitive: %s,\n" //true or false
+                + "    wholeWord: %s,\n" // true or false
+                + "    regExp: %s\n" //true or false
+                + "});\n");
+        map.put(EditorCommand.FindNext,
+                "editor.findNext();");
+        map.put(EditorCommand.FindPrevious,
+                "editor.findPrevious();");
+        map.put(EditorCommand.Replace,
+                "editor.replace('%s');"); //formated string
+        map.put(EditorCommand.ReplaceAll,
+                "editor.replaceAll('%s');"); //formated string
+        map.put(EditorCommand.Resize, "editor.resize();"); //dummy
+        map.put(EditorCommand.DUMMY, ""); //dummy
+    }
+//</editor-fold>
 
     public EditorCore() {
         initialize();
@@ -47,6 +214,234 @@ public class EditorCore extends BorderPane {
 
         //init editor
         webEngine = webView.getEngine();
+
+        //--- test --- //
         webEngine.load(ACE_URL);
+
+        webEngine.getLoadWorker().stateProperty().addListener(
+                (ObservableValue<? extends State> observable, State oldValue, State newValue) -> {
+                    if (newValue == State.SUCCEEDED) {
+
+                        runTests();
+                    }
+                });
     }
+
+    private void runTests() {
+
+        setTheme("twilight");
+
+        System.out.println(getContent());
+
+        setLanguage("c_cpp");
+
+        String txt = "#include \"file.h\";\nint main()\n{\n\tprintf(\"Hello World! %d\", 1234);\n}\n";
+        setContent(txt);
+
+        insertAtCursor("hi there!");
+
+        System.out.println(getNumberOfLines());
+
+        System.out.println(getTheme());
+    }
+
+    /**
+     * formats a content into a string passable inside quote.
+     *
+     * @param content text to format
+     * @return formated content
+     */
+    public String formatText(String content) {
+        return content
+                .replace("\\", "\\\\") //replace backslash
+                .replace("\"", "\\\"") //replace quote
+                .replace("\r", "") //replace return
+                .replace("\n", "\\n") //replace new line
+                .replace("\t", "\\t") //replace tab 
+                ;
+    }
+
+    /**
+     * Checks if the editor is ready for interaction.
+     *
+     * @return True if worker is successfully loaded.
+     */
+    public boolean isReady() {
+        return (webEngine.getLoadWorker().getState() == State.SUCCEEDED);
+    }
+
+    /**
+     * Executes a java-script command.
+     *
+     * @param script command to execute.
+     * @return returned object by execution.
+     */
+    public Object executeScript(String script) {
+        if (isReady()) {
+            return webEngine.executeScript(script);
+        }
+        return null;
+    }
+
+    /**
+     * Set a theme in the editor.
+     *
+     * @param themeName Name of the theme to set.
+     */
+    public void setTheme(String themeName) {
+        executeScript(String.format(mEditorScripts.get(EditorCommand.SetTheme), themeName));
+    }
+
+    /**
+     * Get the current cursor line and column.
+     *
+     * @return
+     */
+    public String getTheme() {
+        String res = (String) executeScript(String.format(mEditorScripts.get(EditorCommand.GetTheme)));
+        return res.substring(res.lastIndexOf("/") + 1);
+    }
+
+    /**
+     * Setting the Programming Language Mode.
+     *
+     * @param mode
+     */
+    public void setLanguage(String mode) {
+        executeScript(String.format(mEditorScripts.get(EditorCommand.SetMode), mode));
+    }
+
+    /**
+     * Set content.
+     *
+     * @param content
+     */
+    public void setContent(String content) {
+        executeScript(String.format(mEditorScripts.get(EditorCommand.SetContent), formatText(content)));
+    }
+
+    /**
+     * Get content.
+     *
+     * @return
+     */
+    public String getContent() {
+        return (String) executeScript(String.format(mEditorScripts.get(EditorCommand.GetContent)));
+    }
+
+    /**
+     * Get selected text.
+     *
+     * @return
+     */
+    public String getSelectedText() {
+        return (String) executeScript(String.format(mEditorScripts.get(EditorCommand.GetSelectedText)));
+    }
+
+    /**
+     * Insert at cursor.
+     *
+     * @param content
+     */
+    public void insertAtCursor(String content) {
+        executeScript(String.format(mEditorScripts.get(EditorCommand.InsertAtCursor), formatText(content)));
+    }
+
+    /**
+     * Go to a line.
+     *
+     * @param lineNumber
+     */
+    public void goToLine(int lineNumber) {
+        executeScript(String.format(mEditorScripts.get(EditorCommand.GoToLine), lineNumber));
+    }
+
+    /**
+     * Get total number of lines.
+     *
+     * @return total number of lines.
+     */
+    public int getNumberOfLines() {
+        if (isReady()) {
+            return (int) executeScript(String.format(mEditorScripts.get(EditorCommand.GetNumberOfLines)));
+        }
+        return -1;
+    }
+
+    /**
+     * Set the default tab size.
+     *
+     * @param siz Tab size in pixels
+     */
+    public void setTabSize(int siz) {
+        executeScript(String.format(mEditorScripts.get(EditorCommand.SetTabSize), siz));
+    }
+
+    /**
+     * Use soft tabs
+     *
+     * @param val true or false
+     */
+    public void setUseSoftTab(boolean val) {
+        String p = val ? "true" : "false";
+        executeScript(String.format(mEditorScripts.get(EditorCommand.SetUseSoftTab), p));
+    }
+
+    /**
+     * Set the font size
+     *
+     * @param siz Font size in pixels
+     */
+    public void setFontSize(int siz) {
+        executeScript(String.format(mEditorScripts.get(EditorCommand.SetFontSize), siz));
+    }
+
+    /**
+     * Toggle word wrapping
+     *
+     * @param val true or false
+     */
+    public void setToggleWordWrapping(boolean val) {
+        String p = val ? "true" : "false";
+        executeScript(String.format(mEditorScripts.get(EditorCommand.SetUseWrapMode), p));
+    }
+
+    /**
+     * Set line highlighting
+     *
+     * @param val true or false
+     */
+    public void setLineHighlighting(boolean val) {
+        String p = val ? "true" : "false";
+        executeScript(String.format(mEditorScripts.get(EditorCommand.SetHighlightMode), p));
+    }
+
+    /**
+     * Set the print margin visibility
+     *
+     * @param val true or false
+     */
+    public void setPrintMarginVisibility(boolean val) {
+        String p = val ? "true" : "false";
+        executeScript(String.format(mEditorScripts.get(EditorCommand.SetMargin), p));
+    }
+
+    /**
+     * Set the editor to read-only
+     *
+     * @param val true or false
+     */
+    public void setReadOnly(boolean val) {
+        String p = val ? "true" : "false";
+        executeScript(String.format(mEditorScripts.get(EditorCommand.SetReadOnly), p));
+    }
+
+    /**
+     * Ace only resizes itself on window events. If you resize the editor div in
+     * another manner, and need Ace to resize, use this.
+     */
+    public void resize() {
+        executeScript(String.format(mEditorScripts.get(EditorCommand.Resize)));
+    }
+
 }
