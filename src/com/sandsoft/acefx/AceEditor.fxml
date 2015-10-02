@@ -5,28 +5,28 @@
 <?import java.util.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.*?> 
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sandsoft.acefx.AceEditor">
-   <center>
-      <WebView fx:id="webView" prefHeight="-1.0" prefWidth="-1.0" BorderPane.alignment="CENTER" />
-   </center>
-   <top>
-      <ToolBar minHeight="0.0" minWidth="0.0" prefHeight="40.0" BorderPane.alignment="CENTER">
-        <items>
-            <Button id="open" fx:id="openButton" mnemonicParsing="false" onAction="#handleOpenButton" text="Open" />
-            <Button id="save" fx:id="saveButton" mnemonicParsing="false" onAction="#handleSaveButton" text="Save" />
-            <Separator orientation="VERTICAL" />
-          <Button id="cut" fx:id="cutButton" mnemonicParsing="false" onAction="#handleCutButton" text="Cut" />
-            <Button id="copy" fx:id="copyButton" mnemonicParsing="false" onAction="#handleCopyButton" text="Copy" />
-            <Button id="paste" fx:id="pasteButton" mnemonicParsing="false" onAction="#handlePasteButton" text="Paste" />
-            <Separator orientation="VERTICAL" />
-            <Button id="find" fx:id="findButton" mnemonicParsing="false" onAction="#handleFindButton" text="Find" />
-            <Button id="replace" fx:id="replaceButton" mnemonicParsing="false" onAction="#handleReplaceButton" text="Replace" />
-            <Separator orientation="VERTICAL" />
-            <Button id="options" fx:id="opetionsButton" mnemonicParsing="false" onAction="#handleOptionsButton" text="Options" />
-            <Button id="shortcuts" fx:id="shortcutsButton" mnemonicParsing="false" onAction="#handleShortcutsButton" text="Shortcuts" />
-        </items>
-      </ToolBar>
-   </top>
+<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sandsoft.acefx.AceEditor">
+    <center>
+        <WebView fx:id="webView" BorderPane.alignment="CENTER" />
+    </center>
+    <top>
+        <ToolBar minHeight="0.0" minWidth="0.0" prefHeight="40.0" BorderPane.alignment="CENTER">
+            <items>
+                <Button id="undo" fx:id="undoButton" mnemonicParsing="false" onAction="#handleUndoButton" text="Undo" />
+                <Button id="redo" fx:id="redoButton" mnemonicParsing="false" onAction="#handleRedoButton" text="Redo" />
+                <Separator orientation="VERTICAL" />
+                <Button id="cut" fx:id="cutButton" mnemonicParsing="false" onAction="#handleCutButton" text="Cut" />
+                <Button id="copy" fx:id="copyButton" mnemonicParsing="false" onAction="#handleCopyButton" text="Copy" />
+                <Button id="paste" fx:id="pasteButton" mnemonicParsing="false" onAction="#handlePasteButton" text="Paste" />
+                <Separator orientation="VERTICAL" />
+                <Button id="find" fx:id="findButton" mnemonicParsing="false" onAction="#handleFindButton" text="Find" />
+                <Button id="replace" fx:id="replaceButton" mnemonicParsing="false" onAction="#handleReplaceButton" text="Replace" />
+                <Separator orientation="VERTICAL" />
+                <Button id="options" fx:id="opetionsButton" mnemonicParsing="false" onAction="#handleOptionsButton" text="Options" />
+                <Button id="shortcuts" fx:id="shortcutsButton" mnemonicParsing="false" onAction="#handleShortcutsButton" text="Shortcuts" />
+            </items>
+        </ToolBar>
+    </top>
 </BorderPane>

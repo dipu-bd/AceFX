@@ -15,6 +15,8 @@
  */
 package com.sandsoft.acefx;
 
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.web.WebEngine;
 
 /**
@@ -155,10 +157,28 @@ public class EditorCore {
     }
 
     /**
+     * Cleans up the entire editor.
+     */
+    public void destroy() {
+        execute("editor.destroy();");
+    }
+
+    /**
      * Duplicate the selected text.
      */
     public void duplicateSelection() {
         execute("editor.duplicateSelection();");
+    }
+
+    /**
+     * Executes a command under editor. Here is the
+     * <a href="https://github.com/ajaxorg/ace/blob/master/lib/ace/commands/default_commands.js#L171">link
+     * to all commands</a>
+     *
+     * @param command
+     */
+    public void execCommand(String command) {
+        execute("editor.execCommand(\"" + formatText(command) + "\");");
     }
 
     /**
@@ -327,15 +347,6 @@ public class EditorCore {
     }
 
     /**
-     * Return the current text in the editor.
-     *
-     * @return Current content in the editor.
-     */
-    public String getText() {
-        return getValue();
-    }
-
-    /**
      * Returns the path of the current theme.
      *
      * @return
@@ -366,7 +377,7 @@ public class EditorCore {
      * Moves the cursor to the specified line number, and also into the
      * indicated column.
      *
-     * @param lineint Required. The line number to go to
+     * @param lineNumber Required. The line number to go to
      * @param column Required. A column number to go to
      * @param animate Required. If true animates scrolling
      */
@@ -655,17 +666,9 @@ public class EditorCore {
      *
      * @param force Required. If true, recomputes the size, even if the height
      * and width haven't changed
-     *
      */
     public void resize(boolean force) {
         execute("editor.resize(" + formatBool(force) + ");");
-    }
-
-    /**
-     * <strong>Undocumented</strong>
-     */
-    public void revealRange() {
-        execute("editor.revealRange();");
     }
 
     /**
@@ -868,15 +871,6 @@ public class EditorCore {
     }
 
     /**
-     * Sets the document display text.
-     *
-     * @param text The new text to set for the document.
-     */
-    public void setValue(String text) {
-        setValue(text, -1);
-    }
-
-    /**
      * Sets a new theme for the editor. theme should exist , and be a directory
      * path, like ace/theme/textmate.
      *
@@ -887,7 +881,7 @@ public class EditorCore {
     }
 
     /**
-     * Sets the current document to val.
+     * Sets the current document to value.
      *
      * @param val Required. The new value to set for the document.
      * @param cursorPos Required. Where to set the new value. undefined or 0 is
@@ -903,7 +897,7 @@ public class EditorCore {
      * wrapping the selection with characters such as brackets when such a
      * character is typed in.
      *
-     * @param enabled
+     * @param enabled true if wrap behaviors should be enabled.
      */
     public void setWrapBehavioursEnabled(boolean enabled) {
         execute("editor.setWrapBehavioursEnabled(" + formatBool(enabled) + ");");
@@ -986,8 +980,21 @@ public class EditorCore {
     }
 
     /**
+     * Adds className to the row, to be used for CSS stylings and whatnot.
+     *
+     * @param row Required. The row number
+     * @param className Required. The class to add
+     */
+    public void addGutterDecoration(int row, String className) {
+        execute("editor.getSession().addGutterDecoration("
+                + formatOther(row) + ",\"" + formatText(className) + "\")");
+    }
+
+    /**
      * Removes a breakpoint on the row number given by rows. This function also
-     * emites the 'changeBreakpoint' event.
+     * emits the 'changeBreakpoint' event.
+     *
+     * @param row
      */
     public void clearBreakpoint(int row) {
         execute("editor.getSession().clearBreakpoint(" + formatOther(row) + ")");
@@ -995,6 +1002,10 @@ public class EditorCore {
 
     /**
      * Duplicates all the text between firstRow and lastRow.
+     *
+     * @param firstRow
+     * @param lastRow
+     * @return
      */
     public int duplicateLines(int firstRow, int lastRow) {
         return (int) execute("editor.getSession().duplicateLines("
@@ -1003,6 +1014,9 @@ public class EditorCore {
 
     /**
      * Returns a verbatim copy of the given line as it is in the document
+     *
+     * @param row
+     * @return
      */
     public String getLine(int row) {
         return (String) execute("editor.getSession().getLine(" + formatOther(row) + ")");
@@ -1010,6 +1024,9 @@ public class EditorCore {
 
     /**
      * Returns number of screenrows in a wrapped line.
+     *
+     * @param row
+     * @return
      */
     public int getRowLength(int row) {
         return (int) execute("editor.getSession().getRowLength(" + formatOther(row) + ")");
@@ -1017,6 +1034,8 @@ public class EditorCore {
 
     /**
      * Returns the current tab size.
+     *
+     * @return
      */
     public int getTabSize() {
         return (int) execute("editor.getSession().getTabSize()");
@@ -1026,6 +1045,8 @@ public class EditorCore {
      * Returns the current value for tabs. If the user is using soft tabs, this
      * will be a series of spaces (defined by getTabSize()); otherwise it's
      * simply '\t'.
+     *
+     * @return
      */
     public String getTabString() {
         return (String) execute("editor.getSession().getTabString()");
@@ -1033,6 +1054,8 @@ public class EditorCore {
 
     /**
      * Returns true if soft tabs are being used, false otherwise.
+     *
+     * @return
      */
     public boolean getUseSoftTabs() {
         return (boolean) execute("editor.getSession().getUseSoftTabs()");
@@ -1040,6 +1063,8 @@ public class EditorCore {
 
     /**
      * Returns true if wrap mode is being used; false otherwise.
+     *
+     * @return
      */
     public boolean getUseWrapMode() {
         return (boolean) execute("editor.getSession().getUseWrapMode()");
@@ -1048,6 +1073,10 @@ public class EditorCore {
     /**
      * Indents all the rows, from startRow to endRow (inclusive), by prefixing
      * each row with the token in indentString.
+     *
+     * @param startRow
+     * @param endRow
+     * @param indentString
      */
     public void indentRows(int startRow, int endRow, String indentString) {
         execute("editor.getSession().indentRows("
@@ -1058,6 +1087,10 @@ public class EditorCore {
 
     /**
      * Inserts a block of text and the indicated position.
+     *
+     * @param row
+     * @param text
+     * @param column
      */
     public void insert(int row, int column, String text) {
         execute("editor.getSession().insert("
@@ -1066,10 +1099,16 @@ public class EditorCore {
                 + ",\"" + formatText(text) + "\")");
     }
 
+    /**
+     *
+     */
     public void reset() {
         execute("editor.getSession().highlight()");
     }
 
+    /**
+     *
+     */
     public void resetCaches() {
         execute("editor.getSession().resetCaches()");
     }
@@ -1077,6 +1116,9 @@ public class EditorCore {
     /**
      * Sets a breakpoint on the row number given by rows. This function also
      * emites the 'changeBreakpoint' event.
+     *
+     * @param row
+     * @param className
      */
     public void setBreakpoint(int row, String className) {
         execute("editor.getSession().setBreakpoint("
@@ -1087,6 +1129,8 @@ public class EditorCore {
      * Set the number of spaces that define a soft tab; for example, passing in
      * 4 transforms the soft tabs to be equivalent to four spaces. This function
      * also emits the changeTabSize event.
+     *
+     * @param tabSize
      */
     public void setTabSize(int tabSize) {
         execute("editor.getSession().setTabSize(" + formatOther(tabSize) + ")");
@@ -1094,6 +1138,8 @@ public class EditorCore {
 
     /**
      * Enables or disables highlighting of the range where an undo occurred.
+     *
+     * @param enable
      */
     public void setUndoSelect(boolean enable) {
         execute("editor.getSession().setUndoSelect(" + formatBool(enable) + ")");
@@ -1102,6 +1148,8 @@ public class EditorCore {
     /**
      * Pass true to enable the use of soft tabs. Soft tabs means you're using
      * spaces instead of the tab character ('\t').
+     *
+     * @param useSoftTabs
      */
     public void setUseSoftTabs(boolean useSoftTabs) {
         execute("editor.getSession().setUseSoftTabs(" + formatBool(useSoftTabs) + ")");
@@ -1110,6 +1158,8 @@ public class EditorCore {
     /**
      * Sets whether or not line wrapping is enabled. If useWrapMode is different
      * than the current value, the 'changeWrapMode' event is emitted.
+     *
+     * @param useWrapMode
      */
     public void setUseWrapMode(boolean useWrapMode) {
         execute("editor.getSession().setUseWrapMode(" + formatBool(useWrapMode) + ")");
@@ -1120,6 +1170,9 @@ public class EditorCore {
      * unconstrained wrap, or, they can be the same number to pin the limit. If
      * the wrap limits for min or max are different, this method also emits the
      * 'changeWrapMode' event.
+     *
+     * @param min
+     * @param max
      */
     public void setWrapLimitRange(int min, int max) {
         execute("editor.getSession().setWrapLimitRange("
@@ -1153,4 +1206,78 @@ public class EditorCore {
         execute("editor.getSession().getUndoManager().reset()");
     }
 //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="My Custom Methods">
+    /**
+     * Return the current text in the editor.
+     *
+     * @return Current content in the editor.
+     */
+    public String getText() {
+        return getValue();
+    }
+
+    /**
+     * Sets the document display text.
+     *
+     * @param text The new text to set for the document.
+     */
+    public void setText(String text) {
+        setValue(text, -1);
+    }
+
+    /**
+     * Removes the selected text and copy it to clipboard.
+     */
+    public void Cut() {
+        if (Copy()) {
+            insert("");
+        }
+    }
+
+    /**
+     * Copies the selected text to clipboard.
+     *
+     * @return True if performed successfully.
+     */
+    public boolean Copy() {
+        String copy = getCopyText();
+        if (copy != null && !copy.isEmpty()) {
+            ClipboardContent content = new ClipboardContent();
+            content.putString(copy);
+            Clipboard.getSystemClipboard().setContent(content);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Paste text from clipboard after the cursor.
+     */
+    public void Paste() {
+        insert(Clipboard.getSystemClipboard().getString());
+    }
+
+    /**
+     * Shows the find dialogue.
+     */
+    public void Find() {
+        execCommand("find");
+    }
+
+    /**
+     * Show the replace dialogue.
+     */
+    public void Replace() {
+        execCommand("replace");
+    }
+
+    /**
+     * Shows the options pane.
+     */
+    public void Options() {
+        execCommand("showSettingsMenu");
+    }
+
+    //</editor-fold>
 }

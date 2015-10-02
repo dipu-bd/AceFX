@@ -15,12 +15,11 @@
  */
 package com.sandsoft.acefx;
 
+import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
@@ -36,45 +35,44 @@ public class AceEditor extends BorderPane {
             //init loader
             Class resourceClass = AceEditor.class;
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(resourceClass.getClass().getResource(
-                    resourceClass.getSimpleName() + ".fxml"));
+            loader.setLocation(resourceClass.getResource("AceEditor.fxml"));
 
             //load fxml
-            Pane node = (Pane) loader.load();
-            AceEditor layout = (AceEditor) loader.getController();
+            BorderPane node = (BorderPane) loader.load();
+            AceEditor ace = (AceEditor) loader.getController();
 
-            //add to layout
+            //add to layout 
             node.setMaxWidth(Double.MAX_VALUE);
             node.setMaxHeight(Double.MAX_VALUE);
-            layout.setCenter(node);
+            ace.setCenter(node);
 
             //post initialization
-            layout.initialize(acePath);
-            return layout;
+            ace.initialize(acePath);
+            return ace;
 
         } catch (Exception ex) {
             return null;
         }
     }
 
-    @FXML
-    private Button openButton;
-    @FXML
-    private Button saveButton;
-    @FXML
-    private Button cutButton;
-    @FXML
-    private Button copyButton;
-    @FXML
-    private Button pasteButton;
-    @FXML
-    private Button findButton;
-    @FXML
-    private Button replaceButton;
-    @FXML
-    private Button opetionsButton;
-    @FXML
-    private Button shortcutsButton;
+//    @FXML
+//    private Button undoButton;
+//    @FXML
+//    private Button redoButton;
+//    @FXML
+//    private Button cutButton;
+//    @FXML
+//    private Button copyButton;
+//    @FXML
+//    private Button pasteButton;
+//    @FXML
+//    private Button findButton;
+//    @FXML
+//    private Button replaceButton;
+//    @FXML
+//    private Button opetionsButton;
+//    @FXML
+//    private Button shortcutsButton;
     @FXML
     private WebView webView;
 
@@ -93,39 +91,49 @@ public class AceEditor extends BorderPane {
         editor = new EditorCore(webEngine);
     }
 
-    @FXML
-    private void handleOpenButton(ActionEvent event) {
-        
+    public EditorCore getEditor() {
+        return editor;
     }
 
     @FXML
-    private void handleSaveButton(ActionEvent event) {
+    private void handleUndoButton(ActionEvent event) {
+        editor.undo();
+    }
+
+    @FXML
+    private void handleRedoButton(ActionEvent event) {
+        editor.redo();
     }
 
     @FXML
     private void handleCutButton(ActionEvent event) {
-       
+        editor.Cut();
+
     }
 
     @FXML
     private void handleCopyButton(ActionEvent event) {
-        
+        editor.Copy();
     }
 
     @FXML
     private void handlePasteButton(ActionEvent event) {
+        editor.Paste();
     }
 
     @FXML
     private void handleFindButton(ActionEvent event) {
+        editor.Find();
     }
 
     @FXML
     private void handleReplaceButton(ActionEvent event) {
+        editor.Replace();
     }
 
     @FXML
     private void handleOptionsButton(ActionEvent event) {
+        editor.Options();
     }
 
     @FXML

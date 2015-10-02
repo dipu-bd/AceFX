@@ -15,8 +15,7 @@
  */
 package com.sandsoft.acefx.demo;
 
-import com.sandsoft.acefx.AceEditor;
-import com.sandsoft.acefx.AceFX;
+import com.sandsoft.acefx.AceEditor; 
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
