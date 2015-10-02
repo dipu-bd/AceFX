@@ -15,24 +15,25 @@
  */
 package com.sandsoft.acefx.demo;
 
+import com.sandsoft.acefx.AceEditor;
 import com.sandsoft.acefx.AceFX;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- * 
+ *
  * @author Sudipto Chandra
  */
 public class Main extends Application {
-    
+
     String defAce = "file:/Z:/Projects/GitHub/AceFX/ace-builds/editor.html";
-    
+
     @Override
     public void start(Stage primaryStage) {
-        AceFX root = new AceFX(defAce);
+        AceEditor root = AceEditor.createNew(defAce);
         Scene scene = new Scene(root, 600, 400);
-        
+
         primaryStage.setTitle("Hello World!");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -44,5 +45,5 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    
+
 }

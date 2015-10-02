@@ -226,14 +226,12 @@ public class AceFX extends BorderPane {
 
         BorderPane.setAlignment(webView, Pos.CENTER);
         this.setCenter(webView);
-        
-        //init toolbar
-        
 
+        //init toolbar
         //init editor
         webEngine = webView.getEngine();
         webEngine.load(AcePath);
-        
+
         editor = new EditorCore(webEngine);
         webEngine.getLoadWorker().stateProperty().addListener(
                 (ObservableValue<? extends State> observable, State oldValue, State newValue) -> {
@@ -256,6 +254,16 @@ public class AceFX extends BorderPane {
         } catch (Exception ex) {
             webEngine.load(AcePath);
         }
+    }
+
+    /**
+     * Gets the main editor core object which has definitions for almost all
+     * functions of the editor.
+     *
+     * @return Constant reference to editor core object.
+     */
+    public final EditorCore getEditorCore() {
+        return editor;
     }
 
     /**
