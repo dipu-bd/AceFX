@@ -25,7 +25,9 @@ import javafx.scene.web.WebView;
  * @author Sudipto Chandra
  */
 public class EditorCore extends BorderPane {
- 
+
+    private String ACE_URL = "http://dipu-bd.github.io/AceFX/";
+
     public EditorCore() {
         initialize();
     }
@@ -45,6 +47,6 @@ public class EditorCore extends BorderPane {
 
         //init editor
         webEngine = webView.getEngine();
- 
-    } 
+        webEngine.load(ACE_URL);
+    }
 }
