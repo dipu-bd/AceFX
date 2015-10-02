@@ -1,4 +1,6 @@
-/** THIS IS A PRESERVED COPY OF EDITOR CORE **/
+/**
+ * THIS IS A PRESERVED COPY OF EDITOR CORE *
+ */
 
 /*
  * Copyright 2015 Sudipto Chandra.
@@ -16,8 +18,7 @@
  * limitations under the License.
  */
 package preserved;
-
-import com.sandsoft.acefx.*;
+ 
 import javafx.concurrent.Worker;
 import javafx.geometry.Point2D;
 import javafx.scene.web.WebEngine;

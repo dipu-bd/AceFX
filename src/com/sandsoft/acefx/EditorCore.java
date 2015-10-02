@@ -15,8 +15,6 @@
  */
 package com.sandsoft.acefx;
 
-import javafx.concurrent.Worker;
-import javafx.geometry.Point2D;
 import javafx.scene.web.WebEngine;
 
 /**
@@ -25,20 +23,11 @@ import javafx.scene.web.WebEngine;
  */
 public class EditorCore {
 
+    //<editor-fold defaultstate="collapsed" desc="Editor Core Methods and Objecets">
     /**
-     * Options for find and replace text.
+     * web engine
      */
-    public class Options {
-
-        public boolean backwars = false;
-        public boolean wrap = false;
-        public boolean caseSensitive = false;
-        public boolean wholeWord = false;
-        public boolean regExp = false;
-
-        public Options() {
-        }
-    }
+    private WebEngine webEngine;
 
     /**
      * Constructor.
@@ -49,16 +38,15 @@ public class EditorCore {
         webEngine = engine;
     }
 
-    //web engine
-    private WebEngine webEngine;
-
     /**
      * Checks if the editor is ready for interaction.
      *
      * @return True if worker is successfully loaded.
      */
     public boolean isReady() {
-        return (webEngine != null && webEngine.getLoadWorker().getState() == Worker.State.SUCCEEDED);
+        return (webEngine != null
+                && webEngine.getLoadWorker().getState()
+                == javafx.concurrent.Worker.State.SUCCEEDED);
     }
 
     /**
@@ -67,7 +55,7 @@ public class EditorCore {
      * @param script Script to execute.
      * @return Result return by the function.
      */
-    public Object execute(String script) {
+    protected final Object execute(String script) {
         if (isReady()) {
             return (Object) webEngine.executeScript(script);
         }
@@ -80,13 +68,13 @@ public class EditorCore {
      * @param content text to format
      * @return formated content
      */
-    private String formatText(String content) {
+    private static String formatText(String content) {
         return content
                 .replace("\\", "\\\\") //replace backslash
                 .replace("\"", "\\\"") //replace quote
                 .replace("\r", "") //replace return
                 .replace("\n", "\\n") //replace new line
-                .replace("\t", "\\t") //replace tab 
+                .replace("\t", "\\t") //replace tab
                 ;
     }
 
@@ -96,7 +84,7 @@ public class EditorCore {
      * @param val Value to convert.
      * @return JavaScript supported string.
      */
-    private String formatBool(boolean val) {
+    private static String formatBool(boolean val) {
         return val ? "true" : "false";
     }
 
@@ -106,14 +94,12 @@ public class EditorCore {
      * @param num Number to convert.
      * @return JavaScript supported string.
      */
-    private String formatOther(int num) {
+    private static String formatOther(int num) {
         return String.valueOf(num);
     }
+//</editor-fold>
 
-    /* 
-     //Adds the selection and cursor.
-     Range addSelectionMarker(Range orientedRange)     
-     */
+    //<editor-fold defaultstate="collapsed" desc="Editor Functions Definitions">
     /**
      * Aligns the cursors or selected text.
      */
@@ -183,76 +169,10 @@ public class EditorCore {
     }
 
     /**
-     * Attempts to find needle within the document. For more information on
-     * options, see Search.
-     *
-     * @param needle Required. The text to search for (optional)
-     * @param options Required. An object defining various search properties
-     * @param animate Required. If true animate scrolling
-     */
-    public void find(String needle, Options options, boolean animate) {
-        execute("editor.find(\"" + formatText(needle) + "\","
-                + "{ backwards: " + formatBool(options.backwars)
-                + ", wrap: " + formatBool(options.wrap)
-                + ", caseSensitive: " + formatBool(options.caseSensitive)
-                + ", wholeWord: " + formatBool(options.wholeWord)
-                + ", regExp: " + formatBool(options.regExp)
-                + "}, " + formatBool(animate) + ");");
-    }
-
-    /*
-     //Finds and selects all the occurences of needle.
-     public int findAll(String needle, Object options, boolean keeps) {   }
-     */
-    /**
-     * Performs another search for needle in the document. For more information
-     * on options, see Search.
-     *
-     * @param options Required. An object defining various search properties
-     * @param animate Required. If true animate scrolling
-     */
-    public void findNext(Options options, boolean animate) {
-        execute("editor.findNext({"
-                + "  backwards: " + formatBool(options.backwars)
-                + ", wrap: " + formatBool(options.wrap)
-                + ", caseSensitive: " + formatBool(options.caseSensitive)
-                + ", wholeWord: " + formatBool(options.wholeWord)
-                + ", regExp: " + formatBool(options.regExp)
-                + "}, " + formatBool(animate) + "\");");
-    }
-
-    /**
-     * Performs a search for needle backwards. For more information on options,
-     * see Search.
-     *
-     * @param options Required. An object defining various search properties
-     * @param animate Required. If true animate scrolling
-     */
-    public void findPrevious(Options options, boolean animate) {
-        execute("editor.findPrevious({"
-                + "  backwards: " + formatBool(options.backwars)
-                + ", wrap: " + formatBool(options.wrap)
-                + ", caseSensitive: " + formatBool(options.caseSensitive)
-                + ", wholeWord: " + formatBool(options.wholeWord)
-                + ", regExp: " + formatBool(options.regExp)
-                + "}, " + formatBool(animate) + "\");");
-    }
-
-    /**
      * Brings the current textInput into focus.
      */
     public void focus() {
         execute("editor.focus();");
-    }
-
-    /**
-     * Executes a command for each selection range.
-     *
-     * @param cmd
-     * @param args
-     */
-    public void forEachSelection(String cmd, String args) {
-        execute("editor.forEachSelection(\"" + formatText(cmd) + "\",\"" + formatText(args) + "\");");
     }
 
     /**
@@ -273,26 +193,6 @@ public class EditorCore {
      */
     public String getCopyText() {
         return (String) execute("editor.getCopyText();");
-    }
-
-    /**
-     * Gets the current position of the cursor.
-     *
-     * @return
-     */
-    public Point2D getCursorPosition() {
-        int row = (int) execute("editor.getCursorPosition().row");
-        int col = (int) execute("editor.getCursorPosition().column");
-        return new Point2D(row, col);
-    }
-
-    /**
-     * Returns the screen position of the cursor.
-     *
-     * @return
-     */
-    public int getCursorPositionScreen() {
-        return (int) execute("editor.getCursorPositionScreen();");
     }
 
     /**
@@ -332,28 +232,12 @@ public class EditorCore {
     }
 
     /**
-     * Returns an object containing all the search options. For more information
-     * on options, see Search.
-     */
-    //public Object getLastSearchOptions() { }
-    /**
      * Returns the index of the last visible row.
      *
      * @return
      */
     public int getLastVisibleRow() {
         return (int) execute("editor.getLastVisibleRow();");
-    }
-
-    /**
-     * Works like EditSession.getTokenAt(), except it returns a number.
-     *
-     * @param row
-     * @param column
-     * @return
-     */
-    public int getNumberAt(int row, int column) {
-        return (int) execute("editor.getNumberAt(" + formatOther(row) + "," + formatOther(column) + ");");
     }
 
     /**
@@ -443,6 +327,15 @@ public class EditorCore {
     }
 
     /**
+     * Return the current text in the editor.
+     *
+     * @return Current content in the editor.
+     */
+    public String getText() {
+        return getValue();
+    }
+
+    /**
      * Returns the path of the current theme.
      *
      * @return
@@ -473,9 +366,9 @@ public class EditorCore {
      * Moves the cursor to the specified line number, and also into the
      * indicated column.
      *
-     * @param lineNumber
-     * @param column
-     * @param animate
+     * @param lineNumber Required. The line number to go to
+     * @param column Required. A column number to go to
+     * @param animate Required. If true animates scrolling
      */
     public void gotoLine(int lineNumber, int column, boolean animate) {
         execute("editor.gotoLine(" + formatOther(lineNumber) + ","
@@ -508,7 +401,7 @@ public class EditorCore {
     /**
      * Inserts text into wherever the cursor is pointing.
      *
-     * @param text
+     * @param text Required. The new text to add.
      */
     public void insert(String text) {
         execute("editor.insert(\"" + formatText(text) + "\");");
@@ -517,7 +410,7 @@ public class EditorCore {
     /**
      * Returns true if the current textInput is in focus.
      *
-     * @return
+     * @return true if the current textInput is in focus.
      */
     public boolean isFocused() {
         return (boolean) execute("editor.isFocused();");
@@ -526,8 +419,8 @@ public class EditorCore {
     /**
      * Indicates if the entire row is currently visible on the screen.
      *
-     * @param row
-     * @return
+     * @param row Required. The row to check
+     * @return true if the entire row is currently visible on the screen.
      */
     public boolean isRowFullyVisible(int row) {
         return (boolean) execute("editor.isRowFullyVisible(" + formatOther(row) + ");");
@@ -536,17 +429,13 @@ public class EditorCore {
     /**
      * Indicates if the row is currently visible on the screen.
      *
-     * @param row
-     * @return
+     * @param row Required. The row to check
+     * @return true if the row is currently visible on the screen.
      */
     public boolean isRowVisible(int row) {
         return (boolean) execute("editor.isRowVisible(" + formatOther(row) + ");");
     }
 
-    /**
-     * Moves the cursor's row and column to the next matching bracket.
-     */
-    //public void jumpToMatching(Object select) { }
     /**
      * If the character before the cursor is a number, this functions changes
      * its value by amount.
@@ -561,8 +450,8 @@ public class EditorCore {
      * Moves the cursor to the specified row and column. Note that this does not
      * de-select the current selection.
      *
-     * @param row
-     * @param column
+     * @param row Required. The row to move.
+     * @param column Required. The columns to move.
      */
     public void moveCursorTo(int row, int column) {
         execute("editor.moveCursorTo(" + formatOther(row) + "," + formatOther(column) + ");");
@@ -571,19 +460,20 @@ public class EditorCore {
     /**
      * Moves the cursor to the position indicated by pos.row and pos.column.
      *
-     * @param pos
+     * @param row Required. The row to move.
+     * @param column Required. The columns to move.
      */
-    public void moveCursorToPosition(Point2D pos) {
+    public void moveCursorToPosition(int row, int column) {
         execute("editor.moveCursorToPosition({"
-                + "row : " + formatOther((int) pos.getX())
-                + ", column:" + formatOther((int) pos.getY())
+                + "row : " + formatOther((int) row)
+                + ", column:" + formatOther((int) column)
                 + "});");
     }
 
     /**
      * Shifts all the selected lines down one row.
      *
-     * @return
+     * @return number of lines moved.
      */
     public int moveLinesDown() {
         return (int) execute("editor.moveLinesDown();");
@@ -592,14 +482,14 @@ public class EditorCore {
     /**
      * Shifts all the selected lines up one row.
      *
-     * @return
+     * @return number of lines moved.
      */
     public int moveLinesUp() {
         return (int) execute("editor.moveLinesUp();");
     }
 
     /**
-     *
+     * Undocumented.
      */
     public void moveText() {
         execute("editor.moveText();");
@@ -609,7 +499,7 @@ public class EditorCore {
      * Moves the cursor down in the document the specified number of times. Note
      * that this does de-select the current selection.
      *
-     * @param times
+     * @param times Required. The number of times to change navigation
      */
     public void navigateDown(int times) {
         execute("editor.navigateDown(" + formatOther(times) + ");");
@@ -635,7 +525,7 @@ public class EditorCore {
      * Moves the cursor left in the document the specified number of times. Note
      * that this does de-select the current selection.
      *
-     * @param times
+     * @param times Required. The number of times to change navigation
      */
     public void navigateLeft(int times) {
         execute("editor.navigateLeft(" + formatOther(times) + ");");
@@ -661,7 +551,7 @@ public class EditorCore {
      * Moves the cursor right in the document the specified number of times.
      * Note that this does de-select the current selection.
      *
-     * @param times
+     * @param times Required. The number of times to change navigation
      */
     public void navigateRight(int times) {
         execute("editor.navigateRight(" + formatOther(times) + ");");
@@ -671,8 +561,8 @@ public class EditorCore {
      * Moves the cursor to the specified row and column. Note that this does
      * de-select the current selection.
      *
-     * @param row
-     * @param column
+     * @param row Required. The row to move.
+     * @param column Required. The columns to move.
      */
     public void navigateTo(int row, int column) {
         execute("editor.navigateTo(" + formatOther(row) + "," + formatOther(column) + ");");
@@ -704,38 +594,8 @@ public class EditorCore {
         execute("editor.navigateWordRight();");
     }
 
-    /*
-     //     onBlur() Undocumented
-     //     onChangeAnnotation() Undocumented
-     //     onChangeBackMarker() Undocumented
-     //     onChangeBreakpoint() Undocumented
-     //     onChangeFold() Undocumented
-     //     onChangeFrontMarker() Undocumented
-     //     onChangeMode() Undocumented
-     //     onChangeWrapLimit() Undocumented
-     //     onChangeWrapMode() Undocumented
-     //     onCommandKey() Undocumented
-     //     onCompositionEnd() Undocumented
-     //     onCompositionStart() Undocumented
-     //     onCompositionUpdate() Undocumented
-     //     onCopy()
-     //     Called whenever a text "copy" happens.
-     //     onCursorChange()
-     //     Emitted when the selection changes.
-     //     onCut()
-     //     Called whenever a text "cut" happens.
-     //     onDocumentChange() Undocumented
-     //     onFocus() Undocumented
-     //     onPaste(String text)
-     //     Called whenever a text "paste" happens.
-     //     onScrollLeftChange() Undocumented
-     //     onScrollTopChange() Undocumented
-     //     onSelectionChange() Undocumented
-     //     onTextInput() Undocumented
-     //     onTokenizerUpdate() Undocumented
-     */
     /**
-     * Perform a redo operation on the document , reimplementing the last
+     * Perform a redo operation on the document, re-implementing the last
      * change.
      */
     public void redo() {
@@ -743,10 +603,11 @@ public class EditorCore {
     }
 
     /**
-     * Removes words of text from the editor.A "word" is defined as a string of
-     * characters bookended by whitespace.
+     * Removes words of text from the editor. A "word" is defined as a string of
+     * characters book-ended by whitespace.
      *
-     * @param dir
+     * @param dir Required. The direction of the deletion to occur, either
+     * "left" or "right"
      */
     public void remove(String dir) {
         execute("editor.remove(\"" + formatText(dir) + "\");");
@@ -759,8 +620,6 @@ public class EditorCore {
         execute("editor.removeLines();");
     }
 
-    //Removes the selection marker
-    //public void removeSelectionMarker(Range The) { }
     /**
      * Removes all the words to the right of the current selection , until the
      * end of the line.
@@ -792,49 +651,18 @@ public class EditorCore {
     }
 
     /**
-     * Replaces the first occurance of options. needle with the value in
-     * replacement.
-     *
-     * @param replacement
-     * @param options
-     */
-    public void replace(String replacement, Options options) {
-        execute("editor.replace(\"" + formatText(replacement) + "\","
-                + "{ backwards: " + formatBool(options.backwars)
-                + ", wrap: " + formatBool(options.wrap)
-                + ", caseSensitive: " + formatBool(options.caseSensitive)
-                + ", wholeWord: " + formatBool(options.wholeWord)
-                + ", regExp: " + formatBool(options.regExp)
-                + "});");
-    }
-
-    /**
-     * Replaces all occurances of options.needle with the value in replacement.
-     *
-     * @param replacement
-     * @param options
-     */
-    public void replaceAll(String replacement, Options options) {
-        execute("editor.replaceAll(\"" + formatText(replacement) + "\","
-                + "{ backwards: " + formatBool(options.backwars)
-                + ", wrap: " + formatBool(options.wrap)
-                + ", caseSensitive: " + formatBool(options.caseSensitive)
-                + ", wholeWord: " + formatBool(options.wholeWord)
-                + ", regExp: " + formatBool(options.regExp)
-                + "});");
-    }
-
-    /**
      * Triggers a resize of the editor.
      *
-     * @param force
+     * @param force Required. If true, recomputes the size, even if the height
+     * and width haven't changed
+     *
      */
     public void resize(boolean force) {
         execute("editor.resize(" + formatBool(force) + ");");
     }
 
     /**
-     *
+     * <strong>Undocumented</strong>
      */
     public void revealRange() {
         execute("editor.revealRange();");
@@ -857,14 +685,9 @@ public class EditorCore {
     }
 
     /**
-     * Scrolls to a line. If center is true, it puts the line in middle of
-     * screen(or attempts to).
-     */
-    //public void scrollToLine(int line, boolean center, boolean animate, Function callback) { }
-    /**
      * Moves the editor to the specified row.
      *
-     * @param row
+     * @param row Required. Row number.
      */
     public void scrollToRow(int row) {
         execute("editor.resize(" + formatOther(row) + ");");
@@ -875,27 +698,6 @@ public class EditorCore {
      */
     public void selectAll() {
         execute("editor.selectAll();");
-    }
-
-    /**
-     * Finds the next occurence of text in an active selection and adds it to
-     * the selections.
-     *
-     * @param dir
-     * @param skip
-     */
-    public void selectMore(int dir, boolean skip) {
-        execute("editor.selectMore(" + formatOther(dir) + "," + formatBool(skip) + ");");
-    }
-
-    /**
-     * Adds a cursor above or below the active cursor.
-     *
-     * @param dir
-     * @param skip
-     */
-    public void selectMoreLines(int dir, boolean skip) {
-        execute("editor.selectMoreLines(" + formatOther(dir) + "," + formatBool(skip) + ");");
     }
 
     /**
@@ -915,44 +717,23 @@ public class EditorCore {
     }
 
     /**
-     *
-     */
-    public void setAnimatedScroll() {
-        execute("editor.setAnimatedScroll();");
-    }
-
-    /**
      * Specifies whether to use behaviors or not. "Behaviors" in this case is
      * the auto-pairing of special characters, like quotation marks,
      * parenthesis, or brackets.
      *
-     * @param enabled
+     * @param enabled Required. Enables or disables behaviors
      */
     public void setBehavioursEnabled(boolean enabled) {
         execute("editor.setBehavioursEnabled(" + formatBool(enabled) + ");");
     }
 
     /**
-     *
-     */
-    public void setDisplayIndentGuides() {
-        execute("editor.setDisplayIndentGuides();");
-    }
-
-    /**
      * Sets the delay(in milliseconds) of the mouse drag.
      *
-     * @param dragDelay
+     * @param dragDelay Required. A value indicating the new delay
      */
     public void setDragDelay(int dragDelay) {
         execute("editor.setDragDelay(" + formatOther(dragDelay) + ");");
-    }
-
-    /**
-     *
-     */
-    public void setFadeFoldWidgets() {
-        execute("editor.setFadeFoldWidgets();");
     }
 
     /**
@@ -967,23 +748,28 @@ public class EditorCore {
     /**
      * Determines whether or not the current line should be highlighted.
      *
-     * @param shouldHighlight
+     * @param shouldHighlight Required. Set to true to highlight the current
+     * line
      */
     public void setHighlightActiveLine(boolean shouldHighlight) {
         execute("editor.setHighlightActiveLine(" + formatBool(shouldHighlight) + ");");
     }
 
     /**
+     * etermines whether or not the current gutter line should be highlighted.
      *
+     * @param shouldHighlight Required. Set to true to highlight the current
+     * line
      */
-    public void setHighlightGutterLine() {
-        execute("editor.setHighlightGutterLine();");
+    public void setHighlightGutterLine(boolean shouldHighlight) {
+        execute("editor.setHighlightGutterLine(" + formatBool(shouldHighlight) + ");");
     }
 
     /**
      * Determines if the currently selected word should be highlighted.
      *
-     * @param shouldHighlight
+     * @param shouldHighlight Required. Set to true to highlight the current
+     * line
      */
     public void setHighlightSelectedWord(boolean shouldHighlight) {
         execute("editor.setHighlightSelectedWord(" + formatBool(shouldHighlight) + ");");
@@ -992,7 +778,7 @@ public class EditorCore {
     /**
      * Sets a new key handler, such as "vim" or "windows".
      *
-     * @param keyboardHandler
+     * @param keyboardHandler Required. The new key handler
      */
     public void setKeyboardHandler(String keyboardHandler) {
         execute("editor.setKeyboardHandler(\"" + formatText(keyboardHandler) + "\");");
@@ -1001,10 +787,10 @@ public class EditorCore {
     /**
      * Pass in true to enable overwrites in your session, or false to disable.
      * If overwrites is enabled, any text you enter will type over any text
-     * after it. If the value of overwrite changes, this function also emites
-     * the changeOverwrite event.
+     * after it. If the value of overwrite changes, this function also emits the
+     * changeOverwrite event.
      *
-     * @param overwrite
+     * @param overwrite Required. Defines whether or not to set overwrites
      */
     public void setOverwrite(boolean overwrite) {
         execute("editor.setOverwrite(" + formatBool(overwrite) + ");");
@@ -1013,7 +799,7 @@ public class EditorCore {
     /**
      * Sets the column defining where the print margin should be.
      *
-     * @param showPrintMargin
+     * @param showPrintMargin Required. Specifies the new print margin.
      */
     public void setPrintMarginColumn(int showPrintMargin) {
         execute("editor.setPrintMarginColumn(" + formatOther(showPrintMargin) + ");");
@@ -1023,7 +809,8 @@ public class EditorCore {
      * If readOnly is true, then the editor is set to read-only mode, and none
      * of the content can change.
      *
-     * @param readOnly
+     * @param readOnly Required. Specifies whether the editor can be modified or
+     * not
      */
     public void setReadOnly(boolean readOnly) {
         execute("editor.setReadOnly(" + formatBool(readOnly) + ");");
@@ -1032,28 +819,28 @@ public class EditorCore {
     /**
      * Sets how fast the mouse scrolling should do.
      *
-     * @param speed
+     * @param speed Required. A value indicating the new speed (in milliseconds)
      */
     public void setScrollSpeed(int speed) {
         execute("editor.setScrollSpeed(" + formatOther(speed) + ");");
     }
 
     /**
-     * Indicates how selections should occur.
+     * Indicates how selections should occur. <br/>
+     * By default, selections are set to "line". There are no other styles at
+     * the moment, although this code change in the future. <br/>
+     * This function also emits the 'changeSelectionStyle' event.
      *
-     * @param style
+     * @param style Required. The new selection style
      */
     public void setSelectionStyle(String style) {
         execute("editor.setSelectionStyle(\"" + formatText(style) + "\");");
     }
 
-    //Sets a new editsession to use.This method also emits the 'changeSession' event.
-    //public void setSession(EditSession session) { }
-    //
     /**
      * Indicates whether the fold widgets are shown or not.
      *
-     * @param show
+     * @param show Required. Specifies whether the fold widgets are shown.
      */
     public void setShowFoldWidgets(boolean show) {
         execute("editor.setShowFoldWidgets(" + formatBool(show) + ");");
@@ -1073,36 +860,38 @@ public class EditorCore {
      * If showPrintMargin is set to true, the print margin is shown in the
      * editor .
      *
-     * @param showPrintMargin
+     * @param showPrintMargin Required. Specifies whether or not to show
+     * invisible characters.
      */
     public void setShowPrintMargin(boolean showPrintMargin) {
         execute("editor.setShowPrintMargin(" + formatBool(showPrintMargin) + ");");
     }
 
     /**
-     * Adds a new class, style, to the editor.
+     * Sets the document display text.
      *
-     * @param style
+     * @param text The new text to set for the document.
      */
-    public void setStyle(String style) {
-        execute("editor.setStyle(\"" + formatText(style) + "\");");
+    public void setValue(String text) {
+        setValue(text, -1);
     }
 
     /**
      * Sets a new theme for the editor. theme should exist , and be a directory
      * path, like ace/theme/textmate.
      *
-     * @param theme
+     * @param theme Required. The path to a theme.
      */
     public void setTheme(String theme) {
-        execute("editor.setTheme(\"ace/theme/" + theme + "\");");
+        execute("editor.setTheme(\"" + theme + "\");");
     }
 
     /**
      * Sets the current document to val.
      *
-     * @param val
-     * @param cursorPos
+     * @param val Required. The new value to set for the document.
+     * @param cursorPos Required. Where to set the new value. undefined or 0 is
+     * selectAll, -1 is at the document start, and 1 is at the end
      * @return
      */
     public String setValue(String val, int cursorPos) {
@@ -1121,7 +910,7 @@ public class EditorCore {
     }
 
     /**
-     *
+     * <strong>Undocumented</strong>
      */
     public void sortLines() {
         execute("editor.sortLines();");
@@ -1166,7 +955,7 @@ public class EditorCore {
     /**
      * Transposes the selected ranges.
      *
-     * @param dir
+     * @param dir Required. The direction to rotate selections.
      */
     public void transposeSelections(int dir) {
         execute("editor.setWrapBehavioursEnabled(" + formatOther(dir) + ");");
@@ -1180,19 +969,11 @@ public class EditorCore {
     }
 
     /**
-     * Removes the class style from the editor. public void
-     *
-     * @param style
-     */
-    public void unsetStyle(String style) {
-        execute("editor.unsetStyle(\"" + formatText(style) + "\");");
-    }
-
-    /**
      * Updates the cursor and marker layers. public void
      */
     public void updateSelectionMarkers() {
         execute("editor.updateSelectionMarkers();");
     }
+//</editor-fold>
 
 }
