@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Dipu.
+ * Copyright 2015 Sudipto Chandra.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,24 +15,22 @@
  */
 package com.sandsoft.acefx.demo;
 
-import com.sandsoft.acefx.EditorCore;
+import com.sandsoft.acefx.AceFX;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 /**
- *
- * @author Dipu
+ * 
+ * @author Sudipto Chandra
  */
 public class Main extends Application {
     
+    String defAce = "file:/Z:/Projects/GitHub/AceFX/ace-builds/editor.html";
+    
     @Override
     public void start(Stage primaryStage) {
-        EditorCore root = new EditorCore();
+        AceFX root = new AceFX(defAce);
         Scene scene = new Scene(root, 600, 400);
         
         primaryStage.setTitle("Hello World!");
