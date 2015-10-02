@@ -1,5 +1,5 @@
-/*
- * Copyright 2015 Sudipto Chandra.
+/* 
+ * Copyright 2015 Sudipto Chandra. 
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,11 @@ import javafx.scene.web.WebView;
 
 /**
  *
- * @author Sudipto Chandra
+ * uthor Sudipto Chandra
  */
 public class EditorCore extends BorderPane {
 
-    private String ACE_URL = "http://dipu-bd.github.io/AceFX/";
+    private final String ACE_URL = "http://dipu-bd.github.io/AceFX/";
 
     public EditorCore() {
         initialize();
