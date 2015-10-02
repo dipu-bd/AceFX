@@ -91,7 +91,7 @@ public class EditorCore {
     /**
      * Formats other value and return JavaScript string.
      *
-     * @param num Number to convert.
+     * @param num int to convert.
      * @return JavaScript supported string.
      */
     private static String formatOther(int num) {
@@ -366,7 +366,7 @@ public class EditorCore {
      * Moves the cursor to the specified line number, and also into the
      * indicated column.
      *
-     * @param lineNumber Required. The line number to go to
+     * @param lineint Required. The line number to go to
      * @param column Required. A column number to go to
      * @param animate Required. If true animates scrolling
      */
@@ -976,4 +976,181 @@ public class EditorCore {
     }
 //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Editor -> Editor Session Methods ">
+    /**
+     * Clears all the annotations for this session. This function also triggers
+     * the 'changeAnnotation' event.
+     */
+    public void clearAnnotations() {
+        execute("editor.getSession().clearAnnotations()");
+    }
+
+    /**
+     * Removes a breakpoint on the row number given by rows. This function also
+     * emites the 'changeBreakpoint' event.
+     */
+    public void clearBreakpoint(int row) {
+        execute("editor.getSession().clearBreakpoint(" + formatOther(row) + ")");
+    }
+
+    /**
+     * Duplicates all the text between firstRow and lastRow.
+     */
+    public int duplicateLines(int firstRow, int lastRow) {
+        return (int) execute("editor.getSession().duplicateLines("
+                + formatOther(firstRow) + "," + formatOther(lastRow) + ")");
+    }
+
+    /**
+     * Returns a verbatim copy of the given line as it is in the document
+     */
+    public String getLine(int row) {
+        return (String) execute("editor.getSession().getLine(" + formatOther(row) + ")");
+    }
+
+    /**
+     * Returns number of screenrows in a wrapped line.
+     */
+    public int getRowLength(int row) {
+        return (int) execute("editor.getSession().getRowLength(" + formatOther(row) + ")");
+    }
+
+    /**
+     * Returns the current tab size.
+     */
+    public int getTabSize() {
+        return (int) execute("editor.getSession().getTabSize()");
+    }
+
+    /**
+     * Returns the current value for tabs. If the user is using soft tabs, this
+     * will be a series of spaces (defined by getTabSize()); otherwise it's
+     * simply '\t'.
+     */
+    public String getTabString() {
+        return (String) execute("editor.getSession().getTabString()");
+    }
+
+    /**
+     * Returns true if soft tabs are being used, false otherwise.
+     */
+    public boolean getUseSoftTabs() {
+        return (boolean) execute("editor.getSession().getUseSoftTabs()");
+    }
+
+    /**
+     * Returns true if wrap mode is being used; false otherwise.
+     */
+    public boolean getUseWrapMode() {
+        return (boolean) execute("editor.getSession().getUseWrapMode()");
+    }
+
+    /**
+     * Indents all the rows, from startRow to endRow (inclusive), by prefixing
+     * each row with the token in indentString.
+     */
+    public void indentRows(int startRow, int endRow, String indentString) {
+        execute("editor.getSession().indentRows("
+                + formatOther(startRow) + "," + formatOther(endRow)
+                + ",\"" + formatText(indentString) + "\")");
+
+    }
+
+    /**
+     * Inserts a block of text and the indicated position.
+     */
+    public void insert(int row, int column, String text) {
+        execute("editor.getSession().insert("
+                + "{ row:" + formatOther(row)
+                + ", column:" + formatOther(column)
+                + ",\"" + formatText(text) + "\")");
+    }
+
+    public void reset() {
+        execute("editor.getSession().highlight()");
+    }
+
+    public void resetCaches() {
+        execute("editor.getSession().resetCaches()");
+    }
+
+    /**
+     * Sets a breakpoint on the row number given by rows. This function also
+     * emites the 'changeBreakpoint' event.
+     */
+    public void setBreakpoint(int row, String className) {
+        execute("editor.getSession().setBreakpoint("
+                + formatOther(row) + ",\"" + formatText(className) + "\");");
+    }
+
+    /**
+     * Set the number of spaces that define a soft tab; for example, passing in
+     * 4 transforms the soft tabs to be equivalent to four spaces. This function
+     * also emits the changeTabSize event.
+     */
+    public void setTabSize(int tabSize) {
+        execute("editor.getSession().setTabSize(" + formatOther(tabSize) + ")");
+    }
+
+    /**
+     * Enables or disables highlighting of the range where an undo occurred.
+     */
+    public void setUndoSelect(boolean enable) {
+        execute("editor.getSession().setUndoSelect(" + formatBool(enable) + ")");
+    }
+
+    /**
+     * Pass true to enable the use of soft tabs. Soft tabs means you're using
+     * spaces instead of the tab character ('\t').
+     */
+    public void setUseSoftTabs(boolean useSoftTabs) {
+        execute("editor.getSession().setUseSoftTabs(" + formatBool(useSoftTabs) + ")");
+    }
+
+    /**
+     * Sets whether or not line wrapping is enabled. If useWrapMode is different
+     * than the current value, the 'changeWrapMode' event is emitted.
+     */
+    public void setUseWrapMode(boolean useWrapMode) {
+        execute("editor.getSession().setUseWrapMode(" + formatBool(useWrapMode) + ")");
+    }
+
+    /**
+     * Sets the boundaries of wrap. Either value can be null to have an
+     * unconstrained wrap, or, they can be the same number to pin the limit. If
+     * the wrap limits for min or max are different, this method also emits the
+     * 'changeWrapMode' event.
+     */
+    public void setWrapLimitRange(int min, int max) {
+        execute("editor.getSession().setWrapLimitRange("
+                + formatOther(min) + "," + formatOther(max) + ")");
+    }
+//</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Editor -> Editor Session -> Undo Manager methods">
+    /**
+     * Returns true if there are redo operations left to perform.
+     *
+     * @return true if there are redo operations left to perform.
+     */
+    public boolean hasRedo() {
+        return (boolean) execute("editor.getSession().getUndoManager().hasRedo()");
+    }
+
+    /**
+     * Returns true if there are undo operations left to perform.
+     *
+     * @return true if there are undo operations left to perform.
+     */
+    public boolean hasUndo() {
+        return (boolean) execute("editor.getSession().getUndoManager().hasUndo()");
+    }
+
+    /**
+     * Destroys the stack of undo and redo redo operations.
+     */
+    public void resetUndoManager() {
+        execute("editor.getSession().getUndoManager().reset()");
+    }
+//</editor-fold>
 }
