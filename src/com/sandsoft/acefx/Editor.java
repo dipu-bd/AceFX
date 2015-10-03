@@ -25,11 +25,11 @@ import netscape.javascript.JSObject;
 public class Editor {
 
     private final JSObject mEditor;
-    private final EditorSession mEditorSession;
+    private final EditSession mEditSession;
 
     public Editor(final JSObject editor) throws JSException {
         mEditor = editor;
-        mEditorSession = new EditorSession((JSObject) editor.call("getSession"));
+        mEditSession = new EditSession((JSObject) editor.call("getSession"));
     }
 
     /**
@@ -39,7 +39,7 @@ public class Editor {
      * @return
      */
     @Deprecated
-    public Range addSelectionMarker(Range orientedRange) throws JSException {
+    public JSObject addSelectionMarker(JSObject orientedRange) throws JSException {
         return null;
     }
 
@@ -132,9 +132,11 @@ public class Editor {
      * options, see Search.
      *
      * @param needle Required. The text to search for (optional)
-     * @param options An object defining various search properties. Leave null if unsure.
+     * @param options An object defining various search properties. Leave null
+     * if unsure.
      * @param animate If true animate scrolling. Leave null if unsure.
      */
+    @Deprecated
     public void find(String needle, JSObject options, Boolean animate) throws JSException {
         mEditor.call("find", needle, options, animate);
     }
@@ -147,6 +149,7 @@ public class Editor {
      * @param keeps Required.
      * @return
      */
+    @Deprecated
     public int findAll(String needle, JSObject options, Boolean keeps) throws JSException {
         return (int) mEditor.call("findAll", needle, options, keeps);
     }
@@ -158,6 +161,7 @@ public class Editor {
      * @param options Required. An object defining various search properties
      * @param animate Required. If true animate scrolling
      */
+    @Deprecated
     public void findNext(JSObject options, Boolean animate) throws JSException {
         mEditor.call("findNext", options, animate);
     }
@@ -169,6 +173,7 @@ public class Editor {
      * @param options Required. An object defining various search properties
      * @param animate Required. If true animate scrolling
      */
+    @Deprecated
     public void findPrevious(JSObject options, Boolean animate) throws JSException {
         mEditor.call("findPrevious", options, animate);
     }
@@ -186,6 +191,7 @@ public class Editor {
      * @param cmd Required. The command to execute
      * @param args Required. Any arguments for the command
      */
+    @Deprecated
     public void forEachSelection(String cmd, String args) throws JSException {
         mEditor.call("forEachSelection", cmd, args);
     }
@@ -220,15 +226,16 @@ public class Editor {
     /**
      * Returns the screen position of the cursor.
      */
-    public int getCursorPositionScreen() throws JSException {
-        return (int) mEditor.call("getCursorPositionScreen");
+    @Deprecated
+    public JSObject getCursorPositionScreen() throws JSException {
+        return (JSObject) mEditor.call("getCursorPositionScreen");
     }
 
     /**
-     * Gets the display indent guides options.
+     * Gets the display indent guide options.
      */
-    public JSObject getDisplayIndentGuides() throws JSException {
-        return (JSObject) mEditor.call("getDisplayIndentGuides");
+    public boolean getDisplayIndentGuides() throws JSException {
+        return (boolean) mEditor.call("getDisplayIndentGuides");
     }
 
     /**
@@ -241,8 +248,8 @@ public class Editor {
     /**
      * Gets the fade fold widget option.
      */
-    public JSObject getFadeFoldWidgets() throws JSException {
-        return (JSObject) mEditor.call("getFadeFoldWidgets");
+    public boolean getFadeFoldWidgets() throws JSException {
+        return (boolean) mEditor.call("getFadeFoldWidgets");
     }
 
     /**
@@ -284,8 +291,9 @@ public class Editor {
      *
      * @return
      */
-    public String getKeyboardHandler() throws JSException {
-        return (String) mEditor.call("getKeyboardHandler");
+    @Deprecated
+    public JSObject getKeyboardHandler() throws JSException {
+        return (JSObject) mEditor.call("getKeyboardHandler");
     }
 
     /**
@@ -294,6 +302,7 @@ public class Editor {
      *
      * @return
      */
+    @Deprecated
     public JSObject getLastSearchOptions() throws JSException {
         return (JSObject) mEditor.call("getLastSearchOptions");
     }
@@ -314,8 +323,8 @@ public class Editor {
      * @param column Required.
      * @return
      */
-    public int getNumberAt(Integer row, Integer column) throws JSException {
-        return (int) mEditor.call("getNumberAt");
+    public Integer getNumberAt(Integer row, Integer column) throws JSException {
+        return (Integer) mEditor.call("getNumberAt");
     }
 
     /**
@@ -360,8 +369,9 @@ public class Editor {
      *
      * @return
      */
-    public String getSelection() throws JSException {
-        return (String) mEditor.call("getSelection");
+    @Deprecated
+    public JSObject getSelection() throws JSException {
+        return (JSObject) mEditor.call("getSelection");
     }
 
     //Returns the Range for the selected text.
@@ -377,9 +387,11 @@ public class Editor {
 
     /**
      * Returns the current session being used.
+     *
+     * @return Currently active edit session object.
      */
-    public EditorSession getSession() throws JSException {
-        return mEditorSession;
+    public EditSession getSession() throws JSException {
+        return mEditSession;
     }
 
     /**
@@ -481,6 +493,18 @@ public class Editor {
     }
 
     /**
+     * Inserts a block of text and the indicated position.
+     *
+     * @param row
+     * @param column
+     * @param text Required. A chunk of text to insert
+     */
+    public void insert(int row, int column, String text) throws JSException {
+        gotoLine(row, column, Boolean.FALSE);
+        insert(text);
+    }
+
+    /**
      * Returns true if the current textInput is in focus.
      *
      * @return true if the current textInput is in focus.
@@ -512,6 +536,7 @@ public class Editor {
     /**
      * Moves the cursor's row and column to the next matching bracket.
      */
+    @Deprecated
     public void jumpToMatching(JSObject select) throws JSException {
         mEditor.call("jumpToMatching", select);
     }
@@ -543,8 +568,9 @@ public class Editor {
      *
      * @param pos Required. An object with two properties, row and column
      */
-    public void moveCursorToPosition(DocPoint pos) throws JSException {
-        moveCursorTo(pos.getRow(), pos.getColumn());
+    @Deprecated
+    public void moveCursorToPosition(JSObject pos) throws JSException {
+        mEditor.call("moveCursorToPosition", pos);
     }
 
     /**
@@ -552,8 +578,8 @@ public class Editor {
      *
      * @return number of lines moved.
      */
-    public int moveLinesDown() throws JSException {
-        return (int) mEditor.call("moveLinesDown");
+    public void moveLinesDown() throws JSException {
+        mEditor.call("moveLinesDown");
     }
 
     /**
@@ -561,8 +587,8 @@ public class Editor {
      *
      * @return number of lines moved.
      */
-    public int moveLinesUp() throws JSException {
-        return (int) mEditor.call("moveLinesUp");
+    public void moveLinesUp() throws JSException {
+        mEditor.call("moveLinesUp");
     }
 
     //Undocumented
@@ -727,8 +753,9 @@ public class Editor {
      *
      * @param range Required. selection range added with addSelectionMarker().
      */
-    public void removeSelectionMarker(Range range) throws JSException {
-        mEditor.call("removeSelectionMarker", range.toString());
+    @Deprecated
+    public void removeSelectionMarker(JSObject range) throws JSException {
+        mEditor.call("removeSelectionMarker", range);
     }
 
     /**
@@ -768,6 +795,7 @@ public class Editor {
      ** @param replacement Required. The text to replace with
      * @param options Required. The Search options to use
      */
+    @Deprecated
     public void replace(String replacement, JSObject options) throws JSException {
         mEditor.call("replace", replacement, options);
     }
@@ -778,6 +806,7 @@ public class Editor {
      * @param replacement Required. The text to replace with
      * @param options Required. The Search options to use
      */
+    @Deprecated
     public void replaceAll(String replacement, JSObject options) throws JSException {
         mEditor.call("replaceAll", replacement, options);
     }
@@ -798,8 +827,9 @@ public class Editor {
      * @param range Required. Range to reveal. replacement.
      * @param animate Required. true to animate.
      */
-    public void revealRange(Range range, Boolean animate) throws JSException {
-        mEditor.call("revealRange", range.toString(), animate);
+    @Deprecated
+    public void revealRange(JSObject range, Boolean animate) throws JSException {
+        mEditor.call("revealRange", range, animate);
     }
 
     /**
@@ -896,13 +926,13 @@ public class Editor {
     }
 
     /**
-     * sets the Display Indent Guides
+     * sets the Display Indent Guides option
      *
      * @param indentGuides Required. The Indent guides to set.
      * @return True on success.
      */
-    public boolean setDisplayIndentGuides(String indentGuides) throws JSException {
-        return (boolean) mEditor.call("", indentGuides);
+    public void setDisplayIndentGuides(Boolean indentGuides) throws JSException {
+        mEditor.call("setDisplayIndentGuides", indentGuides);
     }
 
     /**
@@ -1153,6 +1183,7 @@ public class Editor {
      *
      * @param style Required.
      */
+    @Deprecated
     public void unsetStyle(JSObject style) throws JSException {
         mEditor.call("unsetStyle", style);
     }

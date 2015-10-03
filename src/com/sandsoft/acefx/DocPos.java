@@ -21,39 +21,39 @@ import netscape.javascript.JSObject;
  *
  * @author Dipu
  */
-class TokenPoint {
+public class DocPos {
 
-    private int index;
-    private int start;
+    private int mRow;
+    private int mColumn;
 
-    public TokenPoint(int index, int start) {
-        this.index = index;
-        this.start = start;
+    public DocPos(int row, int column) {
+        this.mRow = row;
+        this.mColumn = column;
     }
 
-    public TokenPoint(JSObject arg) {
-        this.index = (int) arg.getMember("index");
-        this.start = (int) arg.getMember("start");
+    public DocPos(JSObject arg) {
+        this.mRow = (int) arg.eval("this['row']");
+        this.mColumn = (int) arg.eval("this['column']");
     }
 
-    public String getJsString() {
-        return String.format("(function()"
-                + "{ this.index=%d; this.start=%d; }", index, start);
+    @Override
+    public String toString() {
+        return String.format("{row: %d, column: %d}", mRow, mColumn);
     }
 
-    public int getIndex() {
-        return index;
+    public int getRow() {
+        return mRow;
     }
 
-    public void setIndex(int row) {
-        this.index = row;
+    public int getColumn() {
+        return mColumn;
     }
 
-    public int getStart() {
-        return start;
+    public void setRow(int row) {
+        this.mRow = row;
     }
 
-    public void setStart(int col) {
-        this.start = col;
+    public void setColumn(int col) {
+        this.mColumn = col;
     }
 }

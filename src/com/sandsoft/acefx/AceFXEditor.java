@@ -35,7 +35,7 @@ import netscape.javascript.JSObject;
  *
  * @author Sudipto Chandra.
  */
-public class CodeEditor extends BorderPane {
+public class AceFXEditor extends BorderPane {
 
     /**
      * web engine
@@ -57,7 +57,7 @@ public class CodeEditor extends BorderPane {
      *
      * @param acePath Ace path location.
      */
-    public CodeEditor(String acePath) {
+    public AceFXEditor(String acePath) {
         //setup webview
         mWebView = new WebView();
         mWebView.setMaxWidth(Double.MAX_VALUE);
@@ -66,6 +66,7 @@ public class CodeEditor extends BorderPane {
         mWebView.setPrefHeight(400.0);
         mWebView.setMinWidth(0.0);
         mWebView.setMinHeight(0.0);
+        mWebView.setContextMenuEnabled(false);
         this.setCenter(mWebView);
 
         //load ace
@@ -143,7 +144,7 @@ public class CodeEditor extends BorderPane {
      *
      * @return
      */
-    public EditorSession getEditorSession() {
+    public EditSession getEditSession() {
         return mEditor.getSession();
     }
 
@@ -153,7 +154,7 @@ public class CodeEditor extends BorderPane {
      * @return
      */
     public UndoManager getUndoManager() {
-        return getEditorSession().getUndoManager();
+        return getEditSession().getUndoManager();
     }
 
     /**
@@ -212,6 +213,20 @@ public class CodeEditor extends BorderPane {
         if (isReady()) {
             mEditor.setValue(text, -1);
         }
+    }
+
+    /**
+     * Performs an undo operation. Reverts the changes.
+     */
+    public void Undo() {
+        mEditor.undo();
+    }
+
+    /**
+     * Performs an redo operation. Re-implements the changes.
+     */
+    public void Redo() {
+        mEditor.redo();
     }
 
     /**

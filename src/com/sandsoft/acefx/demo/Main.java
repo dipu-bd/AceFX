@@ -16,6 +16,10 @@
 package com.sandsoft.acefx.demo;
 
 import com.sandsoft.acefx.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.application.Application;
@@ -37,9 +41,9 @@ public class Main extends Application {
         button.setText("RUN TESTS");
         button.setVisible(false);
 
-        final CodeEditor root = new CodeEditor(defAce);
+        final AceFXEditor root = new AceFXEditor(defAce);
         root.setTop(button);
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, 800, 400);
 
         primaryStage.setTitle("Hello World!");
         primaryStage.setScene(scene);
@@ -47,6 +51,7 @@ public class Main extends Application {
 
         button.setOnAction((event) -> {
             runTests(root);
+
         });
 
         root.readyProperty().addListener((event) -> {
@@ -55,16 +60,27 @@ public class Main extends Application {
         });
     }
 
-    public void runTests(final CodeEditor editor) {
-        System.out.println("Running test for editor...");
-        Editor edit = editor.getEditor();
-        //System.out.println(
-        try {
-            edit.forEachSelection("cut", "");
-        } catch (Exception ex) {
-            System.out.println("ERROR");
+    public void runTests(final Object obj) {
+        System.out.println("Running test...");
+        for (Method m : obj.getClass().getMethods()) {
+            if (!m.getDeclaringClass().equals(obj.getClass())) {
+                continue;
+            }
+            if (m.getParameterCount() == 0) {
+                System.out.printf("Calling %s ", m.getName());
+                try {
+                    if (m.getGenericReturnType() instanceof Object) {
+                        System.out.println();
+                        System.out.print(m.invoke(obj));
+                    } else {
+                        m.invoke(obj);
+                    }
+                    System.out.println("...OK.\n");
+                } catch (Exception ex) {
+                    System.out.printf("...ERROR : %s.\n", ex.toString());
+                }
+            }
         }
-
     }
 
     /**

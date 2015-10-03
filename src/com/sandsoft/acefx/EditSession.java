@@ -23,7 +23,7 @@ import netscape.javascript.JSObject;
  * @author Dipu
  */
 //<editor-fold defaultstate="collapsed" desc="Editor -> Editor Session Methods ">
-public class EditorSession {
+public class EditSession {
 
     private JSObject mSession;
     private UndoManager mUndoManager;
@@ -33,7 +33,7 @@ public class EditorSession {
      *
      * @param session Main object to wrap.
      */
-    public EditorSession(JSObject session) throws JSException {
+    public EditSession(JSObject session) throws JSException {
         mSession = session;
         mUndoManager = new UndoManager((JSObject) session.call("getUndoManager"));
     }
@@ -45,6 +45,7 @@ public class EditorSession {
      * @param inFront Required. Set to true to establish a front marker
      * @return
      */
+    @Deprecated
     public Object addDynamicMarker(JSObject marker, Boolean inFront) throws JSException {
         return mSession.call("addDynamicMarker", marker, inFront);
     }
@@ -70,7 +71,8 @@ public class EditorSession {
      * @param inFront Required. Set to true to establish a front marker
      * @return
      */
-    public int addMarker(Range range, String clazz, String type, Boolean inFront) throws JSException {
+    @Deprecated
+    public int addMarker(JSObject range, String clazz, String type, Boolean inFront) throws JSException {
         return (int) mSession.call("addMarker", range.toString(), clazz, type, inFront);
     }
 
@@ -120,8 +122,8 @@ public class EditorSession {
      * @param docColumn Required. The document column to check
      * @return screen coordinates.
      */
-    public DocPoint documentToScreenPosition(Integer docRow, Integer docColumn) throws JSException {
-        return new DocPoint((JSObject) mSession.call("documentToScreenPosition", docRow, docColumn));
+    public DocPos documentToScreenPosition(Integer docRow, Integer docColumn) throws JSException {
+        return new DocPos((JSObject) mSession.call("documentToScreenPosition", docRow, docColumn));
     }
 
     /**
@@ -151,6 +153,7 @@ public class EditorSession {
      *
      * @return the annotations for the EditSession.
      */
+    @Deprecated
     public JSObject getAnnotations() throws JSException {
         return (JSObject) mSession.call("getAnnotations");
     }
@@ -162,8 +165,9 @@ public class EditorSession {
      * @param column Required. The column number to start from
      * @return the range of a word, including its right whitespace.
      */
-    public Range getAWordRange(Integer row, Integer column) throws JSException {
-        return new Range((JSObject) mSession.call("getAWordRange", row, column));
+    @Deprecated
+    public JSObject getAWordRange(Integer row, Integer column) throws JSException {
+        return (JSObject) mSession.call("getAWordRange", row, column);
     }
 
     /**
@@ -175,6 +179,12 @@ public class EditorSession {
         return (int) mSession.call("getBreakpoints");
     }
 
+    /**
+     * Gets the underlying document object.
+     *
+     * @return Document object.
+     */
+    @Deprecated
     private JSObject getDocument() throws JSException {
         return (JSObject) mSession.call("getDocument");
     }
@@ -230,8 +240,9 @@ public class EditorSession {
      * @param lastRow Required. The final row index to retrieve
      * @return a verbatim copy of the given lines as it is in the document
      */
-    public String getLines(Integer firstRow, Integer lastRow) throws JSException {
-        return (String) mSession.call("getLines", firstRow, lastRow);
+    @Deprecated
+    public JSObject getLines(Integer firstRow, Integer lastRow) throws JSException {
+        return (JSObject) mSession.call("getLines", firstRow, lastRow);
     }
 
     /**
@@ -242,6 +253,7 @@ public class EditorSession {
      * false indicates only back markers
      * @return an array containing the IDs of all the markers
      */
+    @Deprecated
     public JSObject getMarkers(Boolean inFront) throws JSException {
         return (JSObject) mSession.call("getMarkers", inFront);
     }
@@ -249,6 +261,7 @@ public class EditorSession {
     /**
      * @return the current text mode.
      */
+    @Deprecated
     public JSObject getMode() throws JSException {
         return (JSObject) mSession.call("getMode");
     }
@@ -281,6 +294,7 @@ public class EditorSession {
      * @param row Required.
      * @return the split data.
      */
+    @Deprecated
     public String getRowSplitData(Integer row) throws JSException {
         return (String) mSession.call("getRowSplitData", row);
     }
@@ -350,8 +364,9 @@ public class EditorSession {
      *
      * @return the current selection.
      */
-    public String getSelection() throws JSException {
-        return (String) mSession.call("getSelection");
+    @Deprecated
+    public JSObject getSelection() throws JSException {
+        return (JSObject) mSession.call("getSelection");
     }
 
     /**
@@ -360,6 +375,7 @@ public class EditorSession {
      * @param row Required. The row to start at
      * @return
      */
+    @Deprecated
     public JSObject getState(Integer row) throws JSException {
         return (JSObject) mSession.call("getState", row);
     }
@@ -391,7 +407,8 @@ public class EditorSession {
      * @param range Required. The range to work with.
      * @return all the text within the range
      */
-    public String getTextRange(Range range) throws JSException {
+    @Deprecated
+    public String getTextRange(JSObject range) throws JSException {
         return (String) mSession.call("getTextRange", range.toString());
     }
 
@@ -403,8 +420,9 @@ public class EditorSession {
      * @param column Required. The column number to retrieve from
      * @return the token at the current row
      */
-    public TokenPoint getTokenAt(Integer row, Integer column) throws JSException {
-        return new TokenPoint((JSObject) mSession.call("getTokenAt", row, column));
+    @Deprecated
+    public JSObject getTokenAt(Integer row, Integer column) throws JSException {
+        return (JSObject) mSession.call("getTokenAt", row, column);
     }
 
     /**
@@ -413,6 +431,7 @@ public class EditorSession {
      *
      * @returna list of objects of the tokenized rows.
      */
+    @Deprecated
     public JSObject getTokens(Integer row) throws JSException {
         return (JSObject) mSession.call("getTokens", row);
     }
@@ -470,8 +489,9 @@ public class EditorSession {
      * @param column Required. The column number to retrieve from
      * @return the Range of the first word boundary it finds.
      */
-    public Range getWordRange(Integer row, Integer column) throws JSException {
-        return new Range((JSObject) mSession.call("getWordRange", row, column));
+    @Deprecated
+    public JSObject getWordRange(Integer row, Integer column) throws JSException {
+        return (JSObject) mSession.call("getWordRange", row, column);
     }
 
     /**
@@ -490,13 +510,15 @@ public class EditorSession {
      *
      * @return n object that defines the minimum and maximum of the wrap limit
      */
+    @Deprecated
     public JSObject getWrapLimitRange() throws JSException {
         return (JSObject) mSession.call("getWrapLimitRange");
     }
 
     /**
-     * Highlight all occurrences of the selected word.
+     * Undocumented.
      */
+    @Deprecated
     public void highlight() throws JSException {
         mSession.call("highlight");
     }
@@ -510,8 +532,9 @@ public class EditorSession {
      * @param inFront Required. true to select front marker
      * @return range of lines that has been highlighted.
      */
-    public Range highlightLines(Integer startRow, Integer endRow, String clazz, Boolean inFront) throws JSException {
-        return new Range((JSObject) mSession.call("highlightLines", startRow, endRow, clazz, inFront));
+    @Deprecated
+    public JSObject highlightLines(Integer startRow, Integer endRow, String clazz, Boolean inFront) throws JSException {
+        return (JSObject) mSession.call("highlightLines", startRow, endRow, clazz, inFront);
     }
 
     /**
@@ -534,8 +557,9 @@ public class EditorSession {
      * at
      * @param text Required. A chunk of text to insert
      */
-    public void insert(DocPoint position, String text) throws JSException {
-        mSession.call("insert", position.toString(), text);
+    @Deprecated
+    public void insert(JSObject position, String text) throws JSException {
+        mSession.call("insert", position, text);
     }
 
     /**
@@ -543,7 +567,7 @@ public class EditorSession {
      *
      * @param position
      */
-    public boolean isTabStop(DocPoint position) throws JSException {
+    public boolean isTabStop(DocPos position) throws JSException {
         return (boolean) mSession.call("isTabStop", position.toString());
     }
 
@@ -582,8 +606,9 @@ public class EditorSession {
      * to move the text to
      * @return new range
      */
-    public Range moveText(Range fromRange, DocPoint toPosition) throws JSException {
-        return new Range((JSObject) mSession.call("moveText", fromRange.toString(), toPosition.toString()));
+    @Deprecated
+    public JSObject moveText(JSObject fromRange, DocPos toPosition) throws JSException {
+        return (JSObject) mSession.call("moveText", fromRange.toString(), toPosition.toString());
     }
 
     // onChange() Undocumented
@@ -595,7 +620,8 @@ public class EditorSession {
      *
      * @param range Required. A range of rows
      */
-    public void outdentRows(Range range) throws JSException {
+    @Deprecated
+    public void outdentRows(JSObject range) throws JSException {
         mSession.call("outdentRows", range.toString());
     }
 
@@ -606,15 +632,24 @@ public class EditorSession {
         mUndoManager.redo(true);
     }
 
-    //Re-implements a previously undone change to your document.
-    //redoChanges(Array deltas, Boolean dontSelect)  Range
+    /**
+     * Re-implements a previously undone change to your document.
+     *
+     * @param deltas Array of deltas
+     */
+    @Deprecated
+    private JSObject redoChanges(JSObject deltas, Boolean dontSelect) {
+        return (JSObject) mSession.call("redoChanges", deltas, dontSelect);
+    }
+
     /**
      * Removes the range from the document.
      *
      * @param range Required. A specified Range to remove
      * @return the range from the document.
      */
-    public JSObject remove(Range range) throws JSException {
+    @Deprecated
+    public JSObject remove(JSObject range) throws JSException {
         return (JSObject) mSession.call("remove", range.toString());
     }
 
@@ -646,13 +681,15 @@ public class EditorSession {
      * @param text Required. The new text to use as a replacement
      * @return
      */
-    public JSObject replace(Range range, String text) throws JSException {
+    @Deprecated
+    public JSObject replace(JSObject range, String text) throws JSException {
         return (JSObject) mSession.call("replace", range.toString(), text);
     }
 
     /**
-     * Completely reset the editor session.
+     * Undocumented
      */
+    @Deprecated
     public void reset() throws JSException {
         mSession.call("reset");
     }
@@ -673,7 +710,7 @@ public class EditorSession {
      * @param screenColumn Required. The screen column to check
      * @return column of the converted coordinate.
      */
-    public int screenToDocumentColumn(int screenRow, int screenColumn) throws JSException {
+    public int screenToDocumentColumn(Integer screenRow, Integer screenColumn) throws JSException {
         return screenToDocumentPosition(screenRow, screenColumn).getColumn();
     }
 
@@ -686,7 +723,7 @@ public class EditorSession {
      * @param screenColumn Required. The screen column to check
      * @return row of the converted coordinate.
      */
-    public int screenToDocumentRow(int screenRow, int screenColumn) throws JSException {
+    public int screenToDocumentRow(Integer screenRow, Integer screenColumn) throws JSException {
         return screenToDocumentPosition(screenRow, screenColumn).getRow();
     }
 
@@ -699,8 +736,8 @@ public class EditorSession {
      * @param screenColumn Required. The screen column to check
      * @return the converted coordinate.
      */
-    public DocPoint screenToDocumentPosition(Integer screenRow, Integer screenColumn) throws JSException {
-        return new DocPoint((JSObject) mSession.call("screenToDocumentPosition", screenRow, screenColumn));
+    public DocPos screenToDocumentPosition(Integer screenRow, Integer screenColumn) throws JSException {
+        return new DocPos((JSObject) mSession.call("screenToDocumentPosition", screenRow, screenColumn));
     }
 
     /**
@@ -709,6 +746,7 @@ public class EditorSession {
      *
      * @param annotations Required. A list of annotations
      */
+    @Deprecated
     public void setAnnotations(JSObject annotations) throws JSException {
         mSession.call("setAnnotations", annotations);
     }
@@ -720,7 +758,7 @@ public class EditorSession {
      * @param row Required. A row index
      * @param className Required. Class of the breakpoint
      */
-    public void setBreakpoint(int row, String className) throws JSException {
+    public void setBreakpoint(Integer row, String className) throws JSException {
         mSession.call("setBreakpoint", row, className);
     }
 
@@ -730,6 +768,7 @@ public class EditorSession {
      *
      * @param rows Required. An array of row indices
      */
+    @Deprecated
     public void setBreakpoints(JSObject rows) throws JSException {
         mSession.call("setBreakpoints", rows);
     }
@@ -784,7 +823,7 @@ public class EditorSession {
      *
      * @param tabSize Required. The new scroll top value
      */
-    public void setTabSize(int tabSize) throws JSException {
+    public void setTabSize(Integer tabSize) throws JSException {
         mSession.call("setTabSize", tabSize);
     }
 
@@ -796,7 +835,7 @@ public class EditorSession {
      * @param enable Required. If true, selects the range of the reinserted
      * change
      */
-    public void setUndoSelect(boolean enable) throws JSException {
+    public void setUndoSelect(Boolean enable) throws JSException {
         mSession.call("setUndoSelect", enable);
     }
 
@@ -807,7 +846,7 @@ public class EditorSession {
      * @param useSoftTabs Required. Value indicating whether or not to use soft
      * tabs
      */
-    public void setUseSoftTabs(boolean useSoftTabs) throws JSException {
+    public void setUseSoftTabs(Boolean useSoftTabs) throws JSException {
         mSession.call("setUseSoftTabs", useSoftTabs);
     }
 
@@ -816,7 +855,7 @@ public class EditorSession {
      *
      * @param useWorker Required. Set to true to use a worker
      */
-    public void setUseWorker(boolean useWorker) throws JSException {
+    public void setUseWorker(Boolean useWorker) throws JSException {
         mSession.call("setUseWorker", useWorker);
     }
 
@@ -826,7 +865,7 @@ public class EditorSession {
      *
      * @param useWrapMode Required. Enable (or disable) wrap mode
      */
-    public void setUseWrapMode(boolean useWrapMode) throws JSException {
+    public void setUseWrapMode(Boolean useWrapMode) throws JSException {
         mSession.call("setUseWrapMode", useWrapMode);
     }
 
@@ -848,7 +887,7 @@ public class EditorSession {
      * @param min Required. The minimum wrap value (the left side wrap)
      * @param max Required. The maximum wrap value (the right side wrap)
      */
-    public void setWrapLimitRange(int min, int max) throws JSException {
+    public void setWrapLimitRange(Integer min, Integer max) throws JSException {
         mSession.call("setWrapLimitRange", min, max);
     }
 
@@ -876,6 +915,15 @@ public class EditorSession {
         mUndoManager.undo(true);
     }
 
-    //undoChanges(Array deltas, Boolean dontSelect)  Range
-    //Reverts previous changes to your document.
+    /**
+     * Reverts previous changes to your document.
+     *
+     * @param deltas Array of deltas
+     * @param dontSelect true to disable selection.
+     * @return
+     */
+    @Deprecated
+    public JSObject undoChanges(JSObject deltas, Boolean dontSelect) {
+        return (JSObject) mSession.call("undoChanges", deltas, dontSelect);
+    }
 }
