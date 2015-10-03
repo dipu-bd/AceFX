@@ -36,8 +36,9 @@ public class DocPoint {
         this.column = (int) arg.eval("this['column']");
     }
 
-    public String getJsString() {
-        return String.format("{row:%d, column:%d}", row, column);
+    @Override
+    public String toString() {
+        return String.format("{'row': %d, 'column': %d}", row, column);
     }
 
     public int getRow() {

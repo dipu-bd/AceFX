@@ -15,10 +15,11 @@
  */
 package com.sandsoft.acefx.demo;
 
-import com.sandsoft.acefx.*;  
+import com.sandsoft.acefx.*;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.application.Application;
+import javafx.scene.control.Button;
 
 /**
  *
@@ -30,12 +31,40 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        TestApp root = new TestApp(defAce);
+
+        final Button button = new Button();
+        button.setMaxWidth(1e08);
+        button.setText("RUN TESTS");
+        button.setVisible(false);
+
+        final CodeEditor root = new CodeEditor(defAce);
+        root.setTop(button);
         Scene scene = new Scene(root, 800, 600);
 
         primaryStage.setTitle("Hello World!");
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        button.setOnAction((event) -> {
+            runTests(root);
+        });
+
+        root.readyProperty().addListener((event) -> {
+            root.getEditor().setFontSize(18);
+            button.setVisible(true);
+        });
+    }
+
+    public void runTests(final CodeEditor editor) {
+        System.out.println("Running test for editor...");
+        Editor edit = editor.getEditor();
+        //System.out.println(
+        try {
+            edit.forEachSelection("cut", "");
+        } catch (Exception ex) {
+            System.out.println("ERROR");
+        }
+
     }
 
     /**

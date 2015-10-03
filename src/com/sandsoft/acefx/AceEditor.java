@@ -20,9 +20,7 @@ import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 
 /**
@@ -40,14 +38,14 @@ public class AceEditor extends BorderPane {
             loader.setLocation(resourceClass.getResource("AceEditor.fxml"));
 
             //load fxml
-            Node node = (Node) loader.load();
+            BorderPane node = (BorderPane) loader.load();
             AceEditor ace = (AceEditor) loader.getController();
 
             //add to layout  
             ace.setCenter(node);
+            node.setCenter(new CodeEditor(acePath));
 
-            //post initialization
-            ace.initialize(acePath);
+            //post initialization 
             return ace;
 
         } catch (Exception ex) {
@@ -55,28 +53,24 @@ public class AceEditor extends BorderPane {
         }
     }
 
-    @FXML
-    private WebView webView;
-
-    private EditorCore editor;
-
-    /**
-     * Initializes the controller class.
-     *
-     * @param acePath Path to ACE editor's HTML file.
-     */
-    public void initialize(String acePath) {
-        editor = new EditorCore(webView.getEngine());
-        editor.load(acePath);
-    }
+    private CodeEditor editor;
 
     /**
      * Gets the ace editor currently in use.
      *
      * @return
      */
-    public EditorCore getEditor() {
+    public final CodeEditor getEditor() {
         return editor;
+    }
+
+    /**
+     * Sets the ace editor currently in use.
+     *
+     * @return
+     */
+    public final void setEditor(CodeEditor editor) {
+        this.editor = editor;
     }
 
     @FXML
@@ -95,12 +89,12 @@ public class AceEditor extends BorderPane {
 
     @FXML
     private void handleUndoButton(ActionEvent event) {
-        editor.undo();
+        editor.getEditor().undo();
     }
 
     @FXML
     private void handleRedoButton(ActionEvent event) {
-        editor.redo();
+        editor.getEditor().redo();
     }
 
     @FXML

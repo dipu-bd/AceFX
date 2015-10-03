@@ -40,14 +40,14 @@ public class Range {
         end = new DocPoint(endRow, endColumn);
     }
 
-    public String getJSString() {
+    public String toString() {
         return String.format(
-                "(function() {"
+                "(return (function() {"
                 + "  this.start = %s;\n"
                 + "  this.end = %s;"
-                + "})",
-                start.getJsString(),
-                end.getJsString());
+                + "}).call())",
+                start.toString(),
+                end.toString());
     }
 
     public DocPoint getStart() {

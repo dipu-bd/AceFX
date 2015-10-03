@@ -15,6 +15,7 @@
  */
 package com.sandsoft.acefx;
 
+import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
 
 /**
@@ -30,7 +31,7 @@ public class UndoManager {
      *
      * @param undoManager JavaScript object of undo manager.
      */
-    public UndoManager(JSObject undoManager) {
+    public UndoManager(JSObject undoManager) throws JSException {
         mUndoManager = undoManager;
     }
 
@@ -42,7 +43,7 @@ public class UndoManager {
      *
      * @param options Required. Contains additional properties.
      */
-    private void execute(Object options) {
+    private void execute(Object options) throws JSException {
         mUndoManager.call("execute", options);
     }
 
@@ -51,7 +52,7 @@ public class UndoManager {
      *
      * @return true if there are redo operations left to perform.
      */
-    public boolean hasRedo() {
+    public boolean hasRedo() throws JSException {
         return (boolean) mUndoManager.call("hasRedo");
     }
 
@@ -60,7 +61,7 @@ public class UndoManager {
      *
      * @return true if there are undo operations left to perform.
      */
-    public boolean hasUndo() {
+    public boolean hasUndo() throws JSException {
         return (boolean) mUndoManager.call("hasUndo");
     }
 
@@ -71,14 +72,14 @@ public class UndoManager {
      * @param dontSelect Required. If true, doesn't select the range of where
      * the change occurred.
      */
-    public void redo(Boolean dontSelect) {
+    public void redo(Boolean dontSelect) throws JSException {
         mUndoManager.call("redo", dontSelect);
     }
 
     /**
      * Destroys the stack of undo and redo redo operations.
      */
-    public void reset() {
+    public void reset() throws JSException {
         mUndoManager.call("reset");
     }
 
@@ -88,7 +89,7 @@ public class UndoManager {
      * @param dontSelect Required. If true, doesn't select the range of where
      * the change occurred.
      */
-    public void undo(Boolean dontSelect) {
+    public void undo(Boolean dontSelect) throws JSException {
         mUndoManager.call("undo", dontSelect);
     }
 }
