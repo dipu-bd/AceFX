@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Dipu.
+ * Copyright 2015 Sudipto Chandra.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,13 @@
  */
 package com.sandsoft.acefx;
 
+import com.sandsoft.acefx.model.DocPos;
 import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
 
 /**
  *
- * @author Dipu
+ * @author Sudipto Chandra
  */
 //<editor-fold defaultstate="collapsed" desc="Editor -> Editor Session Methods ">
 public class EditSession {

@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 package com.sandsoft.acefx;
-
+ 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderPane; 
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
@@ -35,29 +34,28 @@ import netscape.javascript.JSObject;
  *
  * @author Sudipto Chandra.
  */
-public class AceFXEditor extends BorderPane {
+public final class AceFXEditor extends BorderPane {
+
+    //where ace.js file is saved
+    private static final String ACE_PATH = "ace/ace.js";
 
     /**
      * web engine
      */
     private Editor mEditor;
-
-    private String mAcePath;
-
+    //file path to save code
     private File mFilePath;
-
+    //if the editor is ready for interaction
     private BooleanProperty mReady;
-
+    //web view where editor is loaded
     private final WebView mWebView;
-
+    //web engine to process java script
     private final WebEngine mWebEngine;
 
     /**
-     * Constructor.
-     *
-     * @param acePath Ace path location.
+     * Constructor a new editor.
      */
-    public AceFXEditor(String acePath) {
+    public AceFXEditor() {
         //setup webview
         mWebView = new WebView();
         mWebView.setMaxWidth(Double.MAX_VALUE);
@@ -69,133 +67,128 @@ public class AceFXEditor extends BorderPane {
         mWebView.setContextMenuEnabled(false);
         this.setCenter(mWebView);
 
-        //load ace
-        mAcePath = acePath;
+        //load ace 
         mWebEngine = mWebView.getEngine();
-        mWebEngine.load(acePath);
         mReady = new SimpleBooleanProperty(false);
+        mWebEngine.loadContent(getHTML());
 
         // process page loading
-        mWebEngine.getLoadWorker().stateProperty().addListener(
-                (ObservableValue<? extends Worker.State> ov, Worker.State oldState, Worker.State newState) -> {
-                    if (newState == Worker.State.SUCCEEDED) {
-                        mEditor = new Editor((JSObject) mWebEngine.executeScript("ace.edit('editor');"));
-                        mReady.set(true);
-                    }
-                });
+        mWebEngine.getLoadWorker().stateProperty().addListener((event) -> {
+            if (mWebEngine.getLoadWorker().getState() == Worker.State.SUCCEEDED) {
+                mEditor = new Editor((JSObject) mWebEngine.executeScript("ace.edit('editor');"));
+                mReady.set(true);
+            }
+        });
     }
 
     /**
-     * Loads ace editor from a new path.
+     * Gets the HTML content that loads the editor.
      *
-     * @param acePath Ace-path to load from.
+     * @return HTML content that loads the editor.
      */
-    public void load(String acePath) {
-        mReady.set(false);
-        this.mAcePath = acePath;
-        mWebEngine.load(acePath);
-    }
-
-    /**
-     * Gets the ace path
-     */
-    public String getAcePath() {
-        return mAcePath;
-    }
-
-    /**
-     * Sets the ace path
-     *
-     * @param acePath Ace path to set
-     */
-    public void setAcePath(String acePath) {
-        load(acePath);
+    private String getHTML() {
+        String acepath
+                = getClass().getResource(ACE_PATH).toExternalForm();
+        String html
+                = "<!DOCTYPE html>\n"
+                + "<html lang=\"en\">\n"
+                + "<head>\n"
+                + "  <meta charset=\"UTF-8\">\n"
+                + "  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\">\n"
+                + "  <title>Editor</title>\n"
+                + "  <style type=\"text/css\" media=\"screen\">\n"
+                + "    body {\n"
+                + "        overflow: hidden;\n"
+                + "    }\n"
+                + "    #editor {\n"
+                + "        margin: 0;\n"
+                + "        position: absolute;\n"
+                + "        top: 0;\n"
+                + "        bottom: 0;\n"
+                + "        left: 0;\n"
+                + "        right: 0;\n"
+                + "    }\n"
+                + "  </style>\n"
+                + "</head>\n"
+                + "<body>\n"
+                + "<pre id=\"editor\">function foo(items) {\n"
+                + "    var i;\n"
+                + "    for (i = 0; i &lt; items.length; i++) {\n"
+                + "        alert(\"Ace Rocks \" + items[i]);\n"
+                + "    }\n"
+                + "}</pre>\n"
+                + "<script src=\"%s\" type=\"text/javascript\" charset=\"utf-8\"></script>\n"
+                + "<script>\n"
+                + "    var editor = ace.edit(\"editor\"); \n"
+                + "    editor.setTheme(\"ace/theme/twilight\");\n"
+                + "    editor.getSession().setMode(\"ace/mode/java\");\n"
+                + "</script>\n"
+                + "</body>\n"
+                + "</html>\n";
+        return String.format(html, acepath);
     }
 
     /**
      * Checks if the editor is ready for interaction.
      *
-     * @return True if worker is successfully loaded.
+     * @return true if ready; false otherwise.
      */
     public boolean isReady() {
         return (mReady.get());
     }
 
     /**
-     * Returns if the web view is ready to execute commands.
+     * Reloads the whole editor in WebView.
+     */
+    public void reload() {
+        mReady.set(false);
+        mWebEngine.loadContent(getHTML());
+    }
+
+    /**
+     * The property indicates if the editor is loaded and ready for
+     * interactions.
      *
-     * @return
+     * @return the Ready property.
      */
     public BooleanProperty readyProperty() {
         return mReady;
     }
 
     /**
-     * Gets the editor associated with this control.
+     * Gets the wrapper class for editor that is associated with this control.
+     * It contains various methods to interact with the editor.
      *
-     * @return
+     * @return the editor from this control.
      */
     public Editor getEditor() {
         return mEditor;
     }
 
     /**
-     * Gets the editor session associated with this control.
+     * Gets the wrapper class for edit session that is associated with the
+     * editor. It contains various methods to interact with the document under
+     * edit.
      *
-     * @return
+     * @return the edit session for the editor.
      */
     public EditSession getEditSession() {
         return mEditor.getSession();
     }
 
     /**
-     * Gets the undo manager associated with this control.
+     * Gets the wrapper class for undo manger that is associated with the
+     * editor. It contains methods for undo or redo operations.
      *
-     * @return
+     * @return the undo manager for the edit session.
      */
     public UndoManager getUndoManager() {
         return getEditSession().getUndoManager();
     }
 
     /**
-     * Loads a content from a file.
-     *
-     * @param file File path to load.
-     * @throws java.io.FileNotFoundException Throws if file could not be found.
-     * @throws java.io.IOException Throws if file could no be read.
-     */
-    public void openFile(File file) throws FileNotFoundException, IOException {
-        try (FileReader fr = new FileReader(file)) {
-            char[] chars = new char[(int) file.length()];
-            fr.read(chars, 0, (int) file.length());
-            setText(new String(chars));
-        }
-    }
-
-    /**
-     * Saves the previously opened file.
-     *
-     * @throws java.io.IOException Throws if output could not be saved.
-     */
-    public void saveFile() throws IOException {
-        try (FileWriter fw = new FileWriter(mFilePath)) {
-            fw.write(getText());
-        }
-    }
-
-    /**
-     * Change or set new save location and saves the file.
-     *
-     * @param file new location to save.
-     * @throws java.io.IOException Throws if output could not be saved.
-     */
-    public void saveAs(File file) throws IOException {
-        mFilePath = file;
-        saveFile();
-    }
-
-    /**
-     * Return the current text in the editor. <i>Same as getValue()</i>
+     * Gets the current content from the editor. If the editor is not ready an
+     * empty text is returned.
      *
      * @return Current content in the editor.
      */
@@ -205,13 +198,13 @@ public class AceFXEditor extends BorderPane {
     }
 
     /**
-     * Sets the document display text. <i>Same as setValue()</i>
+     * Sets the given content to the editor.
      *
-     * @param text The new text to set for the document.
+     * @param text the content to display.
      */
     public void setText(String text) {
         if (isReady()) {
-            mEditor.setValue(text, -1);
+            mEditor.setValue(text, 1);
         }
     }
 
@@ -266,24 +259,60 @@ public class AceFXEditor extends BorderPane {
     }
 
     /**
-     * Shows the find dialogue.
+     * Shows the find dialog.
      */
-    public void Find() {
+    public void ShowFind() {
         mEditor.execCommand("find");
     }
 
     /**
-     * Show the replace dialogue.
+     * Shows the replace dialog.
      */
-    public void Replace() {
+    public void ShowReplace() {
         mEditor.execCommand("replace");
     }
 
     /**
      * Shows the options pane.
      */
-    public void Options() {
+    public void ShowOptions() {
         mEditor.execCommand("showSettingsMenu");
     }
 
+    /**
+     * Loads a content from a file.
+     *
+     * @param file File path to load.
+     * @throws java.io.FileNotFoundException thrown if file could not be found.
+     * @throws java.io.IOException thrown if file could no be read.
+     */
+    public void openFile(File file) throws FileNotFoundException, IOException, NullPointerException {
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] data = new byte[(int) file.length()];
+            fis.read(data);
+            setText(new String(data));
+        }
+    }
+
+    /**
+     * Saves the previously opened file.
+     *
+     * @throws java.io.IOException thrown if file could no be read.
+     */
+    public void saveFile() throws IOException, NullPointerException {
+        try (FileOutputStream fos = new FileOutputStream(mFilePath)) {
+            fos.write(getText().getBytes());
+        }
+    }
+
+    /**
+     * Change or set new save location and saves the file.
+     *
+     * @param file new location to save.
+     * @throws java.io.IOException thrown if file could no be read.
+     */
+    public void saveAs(File file) throws IOException, NullPointerException {
+        mFilePath = file;
+        saveFile();
+    }
 }

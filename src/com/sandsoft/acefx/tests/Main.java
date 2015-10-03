@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sandsoft.acefx.demo;
+package com.sandsoft.acefx.tests;
 
-import com.sandsoft.acefx.*;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import com.sandsoft.acefx.AceFXEditor;
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.application.Application;
 import javafx.scene.control.Button;
+import javafx.stage.FileChooser;
 
 /**
  *
@@ -35,13 +36,12 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-
         final Button button = new Button();
         button.setMaxWidth(1e08);
         button.setText("RUN TESTS");
         button.setVisible(false);
 
-        final AceFXEditor root = new AceFXEditor(defAce);
+        final AceFXEditor root = new AceFXEditor();
         root.setTop(button);
         Scene scene = new Scene(root, 800, 400);
 
@@ -60,27 +60,15 @@ public class Main extends Application {
         });
     }
 
-    public void runTests(final Object obj) {
-        System.out.println("Running test...");
-        for (Method m : obj.getClass().getMethods()) {
-            if (!m.getDeclaringClass().equals(obj.getClass())) {
-                continue;
-            }
-            if (m.getParameterCount() == 0) {
-                System.out.printf("Calling %s ", m.getName());
-                try {
-                    if (m.getGenericReturnType() instanceof Object) {
-                        System.out.println();
-                        System.out.print(m.invoke(obj));
-                    } else {
-                        m.invoke(obj);
-                    }
-                    System.out.println("...OK.\n");
-                } catch (Exception ex) {
-                    System.out.printf("...ERROR : %s.\n", ex.toString());
-                }
-            }
+    public void runTests(final AceFXEditor editor) {
+        try {
+            FileChooser chooser = new FileChooser();
+            File file = chooser.showOpenDialog(null);
+            editor.openFile(file);
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
     /**
