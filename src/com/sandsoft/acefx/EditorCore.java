@@ -15,9 +15,17 @@
  */
 package com.sandsoft.acefx;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.web.WebEngine;
+import netscape.javascript.JSObject;
 
 /**
  *
@@ -29,7 +37,17 @@ public class EditorCore {
     /**
      * web engine
      */
-    private WebEngine webEngine;
+    private final WebEngine mWebEngine;
+
+    private String mAcePath;
+
+    private File mFilePath;
+
+    private JSObject mEditor;
+
+    private JSObject mSession;
+
+    private JSObject mUndoManager;
 
     /**
      * Constructor.
@@ -37,7 +55,22 @@ public class EditorCore {
      * @param engine WebEngine to pass javascript commands.
      */
     public EditorCore(WebEngine engine) {
-        webEngine = engine;
+        mWebEngine = engine;
+
+        // process page loading
+        mWebEngine.getLoadWorker().stateProperty().addListener(
+                (ObservableValue<? extends Worker.State> ov, Worker.State oldState, Worker.State newState) -> {
+                    if (newState == Worker.State.SUCCEEDED) {
+                        mEditor = (JSObject) mWebEngine.executeScript("ace.edit('editor');");
+                        mSession = (JSObject) mEditor.call("getSession");
+                        mUndoManager = (JSObject) mSession.call("getUndoManager");
+                    }
+                });
+    }
+
+    public void load(String acePath) {
+        this.mAcePath = acePath;
+        mWebEngine.load(acePath);
     }
 
     /**
@@ -46,61 +79,122 @@ public class EditorCore {
      * @return True if worker is successfully loaded.
      */
     public boolean isReady() {
-        return (webEngine != null
-                && webEngine.getLoadWorker().getState()
+        return (mWebEngine != null
+                && mWebEngine.getLoadWorker().getState()
                 == javafx.concurrent.Worker.State.SUCCEEDED);
     }
 
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="My Custom Methods">
     /**
-     * Executes a java-script and returns result.
+     * Loads a content from a file.
      *
-     * @param script Script to execute.
-     * @return Result return by the function.
+     * @param file File path to load.
+     * @throws java.io.FileNotFoundException Throws if file could not be found.
+     * @throws java.io.IOException Throws if file could no be read.
      */
-    protected final Object execute(String script) {
-        if (isReady()) {
-            return (Object) webEngine.executeScript(script);
+    public void openFile(File file) throws FileNotFoundException, IOException {
+        try (FileReader fr = new FileReader(file)) {
+            char[] chars = new char[(int) file.length()];
+            fr.read(chars, 0, (int) file.length());
+            setText(new String(chars));
         }
-        return null;
     }
 
     /**
-     * formats a content into a string passable inside quote.
+     * Saves the previously opened file.
      *
-     * @param content text to format
-     * @return formated content
+     * @throws java.io.IOException Throws if output could not be saved.
      */
-    private static String formatText(String content) {
-        return content
-                .replace("\\", "\\\\") //replace backslash
-                .replace("\"", "\\\"") //replace quote
-                .replace("\r", "") //replace return
-                .replace("\n", "\\n") //replace new line
-                .replace("\t", "\\t") //replace tab
-                ;
+    public void saveFile() throws IOException {
+        try (FileWriter fw = new FileWriter(mFilePath)) {
+            fw.write(getText());
+        }
     }
 
     /**
-     * Formats the boolean value and return JavaScript string.
+     * Change or set new save location and saves the file.
      *
-     * @param val Value to convert.
-     * @return JavaScript supported string.
+     * @param file new location to save.
+     * @throws java.io.IOException Throws if output could not be saved.
      */
-    private static String formatBool(boolean val) {
-        return val ? "true" : "false";
+    public void saveAs(File file) throws IOException {
+        mFilePath = file;
+        saveFile();
     }
 
     /**
-     * Formats other value and return JavaScript string.
+     * Return the current text in the editor. <i>Same as getValue()</i>
      *
-     * @param num int to convert.
-     * @return JavaScript supported string.
+     * @return Current content in the editor.
      */
-    private static String formatOther(int num) {
-        return String.valueOf(num);
+    public String getText() {
+        return getValue();
     }
-//</editor-fold>
 
+    /**
+     * Sets the document display text. <i>Same as setValue()</i>
+     *
+     * @param text The new text to set for the document.
+     */
+    public void setText(String text) {
+        setValue(text, -1);
+    }
+
+    /**
+     * Removes the selected text and copy it to clipboard.
+     */
+    public void Cut() {
+        if (Copy()) {
+            insert("");
+        }
+    }
+
+    /**
+     * Copies the selected text to clipboard.
+     *
+     * @return True if performed successfully.
+     */
+    public boolean Copy() {
+        String copy = getCopyText();
+        if (copy != null && !copy.isEmpty()) {
+            ClipboardContent content = new ClipboardContent();
+            content.putString(copy);
+            Clipboard.getSystemClipboard().setContent(content);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Paste text from clipboard after the cursor.
+     */
+    public void Paste() {
+        insert(Clipboard.getSystemClipboard().getString());
+    }
+
+    /**
+     * Shows the find dialogue.
+     */
+    public void Find() {
+        execCommand("find");
+    }
+
+    /**
+     * Show the replace dialogue.
+     */
+    public void Replace() {
+        execCommand("replace");
+    }
+
+    /**
+     * Shows the options pane.
+     */
+    public void Options() {
+        execCommand("showSettingsMenu");
+    }
+
+    //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Editor Functions Definitions">
     /**
      * Aligns the cursors or selected text.
@@ -970,314 +1064,4 @@ public class EditorCore {
     }
 //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Editor -> Editor Session Methods ">
-    /**
-     * Clears all the annotations for this session. This function also triggers
-     * the 'changeAnnotation' event.
-     */
-    public void clearAnnotations() {
-        execute("editor.getSession().clearAnnotations()");
-    }
-
-    /**
-     * Adds className to the row, to be used for CSS stylings and whatnot.
-     *
-     * @param row Required. The row number
-     * @param className Required. The class to add
-     */
-    public void addGutterDecoration(int row, String className) {
-        execute("editor.getSession().addGutterDecoration("
-                + formatOther(row) + ",\"" + formatText(className) + "\")");
-    }
-
-    /**
-     * Removes a breakpoint on the row number given by rows. This function also
-     * emits the 'changeBreakpoint' event.
-     *
-     * @param row
-     */
-    public void clearBreakpoint(int row) {
-        execute("editor.getSession().clearBreakpoint(" + formatOther(row) + ")");
-    }
-
-    /**
-     * Duplicates all the text between firstRow and lastRow.
-     *
-     * @param firstRow
-     * @param lastRow
-     * @return
-     */
-    public int duplicateLines(int firstRow, int lastRow) {
-        return (int) execute("editor.getSession().duplicateLines("
-                + formatOther(firstRow) + "," + formatOther(lastRow) + ")");
-    }
-
-    /**
-     * Returns a verbatim copy of the given line as it is in the document
-     *
-     * @param row
-     * @return
-     */
-    public String getLine(int row) {
-        return (String) execute("editor.getSession().getLine(" + formatOther(row) + ")");
-    }
-
-    /**
-     * Returns number of screenrows in a wrapped line.
-     *
-     * @param row
-     * @return
-     */
-    public int getRowLength(int row) {
-        return (int) execute("editor.getSession().getRowLength(" + formatOther(row) + ")");
-    }
-
-    /**
-     * Returns the current tab size.
-     *
-     * @return
-     */
-    public int getTabSize() {
-        return (int) execute("editor.getSession().getTabSize()");
-    }
-
-    /**
-     * Returns the current value for tabs. If the user is using soft tabs, this
-     * will be a series of spaces (defined by getTabSize()); otherwise it's
-     * simply '\t'.
-     *
-     * @return
-     */
-    public String getTabString() {
-        return (String) execute("editor.getSession().getTabString()");
-    }
-
-    /**
-     * Returns true if soft tabs are being used, false otherwise.
-     *
-     * @return
-     */
-    public boolean getUseSoftTabs() {
-        return (boolean) execute("editor.getSession().getUseSoftTabs()");
-    }
-
-    /**
-     * Returns true if wrap mode is being used; false otherwise.
-     *
-     * @return
-     */
-    public boolean getUseWrapMode() {
-        return (boolean) execute("editor.getSession().getUseWrapMode()");
-    }
-
-    /**
-     * Indents all the rows, from startRow to endRow (inclusive), by prefixing
-     * each row with the token in indentString.
-     *
-     * @param startRow
-     * @param endRow
-     * @param indentString
-     */
-    public void indentRows(int startRow, int endRow, String indentString) {
-        execute("editor.getSession().indentRows("
-                + formatOther(startRow) + "," + formatOther(endRow)
-                + ",\"" + formatText(indentString) + "\")");
-
-    }
-
-    /**
-     * Inserts a block of text and the indicated position.
-     *
-     * @param row
-     * @param text
-     * @param column
-     */
-    public void insert(int row, int column, String text) {
-        execute("editor.getSession().insert("
-                + "{ row:" + formatOther(row)
-                + ", column:" + formatOther(column)
-                + ",\"" + formatText(text) + "\")");
-    }
-
-    /**
-     *
-     */
-    public void reset() {
-        execute("editor.getSession().highlight()");
-    }
-
-    /**
-     *
-     */
-    public void resetCaches() {
-        execute("editor.getSession().resetCaches()");
-    }
-
-    /**
-     * Sets a breakpoint on the row number given by rows. This function also
-     * emites the 'changeBreakpoint' event.
-     *
-     * @param row
-     * @param className
-     */
-    public void setBreakpoint(int row, String className) {
-        execute("editor.getSession().setBreakpoint("
-                + formatOther(row) + ",\"" + formatText(className) + "\");");
-    }
-
-    /**
-     * Set the number of spaces that define a soft tab; for example, passing in
-     * 4 transforms the soft tabs to be equivalent to four spaces. This function
-     * also emits the changeTabSize event.
-     *
-     * @param tabSize
-     */
-    public void setTabSize(int tabSize) {
-        execute("editor.getSession().setTabSize(" + formatOther(tabSize) + ")");
-    }
-
-    /**
-     * Enables or disables highlighting of the range where an undo occurred.
-     *
-     * @param enable
-     */
-    public void setUndoSelect(boolean enable) {
-        execute("editor.getSession().setUndoSelect(" + formatBool(enable) + ")");
-    }
-
-    /**
-     * Pass true to enable the use of soft tabs. Soft tabs means you're using
-     * spaces instead of the tab character ('\t').
-     *
-     * @param useSoftTabs
-     */
-    public void setUseSoftTabs(boolean useSoftTabs) {
-        execute("editor.getSession().setUseSoftTabs(" + formatBool(useSoftTabs) + ")");
-    }
-
-    /**
-     * Sets whether or not line wrapping is enabled. If useWrapMode is different
-     * than the current value, the 'changeWrapMode' event is emitted.
-     *
-     * @param useWrapMode
-     */
-    public void setUseWrapMode(boolean useWrapMode) {
-        execute("editor.getSession().setUseWrapMode(" + formatBool(useWrapMode) + ")");
-    }
-
-    /**
-     * Sets the boundaries of wrap. Either value can be null to have an
-     * unconstrained wrap, or, they can be the same number to pin the limit. If
-     * the wrap limits for min or max are different, this method also emits the
-     * 'changeWrapMode' event.
-     *
-     * @param min
-     * @param max
-     */
-    public void setWrapLimitRange(int min, int max) {
-        execute("editor.getSession().setWrapLimitRange("
-                + formatOther(min) + "," + formatOther(max) + ")");
-    }
-//</editor-fold>
-
-    //<editor-fold defaultstate="collapsed" desc="Editor -> Editor Session -> Undo Manager methods">
-    /**
-     * Returns true if there are redo operations left to perform.
-     *
-     * @return true if there are redo operations left to perform.
-     */
-    public boolean hasRedo() {
-        return (boolean) execute("editor.getSession().getUndoManager().hasRedo()");
-    }
-
-    /**
-     * Returns true if there are undo operations left to perform.
-     *
-     * @return true if there are undo operations left to perform.
-     */
-    public boolean hasUndo() {
-        return (boolean) execute("editor.getSession().getUndoManager().hasUndo()");
-    }
-
-    /**
-     * Destroys the stack of undo and redo redo operations.
-     */
-    public void resetUndoManager() {
-        execute("editor.getSession().getUndoManager().reset()");
-    }
-//</editor-fold>
-
-    //<editor-fold defaultstate="collapsed" desc="My Custom Methods">
-    /**
-     * Return the current text in the editor.
-     *
-     * @return Current content in the editor.
-     */
-    public String getText() {
-        return getValue();
-    }
-
-    /**
-     * Sets the document display text.
-     *
-     * @param text The new text to set for the document.
-     */
-    public void setText(String text) {
-        setValue(text, -1);
-    }
-
-    /**
-     * Removes the selected text and copy it to clipboard.
-     */
-    public void Cut() {
-        if (Copy()) {
-            insert("");
-        }
-    }
-
-    /**
-     * Copies the selected text to clipboard.
-     *
-     * @return True if performed successfully.
-     */
-    public boolean Copy() {
-        String copy = getCopyText();
-        if (copy != null && !copy.isEmpty()) {
-            ClipboardContent content = new ClipboardContent();
-            content.putString(copy);
-            Clipboard.getSystemClipboard().setContent(content);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Paste text from clipboard after the cursor.
-     */
-    public void Paste() {
-        insert(Clipboard.getSystemClipboard().getString());
-    }
-
-    /**
-     * Shows the find dialogue.
-     */
-    public void Find() {
-        execCommand("find");
-    }
-
-    /**
-     * Show the replace dialogue.
-     */
-    public void Replace() {
-        execCommand("replace");
-    }
-
-    /**
-     * Shows the options pane.
-     */
-    public void Options() {
-        execCommand("showSettingsMenu");
-    }
-
-    //</editor-fold>
 }

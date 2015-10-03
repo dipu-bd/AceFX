@@ -15,10 +15,10 @@
  */
 package com.sandsoft.acefx.demo;
 
-import com.sandsoft.acefx.AceEditor; 
-import javafx.application.Application;
+import com.sandsoft.acefx.*;  
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.application.Application;
 
 /**
  *
@@ -30,8 +30,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        AceEditor root = AceEditor.createNew(defAce);
-        Scene scene = new Scene(root, 600, 400);
+        TestApp root = new TestApp(defAce);
+        Scene scene = new Scene(root, 800, 600);
 
         primaryStage.setTitle("Hello World!");
         primaryStage.setScene(scene);

@@ -15,13 +15,15 @@
  */
 package com.sandsoft.acefx;
 
+import java.io.File;
 import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.FileChooser;
 
 /**
  * FXML Controller class
@@ -38,12 +40,10 @@ public class AceEditor extends BorderPane {
             loader.setLocation(resourceClass.getResource("AceEditor.fxml"));
 
             //load fxml
-            BorderPane node = (BorderPane) loader.load();
+            Node node = (Node) loader.load();
             AceEditor ace = (AceEditor) loader.getController();
 
-            //add to layout 
-            node.setMaxWidth(Double.MAX_VALUE);
-            node.setMaxHeight(Double.MAX_VALUE);
+            //add to layout  
             ace.setCenter(node);
 
             //post initialization
@@ -55,28 +55,8 @@ public class AceEditor extends BorderPane {
         }
     }
 
-//    @FXML
-//    private Button undoButton;
-//    @FXML
-//    private Button redoButton;
-//    @FXML
-//    private Button cutButton;
-//    @FXML
-//    private Button copyButton;
-//    @FXML
-//    private Button pasteButton;
-//    @FXML
-//    private Button findButton;
-//    @FXML
-//    private Button replaceButton;
-//    @FXML
-//    private Button opetionsButton;
-//    @FXML
-//    private Button shortcutsButton;
     @FXML
     private WebView webView;
-
-    private WebEngine webEngine;
 
     private EditorCore editor;
 
@@ -86,13 +66,31 @@ public class AceEditor extends BorderPane {
      * @param acePath Path to ACE editor's HTML file.
      */
     public void initialize(String acePath) {
-        webEngine = webView.getEngine();
-        webEngine.load(acePath);
-        editor = new EditorCore(webEngine);
+        editor = new EditorCore(webView.getEngine());
+        editor.load(acePath);
     }
 
+    /**
+     * Gets the ace editor currently in use.
+     *
+     * @return
+     */
     public EditorCore getEditor() {
         return editor;
+    }
+
+    @FXML
+    private void handleOpenButton(ActionEvent event) throws IOException {
+        FileChooser fc = new FileChooser();
+        File file = fc.showOpenDialog(this.getScene().getWindow());
+        editor.openFile(file);
+    }
+
+    @FXML
+    private void handleSaveButton(ActionEvent event) throws IOException {
+        FileChooser fc = new FileChooser();
+        File file = fc.showSaveDialog(this.getScene().getWindow());
+        editor.saveAs(file);
     }
 
     @FXML

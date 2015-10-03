@@ -3,29 +3,51 @@
 <?import javafx.scene.web.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
+<?import java.net.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?> 
+<?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sandsoft.acefx.AceEditor">
+<BorderPane prefHeight="400.0" prefWidth="600.0"  maxWidth="1e08" maxHeight="1e08"   
+            BorderPane.alignment="CENTER" stylesheets="@AceEditor.css" styleClass="acefx-editor" 
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sandsoft.acefx.AceEditor">   
     <center>
-        <WebView fx:id="webView" BorderPane.alignment="CENTER" />
+        <WebView id="browser" fx:id="webView" styleClass="acefx-editor" BorderPane.alignment="CENTER" />
     </center>
     <top>
-        <ToolBar minHeight="0.0" minWidth="0.0" prefHeight="40.0" BorderPane.alignment="CENTER">
+        <ToolBar id="toolbar" minHeight="0.0" minWidth="0.0" prefHeight="40.0" 
+                 styleClass="acefx-editor" BorderPane.alignment="CENTER">
             <items>
-                <Button id="undo" fx:id="undoButton" mnemonicParsing="false" onAction="#handleUndoButton" text="Undo" />
-                <Button id="redo" fx:id="redoButton" mnemonicParsing="false" onAction="#handleRedoButton" text="Redo" />
+                <Button id="open" mnemonicParsing="false" onAction="#handleOpenButton" 
+                        styleClass="acefx-editor-button" text="Open" />
+                <Button id="save" mnemonicParsing="false" onAction="#handleSaveButton" 
+                        styleClass="acefx-editor-button" text="Save" />
+                
                 <Separator orientation="VERTICAL" />
-                <Button id="cut" fx:id="cutButton" mnemonicParsing="false" onAction="#handleCutButton" text="Cut" />
-                <Button id="copy" fx:id="copyButton" mnemonicParsing="false" onAction="#handleCopyButton" text="Copy" />
-                <Button id="paste" fx:id="pasteButton" mnemonicParsing="false" onAction="#handlePasteButton" text="Paste" />
+                <Button id="undo" mnemonicParsing="false" onAction="#handleUndoButton" 
+                        styleClass="acefx-editor-button" text="Undo" />
+                <Button id="redo" mnemonicParsing="false" onAction="#handleRedoButton" 
+                        styleClass="acefx-editor-button" text="Redo" />
+                
                 <Separator orientation="VERTICAL" />
-                <Button id="find" fx:id="findButton" mnemonicParsing="false" onAction="#handleFindButton" text="Find" />
-                <Button id="replace" fx:id="replaceButton" mnemonicParsing="false" onAction="#handleReplaceButton" text="Replace" />
+                <Button id="cut" mnemonicParsing="false" onAction="#handleCutButton" 
+                        styleClass="acefx-editor-button" text="Cut" />
+                <Button id="copy" mnemonicParsing="false" onAction="#handleCopyButton" 
+                        styleClass="acefx-editor-button" text="Copy" />
+                <Button id="paste" mnemonicParsing="false" onAction="#handlePasteButton" 
+                        styleClass="acefx-editor-button" text="Paste" />
+                
                 <Separator orientation="VERTICAL" />
-                <Button id="options" fx:id="opetionsButton" mnemonicParsing="false" onAction="#handleOptionsButton" text="Options" />
-                <Button id="shortcuts" fx:id="shortcutsButton" mnemonicParsing="false" onAction="#handleShortcutsButton" text="Shortcuts" />
+                <Button id="find" mnemonicParsing="false" onAction="#handleFindButton" 
+                        styleClass="acefx-editor-button" text="Find" />
+                <Button id="replace" mnemonicParsing="false" onAction="#handleReplaceButton" 
+                        styleClass="acefx-editor-button" text="Replace" />
+                
+                <Separator orientation="VERTICAL" />
+                <Button id="options" mnemonicParsing="false" onAction="#handleOptionsButton" 
+                        styleClass="acefx-editor-button" text="Options" />
+                <Button id="shortcut" mnemonicParsing="false" onAction="#handleShortcutsButton" 
+                        styleClass="acefx-editor-button" text="Shortcuts" />
             </items>
         </ToolBar>
     </top>
