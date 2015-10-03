@@ -15,7 +15,7 @@
  */
 package com.sandsoft.acefx.tests;
 
-import com.sandsoft.acefx.AceFXEditor;
+import com.sandsoft.acefx.AceEditor;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -41,7 +41,7 @@ public class Main extends Application {
         button.setText("RUN TESTS");
         button.setVisible(false);
 
-        final AceFXEditor root = new AceFXEditor();
+        final AceEditor root = new AceEditor();
         root.setTop(button);
         Scene scene = new Scene(root, 800, 400);
 
@@ -68,7 +68,7 @@ public class Main extends Application {
         });
     }
 
-    public void runTests(final AceFXEditor editor) {
+    public void runTests(final AceEditor editor) {
         try {
             FileChooser chooser = new FileChooser();
             File file = chooser.showOpenDialog(null);

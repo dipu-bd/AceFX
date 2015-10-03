@@ -34,7 +34,7 @@ import netscape.javascript.JSObject;
  *
  * @author Sudipto Chandra.
  */
-public final class AceFXEditor extends BorderPane {
+public final class AceEditor extends BorderPane {
 
     //where ace.js file is saved
     private static final String ACE_PATH = "ace/ace.js";
@@ -55,7 +55,7 @@ public final class AceFXEditor extends BorderPane {
     /**
      * Constructor a new editor.
      */
-    public AceFXEditor() {
+    public AceEditor() {
         //set default to not ready state
         mReady = new SimpleBooleanProperty(false);
         
