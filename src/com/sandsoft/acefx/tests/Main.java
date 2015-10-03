@@ -55,8 +55,16 @@ public class Main extends Application {
         });
 
         root.readyProperty().addListener((event) -> {
-            root.getEditor().setFontSize(18);
+            root.getEditor().setFontSize(16);
+            root.getSession().setMode("ace/mode/javascript");
             button.setVisible(true);
+            
+            root.setText(
+                    "function foo(items) {\n"
+                    + "    var i;\n"
+                    + "    for (i = 0; i &lt; items.length; i++) {\n"
+                    + "        alert(\"Ace Rocks \" + items[i]);\n"
+                    + "}\n");
         });
     }
 

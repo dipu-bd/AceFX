@@ -25,7 +25,7 @@ import netscape.javascript.JSObject;
 public class Editor {
 
     private final JSObject mEditor;
-    private final EditSession mEditSession;
+    private EditSession mEditSession;
 
     public Editor(final JSObject editor) throws JSException {
         mEditor = editor;
@@ -365,17 +365,25 @@ public class Editor {
     }
 
     /**
-     * Returns the currently highlighted selection.
+     * Returns the range of currently highlighted selection.
      *
-     * @return
+     * @return the range of currently highlighted selection.
      */
     @Deprecated
     public JSObject getSelection() throws JSException {
         return (JSObject) mEditor.call("getSelection");
     }
 
-    //Returns the Range for the selected text.
-    //public Range getSelectionRange()  { }
+    /**
+     * Returns the Range for the selected text.
+     *
+     * @return Range for the selected text
+     */
+    @Deprecated
+    public JSObject getSelectionRange() throws JSException {
+        return (JSObject) mEditor.call("getSelectionRange");
+    }
+
     /**
      * Returns the current selection style.
      *
@@ -431,7 +439,7 @@ public class Editor {
     }
 
     /**
-     * Returns the current session's content. 
+     * Returns the current session's content.
      *
      * @return
      */
@@ -591,8 +599,13 @@ public class Editor {
         mEditor.call("moveLinesUp");
     }
 
-    //Undocumented
-    //moveText()
+    /**
+     * Undocumented
+     */
+    @Deprecated
+    public void moveText() {
+    }
+
     /**
      * Moves the cursor down in the document the specified number of times. Note
      * that this does de-select the current selection.
@@ -848,8 +861,20 @@ public class Editor {
         mEditor.call("scrollPageUp");
     }
 
-    //scrollToLine(Number line, Boolean center, Boolean animate, Function callback)
-    //Scrolls to a line. If center is true, it puts the line in middle of screen (or attempts to).
+    /**
+     * Scrolls to a line. If center is true, it puts the line in middle of
+     * screen (or attempts to).
+     *
+     * @param line Line number to scrool to.
+     * @param center true to put the line in middle of screen.
+     * @param animate true to enable scrolling animation
+     * @param callback Function to pass
+     */
+    @Deprecated
+    public void scrollToLine(Integer line, Boolean center, Boolean animate, JSObject callback) {
+        mEditor.call("scrollToLine", line, center, animate, callback);
+    }
+
     /**
      * Moves the editor to the specified row.
      *
@@ -1054,8 +1079,18 @@ public class Editor {
         mEditor.call("setSelectionStyle", style);
     }
 
-    // Sets a new editsession to use. This method also emits the 'changeSession' event.
-    //     setSession(EditSession session)
+    /**
+     * Sets a new editsession to use. This method also emits the 'changeSession'
+     * event.
+     *
+     * @param session EditSession object to set.
+     */
+    @Deprecated
+    public void setSession(JSObject session) throws JSException {
+        mEditor.call("setSession", session);
+        mEditSession = new EditSession(session);
+    }
+
     /**
      * Indicates whether the fold widgets are shown or not.
      *

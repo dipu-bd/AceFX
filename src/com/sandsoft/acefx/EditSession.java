@@ -23,7 +23,6 @@ import netscape.javascript.JSObject;
  *
  * @author Sudipto Chandra
  */
-//<editor-fold defaultstate="collapsed" desc="Editor -> Editor Session Methods ">
 public class EditSession {
 
     private JSObject mSession;
@@ -612,10 +611,16 @@ public class EditSession {
         return (JSObject) mSession.call("moveText", fromRange.toString(), toPosition.toString());
     }
 
+    //
+    //---------------------------------------------------------------------------------------------
+    //
     // onChange() Undocumented
     // onChangeFold() Undocumented
     // Reloads all the tokens on the current session. This function calls BackgroundTokenizer.start () to all the rows; it also emits the 'tokenizerUpdate' event.
     // onReloadTokenizer(Object e)
+    //
+    //---------------------------------------------------------------------------------------------
+    //
     /**
      * Outdents all the rows defined by the start and end properties of range.
      *
@@ -774,9 +779,28 @@ public class EditSession {
         mSession.call("setBreakpoints", rows);
     }
 
-    //Sets the EditSession to point to a new Document. If a BackgroundTokenizer exists, it also points to doc.
-    //setDocument(Document doc)
-    //public void setMode() 
+    /**
+     * Sets the EditSession to point to a new Document. If a BackgroundTokenizer
+     * exists, it also points to doc.
+     *
+     * @param doc Document to add.
+     */
+    @Deprecated
+    public void setDocument(JSObject doc) {
+        mSession.call("setDocument", doc);
+    }
+
+    /**
+     * By default, the editor supports plain text mode. All other language modes
+     * are available as separate modules. Mode should be provided like this:
+     * <code>"ace/mode/javascript"</code>
+     *
+     * @param mode Required. Mode to set.
+     */
+    public void setMode(String mode) {
+        mSession.call("setMode", mode);
+    }
+
     /**
      * Sets the new line mode.
      *
@@ -828,8 +852,15 @@ public class EditSession {
         mSession.call("setTabSize", tabSize);
     }
 
-    //Sets the undo manager
-    //setUndoManager(UndoManager undoManager)
+    /**
+     * Sets the undo manager
+     */
+    @Deprecated
+    public void setUndoManager(JSObject undoManager) {
+        mSession.call("setUndoManager", undoManager);
+        mUndoManager = new UndoManager(undoManager);
+    }
+
     /**
      * Enables or disables highlighting of the range where an undo occurred.
      *

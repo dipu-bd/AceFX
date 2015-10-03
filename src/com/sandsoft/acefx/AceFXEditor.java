@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 package com.sandsoft.acefx;
- 
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,7 +25,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Worker;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.layout.BorderPane; 
+import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
@@ -56,6 +56,9 @@ public final class AceFXEditor extends BorderPane {
      * Constructor a new editor.
      */
     public AceFXEditor() {
+        //set default to not ready state
+        mReady = new SimpleBooleanProperty(false);
+        
         //setup webview
         mWebView = new WebView();
         mWebView.setMaxWidth(Double.MAX_VALUE);
@@ -64,19 +67,19 @@ public final class AceFXEditor extends BorderPane {
         mWebView.setPrefHeight(400.0);
         mWebView.setMinWidth(0.0);
         mWebView.setMinHeight(0.0);
-        mWebView.setContextMenuEnabled(false);
+        mWebView.setContextMenuEnabled(false); 
         this.setCenter(mWebView);
+        mWebView.visibleProperty().bind(mReady);
 
         //load ace 
         mWebEngine = mWebView.getEngine();
-        mReady = new SimpleBooleanProperty(false);
         mWebEngine.loadContent(getHTML());
 
         // process page loading
         mWebEngine.getLoadWorker().stateProperty().addListener((event) -> {
             if (mWebEngine.getLoadWorker().getState() == Worker.State.SUCCEEDED) {
                 mEditor = new Editor((JSObject) mWebEngine.executeScript("ace.edit('editor');"));
-                mReady.set(true);
+                mReady.set(true); 
             }
         });
     }
@@ -111,13 +114,9 @@ public final class AceFXEditor extends BorderPane {
                 + "  </style>\n"
                 + "</head>\n"
                 + "<body>\n"
-                + "<pre id=\"editor\">function foo(items) {\n"
-                + "    var i;\n"
-                + "    for (i = 0; i &lt; items.length; i++) {\n"
-                + "        alert(\"Ace Rocks \" + items[i]);\n"
-                + "    }\n"
-                + "}</pre>\n"
-                + "<script src=\"%s\" type=\"text/javascript\" charset=\"utf-8\"></script>\n"
+                + "<pre id=\"editor\"></pre>\n" //text to diplay in the editor
+                + "<script src=\"%s\" " // %s should be replaced by the path where the ace.js is located.
+                + "type=\"text/javascript\" charset=\"utf-8\"></script>\n"
                 + "<script>\n"
                 + "    var editor = ace.edit(\"editor\"); \n"
                 + "    editor.setTheme(\"ace/theme/twilight\");\n"
@@ -172,7 +171,7 @@ public final class AceFXEditor extends BorderPane {
      *
      * @return the edit session for the editor.
      */
-    public EditSession getEditSession() {
+    public EditSession getSession() {
         return mEditor.getSession();
     }
 
@@ -183,7 +182,7 @@ public final class AceFXEditor extends BorderPane {
      * @return the undo manager for the edit session.
      */
     public UndoManager getUndoManager() {
-        return getEditSession().getUndoManager();
+        return getSession().getUndoManager();
     }
 
     /**

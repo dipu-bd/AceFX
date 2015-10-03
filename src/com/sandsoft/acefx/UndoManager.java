@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Dipu.
+ * Copyright 2015 Sudipto Chandra.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import netscape.javascript.JSObject;
 
 /**
  *
- * @author Dipu
+ * @author Sudipto Chandra
  */
 public class UndoManager {
 
