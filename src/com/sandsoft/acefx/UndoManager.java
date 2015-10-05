@@ -65,6 +65,14 @@ public class UndoManager {
         return (boolean) mUndoManager.call("hasUndo");
     }
 
+    public boolean isClean() throws JSException {
+        return (boolean) mUndoManager.call("isClean");
+    }
+
+    public boolean markClean() throws JSException {
+        return (boolean) mUndoManager.call("markClean");
+    }
+
     /**
      * Perform a redo operation on the document, re-implementing the last
      * change.
@@ -91,5 +99,9 @@ public class UndoManager {
      */
     public void undo(Boolean dontSelect) throws JSException {
         mUndoManager.call("undo", dontSelect);
+    }
+
+    public int getLength() {
+        return (int) mUndoManager.call("length");
     }
 }

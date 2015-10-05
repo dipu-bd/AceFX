@@ -73,7 +73,7 @@ public class Main extends Application {
 
     public void runTests(final AceEditor editor) {
         try { 
-            ObjectMapper.MapObject((JSObject)editor.executeScript("ace.edit('editor').getSession();"));
+            ObjectMapper.MapObject((JSObject)editor.executeScript("ace"));
 
             //+ "modelist.getModeForPath(path)"));
 //            if (list == null || list.isEmpty()) {
