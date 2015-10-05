@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sandsoft.acefx;
+package com.sandsoft.acefx.model;
 
 import com.sandsoft.acefx.model.DocPos;
 import com.sandsoft.acefx.model.Range;
 import com.sandsoft.acefx.model.SearchOptions;
-import com.sandsoft.acefx.util.JSUtils;
+import com.sandsoft.acefx.util.Commons;
 import java.util.Map;
 import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
@@ -43,7 +43,7 @@ public class Editor {
      *
      * @return java script object being wrapped.
      */
-    public final JSObject getEditorObject() {
+    public final JSObject getModel() {
         return mEditor;
     }
 
@@ -159,7 +159,7 @@ public class Editor {
      * @param animate If true animate scrolling. Leave null if unsure.
      */
     public void find(String needle, SearchOptions options, Boolean animate) throws JSException {
-        mEditor.call("find", needle, JSUtils.getObject(mEditor, options), animate);
+        mEditor.call("find", needle, Commons.getObject(mEditor, options), animate);
     }
 
     /**
@@ -171,7 +171,7 @@ public class Editor {
      * @return
      */
     public int findAll(String needle, SearchOptions options, Boolean keeps) throws JSException {
-        return (int) mEditor.call("findAll", needle, JSUtils.getObject(mEditor, options), keeps);
+        return (int) mEditor.call("findAll", needle, Commons.getObject(mEditor, options), keeps);
     }
 
     /**
@@ -182,7 +182,7 @@ public class Editor {
      * @param animate Required. If true animate scrolling
      */
     public void findNext(SearchOptions options, Boolean animate) throws JSException {
-        mEditor.call("findNext", JSUtils.getObject(mEditor, options), animate);
+        mEditor.call("findNext", Commons.getObject(mEditor, options), animate);
     }
 
     /**
@@ -193,7 +193,7 @@ public class Editor {
      * @param animate Required. If true animate scrolling
      */
     public void findPrevious(SearchOptions options, Boolean animate) throws JSException {
-        mEditor.call("findPrevious", JSUtils.getObject(mEditor, options), animate);
+        mEditor.call("findPrevious", Commons.getObject(mEditor, options), animate);
     }
 
     /**
@@ -636,7 +636,7 @@ public class Editor {
      * @param pos Required. An object with two properties, row and column
      */
     public void moveCursorToPosition(DocPos pos) throws JSException {
-        mEditor.call("moveCursorToPosition", JSUtils.getObject(mEditor, pos.toString()));
+        mEditor.call("moveCursorToPosition", Commons.getObject(mEditor, pos.toString()));
     }
 
     /**
@@ -664,8 +664,8 @@ public class Editor {
      */
     public void moveText(Range fromRange, DocPos toPosition, Boolean copy) {
         mEditor.call("moveText",
-                JSUtils.getObject(mEditor, fromRange),
-                JSUtils.getObject(mEditor, toPosition), copy);
+                Commons.getObject(mEditor, fromRange),
+                Commons.getObject(mEditor, toPosition), copy);
     }
 
     /**
@@ -840,7 +840,7 @@ public class Editor {
      */
     @Deprecated
     public void removeSelectionMarker(Range range) throws JSException {
-        mEditor.call("removeSelectionMarker", JSUtils.getObject(mEditor, range.toString()));
+        mEditor.call("removeSelectionMarker", Commons.getObject(mEditor, range.toString()));
     }
 
     /**
@@ -881,7 +881,7 @@ public class Editor {
      * @param options Required. The Search options to use
      */
     public void replace(String replacement, SearchOptions options) throws JSException {
-        mEditor.call("replace", replacement, JSUtils.getObject(mEditor, options));
+        mEditor.call("replace", replacement, Commons.getObject(mEditor, options));
     }
 
     /**
@@ -891,7 +891,7 @@ public class Editor {
      * @param options Required. The Search options to use
      */
     public void replaceAll(String replacement, SearchOptions options) throws JSException {
-        mEditor.call("replaceAll", replacement, JSUtils.getObject(mEditor, options));
+        mEditor.call("replaceAll", replacement, Commons.getObject(mEditor, options));
     }
 
     /**
@@ -911,7 +911,7 @@ public class Editor {
      * @param animate Required. true to animate.
      */
     public void revealRange(Range range, Boolean animate) throws JSException {
-        mEditor.call("revealRange", JSUtils.getObject(mEditor, range), animate);
+        mEditor.call("revealRange", Commons.getObject(mEditor, range), animate);
     }
 
     /**

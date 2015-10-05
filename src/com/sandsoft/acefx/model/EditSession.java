@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sandsoft.acefx;
+package com.sandsoft.acefx.model;
 
 import com.sandsoft.acefx.model.DocPos;
 import com.sandsoft.acefx.model.Range;
-import com.sandsoft.acefx.util.JSUtils;
+import com.sandsoft.acefx.util.Commons;
 import java.util.ArrayList;
 import java.util.Map;
 import netscape.javascript.JSException;
@@ -40,6 +40,15 @@ public class EditSession {
     public EditSession(JSObject session) throws JSException {
         mSession = session;
         mUndoManager = new UndoManager((JSObject) session.call("getUndoManager"));
+    }
+
+    /**
+     * Gets the java script object wrapped by this instance.
+     *
+     * @return java script object being wrapped.
+     */
+    public final JSObject getModel() {
+        return mSession;
     }
 
     /**
@@ -88,7 +97,7 @@ public class EditSession {
      */
     @Deprecated
     public int addMarker(Range range, String clazz, String type, Boolean inFront) throws JSException {
-        return (int) mSession.call("addMarker", JSUtils.getObject(mSession, range), clazz, type, inFront);
+        return (int) mSession.call("addMarker", Commons.getObject(mSession, range), clazz, type, inFront);
     }
 
     public boolean adjustWrapLimit(Integer limit, boolean printMargin) throws JSException {
@@ -186,7 +195,7 @@ public class EditSession {
      */
     @Deprecated
     public DocPos findMatchingBracket(DocPos position, Character chr) {
-        return new DocPos((JSObject) mSession.call("findMatchingBracket", JSUtils.getObject(mSession, position), chr));
+        return new DocPos((JSObject) mSession.call("findMatchingBracket", Commons.getObject(mSession, position), chr));
     }
 
     /**
@@ -229,7 +238,7 @@ public class EditSession {
 
     @Deprecated
     public Range getBracketRange(DocPos pos) {
-        JSObject obj = (JSObject) mSession.call("getBracketRange", JSUtils.getObject(mSession, pos));
+        JSObject obj = (JSObject) mSession.call("getBracketRange", Commons.getObject(mSession, pos));
         return obj == null ? null : new Range(obj);
     }
 
@@ -329,12 +338,12 @@ public class EditSession {
 
     @Deprecated
     public JSObject getFoldsInRange(Range range) {
-        return (JSObject) mSession.call("getFoldsInRange", JSUtils.getObject(mSession, range));
+        return (JSObject) mSession.call("getFoldsInRange", Commons.getObject(mSession, range));
     }
 
     @Deprecated
     public JSObject getFoldsInRangeList(ArrayList<Range> range) {
-        return (JSObject) mSession.call("getFoldsInRangeList", JSUtils.getObjectByList(mSession, range));
+        return (JSObject) mSession.call("getFoldsInRangeList", Commons.getObjectByList(mSession, range));
     }
 
     /**

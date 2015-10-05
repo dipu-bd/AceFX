@@ -15,8 +15,13 @@
  */
 package com.sandsoft.acefx;
 
+import com.sandsoft.acefx.model.Command;
+import com.sandsoft.acefx.model.Editor;
+import com.sandsoft.acefx.model.UndoManager;
+import com.sandsoft.acefx.model.EditSession;
 import com.sandsoft.acefx.model.ModeData;
 import com.sandsoft.acefx.model.ThemeData;
+import com.sandsoft.acefx.util.Commons;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -110,7 +115,7 @@ public final class AceEditor extends BorderPane {
                 + "<head>\n"
                 + "  <meta charset=\"UTF-8\">\n"
                 + "  <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\">\n"
-                + "  <title>Editor</title>\n"
+                + "  <title>Ace Editor In JavaFX</title>\n"
                 + "  <style type=\"text/css\" media=\"screen\">\n"
                 + "    body {\n"
                 + "        overflow: hidden;\n"
@@ -212,10 +217,10 @@ public final class AceEditor extends BorderPane {
      * empty text is returned.
      *
      * @return Current content in the editor.
-     */    
+     */
     public String getText() {
         return isReady() ? mEditor.getValue() : "";
-        
+
     }
 
     /**
@@ -348,17 +353,17 @@ public final class AceEditor extends BorderPane {
         try {
             InputStream is = getClass().getResourceAsStream("resource/themelist");
             String data = IOUtils.toString(is);
-            
+
             JSONParser parser = new JSONParser();
             JSONArray array = (JSONArray) parser.parse(data);
-            
+
             for (int i = 0; i < array.size(); ++i) {
                 JSONArray item = (JSONArray) array.get(i);
                 int siz = item.size();
                 if (siz == 0) {
                     continue;
                 }
-                
+
                 ThemeData theme = new ThemeData((String) item.get(0));
                 if (siz >= 2) {
                     theme.setAlias("ace/theme/" + (String) item.get(1));
@@ -368,7 +373,7 @@ public final class AceEditor extends BorderPane {
                 }
                 list.add(theme);
             }
-            
+
         } catch (IOException | ParseException ex) {
             Logger.getLogger(getClass().getSimpleName()).log(Level.SEVERE, null, ex);
         }
@@ -383,5 +388,14 @@ public final class AceEditor extends BorderPane {
      */
     public ArrayList<ModeData> getModeList() {
         return null;
+    }
+
+    public ArrayList<Command> getCommandList() {
+        JSObject names = (JSObject) mEditor.getModel().eval("this.commands.byName");
+        ArrayList<Command> arr = new ArrayList<>();
+        for (String str : Commons.getAllProperties(names)) {
+            arr.add(new Command((JSObject) names.getMember(str)));
+        }
+        return arr;
     }
 }

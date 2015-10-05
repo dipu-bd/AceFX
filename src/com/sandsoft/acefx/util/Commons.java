@@ -15,6 +15,7 @@
  */
 package com.sandsoft.acefx.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import netscape.javascript.JSObject;
 
@@ -22,7 +23,7 @@ import netscape.javascript.JSObject;
  *
  * @author Sudipto Chandra
  */
-public class JSUtils {
+public class Commons {
 
     /**
      * Creates a new JSObject from string representation of a valid JavaScript
@@ -48,4 +49,25 @@ public class JSUtils {
         String[] data = object.toArray(new String[0]);
         return (JSObject) parent.eval(String.format("(function() { return [%s]; })()", String.join(",", data)));
     }
+
+    /**
+     * Gets a list of all properties of a JavaScript object.
+     *
+     * @param data The object to get properties.
+     * @return List of all properties of the object.
+     */
+    public static ArrayList<String> getAllProperties(JSObject data) {
+        //gets the list of properties.
+        ArrayList<String> propList = new ArrayList<>();
+        JSObject properties = (JSObject) data.eval("Object.getOwnPropertyNames(this);");
+        for (int i = 0; i < (int) properties.eval("this.length"); ++i) {
+            propList.add((String) properties.getSlot(i));
+        }
+        //sorts properties in ascending order.
+//        propList.sort((String t, String t1) -> {
+//            return t.compareTo(t1);
+//        });
+        return propList;
+    }
+ 
 }
