@@ -15,11 +15,17 @@
  */
 package com.sandsoft.acefx;
 
+import com.sandsoft.acefx.model.ModeData;
+import com.sandsoft.acefx.model.ThemeData;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Worker;
@@ -28,7 +34,12 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
+import org.apache.commons.io.IOUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -39,9 +50,9 @@ public final class AceEditor extends BorderPane {
     //where ace.js file is saved
     private static final String ACE_PATH = "ace/ace.js";
 
-    /**
-     * web engine
-     */
+    //ace controller
+    private JSObject mAce;
+    //current editor
     private Editor mEditor;
     //file path to save code
     private File mFilePath;
@@ -58,7 +69,7 @@ public final class AceEditor extends BorderPane {
     public AceEditor() {
         //set default to not ready state
         mReady = new SimpleBooleanProperty(false);
-        
+
         //setup webview
         mWebView = new WebView();
         mWebView.setMaxWidth(Double.MAX_VALUE);
@@ -67,7 +78,7 @@ public final class AceEditor extends BorderPane {
         mWebView.setPrefHeight(400.0);
         mWebView.setMinWidth(0.0);
         mWebView.setMinHeight(0.0);
-        mWebView.setContextMenuEnabled(false); 
+        mWebView.setContextMenuEnabled(false);
         this.setCenter(mWebView);
         mWebView.visibleProperty().bind(mReady);
 
@@ -78,8 +89,9 @@ public final class AceEditor extends BorderPane {
         // process page loading
         mWebEngine.getLoadWorker().stateProperty().addListener((event) -> {
             if (mWebEngine.getLoadWorker().getState() == Worker.State.SUCCEEDED) {
-                mEditor = new Editor((JSObject) mWebEngine.executeScript("ace.edit('editor');"));
-                mReady.set(true); 
+                mAce = (JSObject) mWebEngine.executeScript("ace");
+                mEditor = new Editor((JSObject) mAce.call("edit", "editor"));
+                mReady.set(true);
             }
         });
     }
@@ -155,6 +167,16 @@ public final class AceEditor extends BorderPane {
     }
 
     /**
+     * Executes a script under the current web engine..
+     *
+     * @param script Script to execute.
+     * @return Result of execution
+     */
+    public Object executeScript(String script) throws JSException {
+        return mWebEngine.executeScript(script);
+    }
+
+    /**
      * Gets the wrapper class for editor that is associated with this control.
      * It contains various methods to interact with the editor.
      *
@@ -190,10 +212,10 @@ public final class AceEditor extends BorderPane {
      * empty text is returned.
      *
      * @return Current content in the editor.
-     */
+     */    
     public String getText() {
         return isReady() ? mEditor.getValue() : "";
-
+        
     }
 
     /**
@@ -313,5 +335,53 @@ public final class AceEditor extends BorderPane {
     public void saveAs(File file) throws IOException, NullPointerException {
         mFilePath = file;
         saveFile();
+    }
+
+    /**
+     * Returns the list of available themes. An empty list is returned on
+     * failure.
+     *
+     * @return the list of themes.
+     */
+    public ArrayList<ThemeData> getThemeList() {
+        ArrayList<ThemeData> list = new ArrayList<>();
+        try {
+            InputStream is = getClass().getResourceAsStream("resource/themelist");
+            String data = IOUtils.toString(is);
+            
+            JSONParser parser = new JSONParser();
+            JSONArray array = (JSONArray) parser.parse(data);
+            
+            for (int i = 0; i < array.size(); ++i) {
+                JSONArray item = (JSONArray) array.get(i);
+                int siz = item.size();
+                if (siz == 0) {
+                    continue;
+                }
+                
+                ThemeData theme = new ThemeData((String) item.get(0));
+                if (siz >= 2) {
+                    theme.setAlias("ace/theme/" + (String) item.get(1));
+                }
+                if (siz >= 3) {
+                    theme.setDark("dark".equals((String) item.get(2)));
+                }
+                list.add(theme);
+            }
+            
+        } catch (IOException | ParseException ex) {
+            Logger.getLogger(getClass().getSimpleName()).log(Level.SEVERE, null, ex);
+        }
+        return list;
+    }
+
+    /**
+     * Gets the list of available language modes. returns an empty array on
+     * failure.
+     *
+     * @return list of available language modes.
+     */
+    public ArrayList<ModeData> getModeList() {
+        return null;
     }
 }

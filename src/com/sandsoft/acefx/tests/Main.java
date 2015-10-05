@@ -16,15 +16,16 @@
 package com.sandsoft.acefx.tests;
 
 import com.sandsoft.acefx.AceEditor;
-import java.io.File;
-import java.io.IOException;
+import com.sandsoft.acefx.model.DocPos;
+import com.sandsoft.acefx.model.ThemeData;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.application.Application;
 import javafx.scene.control.Button;
-import javafx.stage.FileChooser;
+import netscape.javascript.JSObject;
 
 /**
  *
@@ -58,7 +59,7 @@ public class Main extends Application {
             root.getEditor().setFontSize(16);
             root.getSession().setMode("ace/mode/javascript");
             button.setVisible(true);
-            
+
             root.setText(
                     "function foo(items) {\n"
                     + "    var i;\n"
@@ -68,12 +69,21 @@ public class Main extends Application {
         });
     }
 
+    ArrayList<ThemeData> list;
+
     public void runTests(final AceEditor editor) {
-        try {
-            FileChooser chooser = new FileChooser();
-            File file = chooser.showOpenDialog(null);
-            editor.openFile(file);
-        } catch (IOException ex) {
+        try { 
+            ObjectMapper.MapObject((JSObject)editor.executeScript("ace.edit('editor').getSession();"));
+
+            //+ "modelist.getModeForPath(path)"));
+//            if (list == null || list.isEmpty()) {
+//                list = editor.getThemeList();
+//            }
+//            
+//            System.out.println("Applying " + list.get(0));
+//            editor.getEditor().setTheme(list.get(0).getAlias());
+//            list.remove(0);
+        } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
 

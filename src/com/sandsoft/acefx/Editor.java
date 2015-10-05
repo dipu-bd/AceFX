@@ -15,6 +15,9 @@
  */
 package com.sandsoft.acefx;
 
+import com.sandsoft.acefx.model.DocPos;
+import com.sandsoft.acefx.model.Range;
+import java.util.Map;
 import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
 
@@ -40,7 +43,7 @@ public class Editor {
      */
     @Deprecated
     public JSObject addSelectionMarker(JSObject orientedRange) throws JSException {
-        return null;
+        return (JSObject) mEditor.call("addSelectionMarker", orientedRange);
     }
 
     /**
@@ -48,6 +51,13 @@ public class Editor {
      */
     public void alignCursors() throws JSException {
         mEditor.call("alignCursors");
+    }
+
+    /**
+     * Out-dents the current line.
+     */
+    public void blockIndent() throws JSException {
+        mEditor.call("blockIndent");
     }
 
     /**
@@ -113,8 +123,8 @@ public class Editor {
      * <a href="https://github.com/ajaxorg/ace/blob/master/lib/ace/commands/default_commands.js#L171">link
      * to all commands</a>
      *
-     * @param command
-     * @return
+     * @param command Command option to execute.
+     * @return true if executed successfully.
      */
     public boolean execCommand(String command) throws JSException {
         return (boolean) mEditor.call("execCommand", command);
@@ -198,6 +208,8 @@ public class Editor {
 
     /**
      * Gets if renderer has animated scroll.
+     *
+     * @return true if renderer has animated scroll
      */
     public boolean getAnimatedScroll() throws JSException {
         return (boolean) mEditor.call("getAnimatedScroll");
@@ -208,7 +220,7 @@ public class Editor {
      * case is the auto-pairing of special characters, like quotation marks,
      * parenthesis, or brackets.
      *
-     * @return
+     * @return true if the behaviors are currently enabled.
      */
     public boolean getBehavioursEnabled() throws JSException {
         return (boolean) mEditor.call("getBehavioursEnabled");
@@ -217,7 +229,7 @@ public class Editor {
     /**
      * Returns the string of text currently highlighted.
      *
-     * @return
+     * @return The string of text currently highlighted.
      */
     public String getCopyText() throws JSException {
         return (String) mEditor.call("getCopyText");
@@ -225,14 +237,17 @@ public class Editor {
 
     /**
      * Returns the screen position of the cursor.
+     *
+     * @return position of the cursor in the document.
      */
-    @Deprecated
-    public JSObject getCursorPositionScreen() throws JSException {
-        return (JSObject) mEditor.call("getCursorPositionScreen");
+    public DocPos getCursorPositionScreen() throws JSException {
+        return new DocPos((JSObject) mEditor.call("getCursorPositionScreen"));
     }
 
     /**
      * Gets the display indent guide options.
+     *
+     * @return true if display indent guide is enabled.
      */
     public boolean getDisplayIndentGuides() throws JSException {
         return (boolean) mEditor.call("getDisplayIndentGuides");
@@ -240,6 +255,8 @@ public class Editor {
 
     /**
      * Returns the current mouse drag delay.
+     *
+     * @return drag delay in milliseconds.
      */
     public int getDragDelay() throws JSException {
         return (int) mEditor.call("getDragDelay");
@@ -247,6 +264,8 @@ public class Editor {
 
     /**
      * Gets the fade fold widget option.
+     *
+     * @return true if fade fold widget is enabled.
      */
     public boolean getFadeFoldWidgets() throws JSException {
         return (boolean) mEditor.call("getFadeFoldWidgets");
@@ -254,6 +273,8 @@ public class Editor {
 
     /**
      * Returns the index of the first visible row.
+     *
+     * @return index of first visible row.
      */
     public int getFirstVisibleRow() throws JSException {
         return (int) mEditor.call("getFirstVisibleRow");
@@ -262,7 +283,7 @@ public class Editor {
     /**
      * Returns true if current lines are always highlighted.
      *
-     * @return
+     * @return true if current lines are always highlighted.
      */
     public boolean getHighlightActiveLine() throws JSException {
         return (boolean) mEditor.call("getHighlightActiveLine");
@@ -271,7 +292,7 @@ public class Editor {
     /**
      * Returns true if gutter lines are always highlighted.
      *
-     * @return
+     * @return rue if gutter lines are always highlighted.
      */
     public boolean getHighlightGutterLine() throws JSException {
         return (boolean) mEditor.call("getHighlightGutterLine");
@@ -280,7 +301,7 @@ public class Editor {
     /**
      * Returns true if currently highlighted words are to be highlighted.
      *
-     * @return
+     * @return true if currently highlighted words are to be highlighted.
      */
     public boolean getHighlightSelectedWord() throws JSException {
         return (boolean) mEditor.call("getHighlightSelectedWord");
@@ -289,7 +310,7 @@ public class Editor {
     /**
      * Returns the keyboard handler, such as "vim" or "windows".
      *
-     * @return
+     * @return keyboard handler, such as "vim" or "windows".
      */
     @Deprecated
     public JSObject getKeyboardHandler() throws JSException {
@@ -300,7 +321,7 @@ public class Editor {
      * Returns an object containing all the search options. For more information
      * on options, see Search.
      *
-     * @return
+     * @return an object containing all the search options.
      */
     @Deprecated
     public JSObject getLastSearchOptions() throws JSException {
@@ -328,9 +349,31 @@ public class Editor {
     }
 
     /**
+     * Gets the value of an option by its name.
+     *
+     * @param name Name of the options.
+     * @return value of the option.
+     */
+    @Deprecated
+    public Object getOption(String name) {
+        return mEditor.call("getOption", name);
+    }
+
+    /**
+     * Gets all values of the given list of options.
+     *
+     * @param optionNames list of option names.
+     * @return values of the options.
+     */
+    @Deprecated
+    public Object getOptions(Object optionNames) {
+        return mEditor.call("getOptions", optionNames);
+    }
+
+    /**
      * Returns true if overwrites are enabled; false otherwise.
      *
-     * @return
+     * @return true if overwrites are enabled; false otherwise.
      */
     public boolean getOverwrite() throws JSException {
         return (boolean) mEditor.call("getOverwrite");
@@ -365,13 +408,22 @@ public class Editor {
     }
 
     /**
+     * Returns the text that has been selected.
+     *
+     * @return the text that has been selected.
+     */
+    public String getSelectedText() throws JSException {
+        return (String) mEditor.call("getSelectedText");
+    }
+
+    /**
      * Returns the range of currently highlighted selection.
      *
      * @return the range of currently highlighted selection.
      */
     @Deprecated
-    public JSObject getSelection() throws JSException {
-        return (JSObject) mEditor.call("getSelection");
+    public Selection getSelection() throws JSException {
+        return new Selection((JSObject) mEditor.call("getSelection"));
     }
 
     /**
@@ -380,8 +432,8 @@ public class Editor {
      * @return Range for the selected text
      */
     @Deprecated
-    public JSObject getSelectionRange() throws JSException {
-        return (JSObject) mEditor.call("getSelectionRange");
+    public Range getSelectionRange() throws JSException {
+        return new Range((JSObject) mEditor.call("getSelectionRange"));
     }
 
     /**
@@ -705,6 +757,16 @@ public class Editor {
         mEditor.call("navigateWordRight");
     }
 
+    @Deprecated
+    public void off(String eventName, Object callback) throws JSException {
+        mEditor.call("off", eventName, callback);
+    }
+
+    @Deprecated
+    public void on(String eventName, Object callback, Boolean capturing) throws JSException {
+        mEditor.call("off", eventName, callback, capturing);
+    }
+
     /*
      onBlur() Undocumented
      onChangeAnnotation() Undocumented
@@ -939,6 +1001,10 @@ public class Editor {
         mEditor.call("setAnimatedScroll", shouldAnimate);
     }
 
+    public void setAutoScrollEditorIntoView(Boolean enable) throws JSException {
+        mEditor.call("setAutoScrollEditorIntoView", enable);
+    }
+
     /**
      * Specifies whether to use behaviors or not. "Behaviors" in this case is
      * the auto-pairing of special characters, like quotation marks,
@@ -954,7 +1020,6 @@ public class Editor {
      * sets the Display Indent Guides option
      *
      * @param indentGuides Required. The Indent guides to set.
-     * @return True on success.
      */
     public void setDisplayIndentGuides(Boolean indentGuides) throws JSException {
         mEditor.call("setDisplayIndentGuides", indentGuides);
@@ -1024,6 +1089,18 @@ public class Editor {
      */
     public void setKeyboardHandler(String keyboardHandler) throws JSException {
         mEditor.call("setKeyboardHandler", keyboardHandler);
+    }
+
+    @Deprecated
+    public void setOption(String name, Object value) throws JSException {
+        mEditor.call("setOption", name, value);
+    }
+
+    @Deprecated
+    public void setOptions(Map<String, Object> opList) throws JSException {
+        opList.forEach((String name, Object value) -> {
+            this.setOption(name, value);
+        });
     }
 
     /**
@@ -1128,7 +1205,7 @@ public class Editor {
      * @param theme Required. The path to a theme.
      */
     public void setTheme(String theme) throws JSException {
-        mEditor.call("setTheme(\"" + theme + "\");");
+        mEditor.call("setTheme", theme);
     }
 
     /**
@@ -1155,10 +1232,39 @@ public class Editor {
     }
 
     /**
-     * <strong>Undocumented</strong>
+     * Sorts the selected line.
      */
     public void sortLines() throws JSException {
         mEditor.call("sortLines");
+    }
+
+    /**
+     * <strong>Undocumented</strong>
+     */
+    public void splitLine() throws JSException {
+        mEditor.call("splitLine");
+    }
+
+    /**
+     * This function makes all text within the selected range to lower case.
+     */
+    public void toLowerCase() throws JSException {
+        mEditor.call("toLowerCase");
+    }
+
+    /**
+     * This function makes all text within the selected range to upper case.
+     */
+    public void toUpperCase() throws JSException {
+        mEditor.call("toUpperCase");
+    }
+
+    /**
+     * This function either comments all blocks of the selected lines, or
+     * uncomments all of them.
+     */
+    public void toggleBlockComment() throws JSException {
+        mEditor.call("toggleBlockComment");
     }
 
     /**
@@ -1177,20 +1283,6 @@ public class Editor {
     }
 
     /**
-     * Converts the current selection entirely into lowercase.
-     */
-    public void toLowerCase() throws JSException {
-        mEditor.call("toLowerCase");
-    }
-
-    /**
-     * Converts the current selection entirely into uppercase.
-     */
-    public void toUpperCase() throws JSException {
-        mEditor.call("toUpperCase");
-    }
-
-    /**
      * Transposes current line.
      */
     public void transposeLetters() throws JSException {
@@ -1203,7 +1295,7 @@ public class Editor {
      * @param dir Required. The direction to rotate selections.
      */
     public void transposeSelections(Integer dir) throws JSException {
-        mEditor.call("setWrapBehavioursEnabled", dir);
+        mEditor.call("transposeSelections", dir);
     }
 
     /**

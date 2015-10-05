@@ -16,6 +16,8 @@
 package com.sandsoft.acefx;
 
 import com.sandsoft.acefx.model.DocPos;
+import com.sandsoft.acefx.model.Range;
+import java.util.Map;
 import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
 
@@ -51,6 +53,17 @@ public class EditSession {
     }
 
     /**
+     * Adds fold for the given range with the given placeholder.
+     *
+     * @param placeholder an instance of Fold.
+     * @param range Range to apply fold.
+     * @return Fold that has been applied.
+     */
+    public Object addFold(Object placeholder, JSObject range) {
+        return mSession.call("addFold", placeholder, range);
+    }
+
+    /**
      * Adds className to the row, to be used for CSS styling and whatnot.
      *
      * @param row Required. The row number
@@ -74,6 +87,10 @@ public class EditSession {
     @Deprecated
     public int addMarker(JSObject range, String clazz, String type, Boolean inFront) throws JSException {
         return (int) mSession.call("addMarker", range.toString(), clazz, type, inFront);
+    }
+
+    public boolean adjustWrapLimit(Integer limit, boolean printMargin) throws JSException {
+        return (boolean) mSession.call("adjustWrapLimit", limit, printMargin);
     }
 
     /**
@@ -100,6 +117,11 @@ public class EditSession {
      */
     public void clearBreakpoints() throws JSException {
         mSession.call("clearBreakpoints");
+    }
+
+    @Deprecated
+    public void destroy() {
+        mSession.call("destroy");
     }
 
     /**
@@ -148,6 +170,43 @@ public class EditSession {
         return (int) mSession.call("duplicateLines", firstRow, lastRow);
     }
 
+    @Deprecated
+    public void expandFold(JSObject fold) {
+        mSession.call("expandFold", fold);
+    }
+
+    /**
+     * Find the position of the matching bracket.
+     *
+     * @param position Position in the document by "{row,column}"
+     * @param chr Character to find the match.
+     * @return Position of either closing or opening bracket.
+     */
+    @Deprecated
+    public DocPos findMatchingBracket(JSObject position, Character chr) {
+        return new DocPos((JSObject) mSession.call("findMatchingBracket", position, chr));
+    }
+
+    @Deprecated
+    public void foldAll(Integer startRow, Integer endRow, Integer depth) {
+        mSession.call("foldAll", startRow, endRow, depth);
+    }
+
+    /**
+     * Gets the range of a word, including its right whitespace.
+     *
+     * @param row Required. The row number to start from
+     * @param column Required. The column number to start from
+     * @return the range of a word, including its right whitespace.
+     */
+    public JSObject getAWordRange(Integer row, Integer column) {
+        return (JSObject) mSession.call("getAWordRange", row, column);
+    }
+
+    public JSObject getAllFolds() {
+        return (JSObject) mSession.call("getAllFolds");
+    }
+
     /**
      * Gets the annotations for the EditSession.
      *
@@ -158,16 +217,9 @@ public class EditSession {
         return (JSObject) mSession.call("getAnnotations");
     }
 
-    /**
-     * Gets the range of a word, including its right whitespace.
-     *
-     * @param row Required. The row number to start from
-     * @param column Required. The column number to start from
-     * @return the range of a word, including its right whitespace.
-     */
     @Deprecated
-    public JSObject getAWordRange(Integer row, Integer column) throws JSException {
-        return (JSObject) mSession.call("getAWordRange", row, column);
+    public Range getBracketRange(JSObject pos) {
+        return new Range((JSObject) mSession.call("", pos));
     }
 
     /**
@@ -177,6 +229,23 @@ public class EditSession {
      */
     public int getBreakpoints() throws JSException {
         return (int) mSession.call("getBreakpoints");
+    }
+
+    /**
+     *
+     * @param row
+     * @param column
+     * @param dir If 1 move forward, else move backward.
+     * @return
+     */
+    @Deprecated
+    public JSObject getCommentFoldRange(Integer row, Integer column, Integer dir) {
+        return (JSObject) mSession.call("getCommentFoldRange", row, column, dir);
+    }
+
+    @Deprecated
+    public JSObject getDisplayLine(Integer endRow, Integer endColumn, Integer startRow, Integer startColumn) {
+        return (JSObject) mSession.call("getDisplayLine", endRow, endColumn, startRow, startColumn);
     }
 
     /**
@@ -213,6 +282,50 @@ public class EditSession {
         return (int) mSession.call("getDocumentLastRowColumnPosition", docRow, docColumn);
     }
 
+    @Deprecated
+    public JSObject getFoldAt(Integer row, Integer column, Integer side) throws JSException {
+        return (JSObject) mSession.call("getFoldAt", row, column, side);
+    }
+
+    @Deprecated
+    public JSObject getFoldDisplayLine(JSObject foldLine, Integer endRow, Integer endColumn, Integer startRow, Integer startColumn) {
+        return (JSObject) mSession.call("getFoldDisplayLine", foldLine, endRow, endColumn, startRow, startColumn);
+    }
+
+    @Deprecated
+    public JSObject getFoldLine(Integer docRow, JSObject startFoldLine) {
+        return (JSObject) mSession.call("getFoldLine", docRow, startFoldLine);
+    }
+
+    /**
+     *
+     * @param row
+     * @param column
+     * @param trim either -1, 1 or other
+     * @param foldLine
+     * @return
+     * @deprecated
+     */
+    @Deprecated
+    public String getFoldStringAt(Integer row, Integer column, Integer trim, JSObject foldLine) {
+        return (String) mSession.call("getFoldStringAt", row, column, trim, foldLine);
+    }
+
+    @Deprecated
+    public int getFoldedRowCount(Integer first, Integer last) {
+        return (int) mSession.call("getFoldedRowCount", first, last);
+    }
+
+    @Deprecated
+    public JSObject getFoldsInRange(JSObject range) {
+        return (JSObject) mSession.call("getFoldsInRange", range);
+    }
+
+    @Deprecated
+    public JSObject getFoldsInRangeList(JSObject range) {
+        return (JSObject) mSession.call("getFoldsInRangeList", range);
+    }
+
     /**
      * Returns the number of rows in the document.
      *
@@ -230,6 +343,11 @@ public class EditSession {
      */
     public String getLine(Integer row) throws JSException {
         return (String) mSession.call("getLine", row);
+    }
+
+    @Deprecated
+    public String getLineWidgetMaxWidth() throws JSException {
+        return (String) mSession.call("getLineWidgetMaxWidth");
     }
 
     /**
@@ -273,11 +391,53 @@ public class EditSession {
         return (String) mSession.call("getNewLineMode");
     }
 
+    @Deprecated
+    public JSObject getNextFoldLine(Integer docRow, JSObject startFoldLine) {
+        return (JSObject) mSession.call("getNextFoldLine", docRow, startFoldLine);
+    }
+
+    /**
+     * Gets the value of an option by its name.
+     *
+     * @param name Name of the options.
+     * @return value of the option.
+     */
+    @Deprecated
+    public Object getOption(String name) {
+        return mSession.call("getOption", name);
+    }
+
+    /**
+     * Gets all values of the given list of options.
+     *
+     * @param optionNames list of option names.
+     * @return values of the options.
+     */
+    @Deprecated
+    public Object getOptions(Object optionNames) {
+        return mSession.call("getOptions", optionNames);
+    }
+
     /**
      * @return true if overwrites are enabled; false otherwise.
      */
     public boolean getOverwrite() throws JSException {
         return (boolean) mSession.call("getOverwrite");
+    }
+
+    @Deprecated
+    public JSObject getParentFoldRangeData(Integer docRow, Boolean ignoreCurrent) {
+        return (JSObject) mSession.call("getParentFoldRangeData", docRow, ignoreCurrent);
+    }
+
+    @Deprecated
+    public int getRowFoldEnd(Integer docRow, Integer startFoldRow) throws JSException {
+        return (int) mSession.call("getRowFoldEnd", docRow, startFoldRow);
+    }
+
+    @Deprecated
+    public int getRowFoldStart(Integer docRow, Integer startFoldRow) throws JSException {
+        return (int) mSession.call("getRowFoldStart", docRow, startFoldRow);
     }
 
     /**
@@ -286,6 +446,11 @@ public class EditSession {
      */
     public int getRowLength(Integer row) throws JSException {
         return (int) mSession.call("getRowLength", row);
+    }
+
+    @Deprecated
+    public int getRowLineCount(Integer row) throws JSException {
+        return (int) mSession.call("getRowFoldStart", row);
     }
 
     /**
@@ -297,6 +462,11 @@ public class EditSession {
     @Deprecated
     public String getRowSplitData(Integer row) throws JSException {
         return (String) mSession.call("getRowSplitData", row);
+    }
+
+    @Deprecated
+    public int getRowWrapIndent(Integer screenRow) throws JSException {
+        return (int) mSession.call("getRowWrapIndent", screenRow);
     }
 
     /**
@@ -367,6 +537,16 @@ public class EditSession {
     @Deprecated
     public JSObject getSelection() throws JSException {
         return (JSObject) mSession.call("getSelection");
+    }
+
+    /**
+     * Returns the string of the current selection.
+     *
+     * @return the current selection.
+     */
+    @Deprecated
+    public JSObject getSelectionMarkers() throws JSException {
+        return (JSObject) mSession.call("getSelectionMarkers");
     }
 
     /**
@@ -516,11 +696,13 @@ public class EditSession {
     }
 
     /**
-     * Undocumented.
+     * Highlight all text that matches with given regular expression.
+     *
+     * @param regExp Regular expression to highlight.
      */
     @Deprecated
-    public void highlight() throws JSException {
-        mSession.call("highlight");
+    public void highlight(String regExp) throws JSException {
+        mSession.call("highlight", regExp);
     }
 
     /**
@@ -565,10 +747,25 @@ public class EditSession {
     /**
      * Returns true if the character at the position is a soft tab.
      *
-     * @param position
+     * @return
      */
-    public boolean isTabStop(DocPos position) throws JSException {
-        return (boolean) mSession.call("isTabStop", position.toString());
+    public boolean isRowFolded(Integer docRow, Integer startFoldRow) throws JSException {
+        return (boolean) mSession.call("isRowFolded", docRow, startFoldRow);
+    }
+
+    /**
+     * Returns true if the character at the position is a soft tab.
+     *
+     * @param position
+     * @return
+     */
+    @Deprecated
+    public boolean isTabStop(JSObject position) throws JSException {
+        return (boolean) mSession.call("isTabStop", position);
+    }
+
+    public void markUndoGroup() {
+        mSession.call("markUndoGroup");
     }
 
     /**
@@ -609,6 +806,16 @@ public class EditSession {
     @Deprecated
     public JSObject moveText(JSObject fromRange, DocPos toPosition) throws JSException {
         return (JSObject) mSession.call("moveText", fromRange.toString(), toPosition.toString());
+    }
+
+    @Deprecated
+    public void off(String eventName, Object callback) throws JSException {
+        mSession.call("off", eventName, callback);
+    }
+
+    @Deprecated
+    public void on(String eventName, Object callback, Boolean capturing) throws JSException {
+        mSession.call("off", eventName, callback, capturing);
     }
 
     //
@@ -659,6 +866,16 @@ public class EditSession {
         return (JSObject) mSession.call("remove", range.toString());
     }
 
+    @Deprecated
+    public void removeFold(JSObject fold) {
+        mSession.call("removeFold", fold);
+    }
+
+    @Deprecated
+    public void removeFullLines(Integer firstRow, Integer lastRow) {
+        mSession.call("removeFold", firstRow, lastRow);
+    }
+
     /**
      * Removes className from the row.
      *
@@ -693,14 +910,6 @@ public class EditSession {
     }
 
     /**
-     * Undocumented
-     */
-    @Deprecated
-    public void reset() throws JSException {
-        mSession.call("reset");
-    }
-
-    /**
      * Clear caches. Clears wrap data, row caches, tokenizer etc.
      */
     public void resetCaches() throws JSException {
@@ -727,10 +936,10 @@ public class EditSession {
      *
      * @param screenRow Required. The screen row to check
      * @param screenColumn Required. The screen column to check
-     * @return row of the converted coordinate.
+     * @return the converted coordinate.
      */
-    public int screenToDocumentRow(Integer screenRow, Integer screenColumn) throws JSException {
-        return screenToDocumentPosition(screenRow, screenColumn).getRow();
+    public DocPos screenToDocumentPosition(Integer screenRow, Integer screenColumn) throws JSException {
+        return new DocPos((JSObject) mSession.call("screenToDocumentPosition", screenRow, screenColumn));
     }
 
     /**
@@ -740,10 +949,10 @@ public class EditSession {
      *
      * @param screenRow Required. The screen row to check
      * @param screenColumn Required. The screen column to check
-     * @return the converted coordinate.
+     * @return row of the converted coordinate.
      */
-    public DocPos screenToDocumentPosition(Integer screenRow, Integer screenColumn) throws JSException {
-        return new DocPos((JSObject) mSession.call("screenToDocumentPosition", screenRow, screenColumn));
+    public int screenToDocumentRow(Integer screenRow, Integer screenColumn) throws JSException {
+        return screenToDocumentPosition(screenRow, screenColumn).getRow();
     }
 
     /**
@@ -790,6 +999,11 @@ public class EditSession {
         mSession.call("setDocument", doc);
     }
 
+    @Deprecated
+    public void setFoldStyle(JSObject style) {
+        mSession.call("setFoldStyle", style);
+    }
+
     /**
      * By default, the editor supports plain text mode. All other language modes
      * are available as separate modules. Mode should be provided like this:
@@ -809,6 +1023,18 @@ public class EditSession {
      */
     public void setNewLineMode(String newLineMode) throws JSException {
         mSession.call("setNewLineMode", newLineMode);
+    }
+
+    @Deprecated
+    public void setOption(String name, Object value) throws JSException {
+        mSession.call("setOption", name, value);
+    }
+
+    @Deprecated
+    public void setOptions(Map<String, Object> opList) throws JSException {
+        opList.forEach((String name, Object value) -> {
+            this.setOption(name, value);
+        });
     }
 
     /**
@@ -924,13 +1150,6 @@ public class EditSession {
     }
 
     /**
-     * Sets the value of overwrite to the opposite of whatever it currently is.
-     */
-    public void toggleOverwrite() throws JSException {
-        mSession.call("toggleOverwrite");
-    }
-
-    /**
      * Returns the current Document as a string.
      *
      * @return the current Document as a string.
@@ -941,10 +1160,36 @@ public class EditSession {
     }
 
     /**
+     * Toggles all the folds.
+     *
+     * @param tryToUnfold true if unfold the folded regions.
+     */
+    public void toggleFold(Boolean tryToUnfold) {
+        mSession.call("toggleFold", tryToUnfold);
+    }
+
+    @Deprecated
+    public void toggleFoldWidget(JSObject toggleParent) {
+        mSession.call("toggleFoldWidget", toggleParent);
+    }
+
+    /**
+     * Sets the value of overwrite to the opposite of whatever it currently is.
+     */
+    public void toggleOverwrite() throws JSException {
+        mSession.call("toggleOverwrite");
+    }
+
+    /**
      * Same as getUndoManager.undo(true)
      */
     public void undo() throws JSException {
         mUndoManager.undo(true);
+    }
+
+    @Deprecated
+    public void unfold(Object location, Boolean expandInner) {
+        mSession.call("unfold", location, expandInner);
     }
 
     /**

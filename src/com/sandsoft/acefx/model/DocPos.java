@@ -32,13 +32,8 @@ public class DocPos {
     }
 
     public DocPos(JSObject arg) {
-        this.mRow = (int) arg.eval("this['row']");
-        this.mColumn = (int) arg.eval("this['column']");
-    }
-
-    @Override
-    public String toString() {
-        return String.format("{row: %d, column: %d}", mRow, mColumn);
+        this.mRow = (int) arg.getMember("row");
+        this.mColumn = (int) arg.getMember("column");
     }
 
     public int getRow() {
@@ -55,5 +50,10 @@ public class DocPos {
 
     public void setColumn(int col) {
         this.mColumn = col;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("{row: %d, column: %d}", mRow, mColumn);
     }
 }
