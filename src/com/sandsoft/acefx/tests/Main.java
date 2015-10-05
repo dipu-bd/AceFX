@@ -17,7 +17,10 @@ package com.sandsoft.acefx.tests;
 
 import com.sandsoft.acefx.AceEditor;
 import com.sandsoft.acefx.model.DocPos;
+import com.sandsoft.acefx.model.Range;
+import com.sandsoft.acefx.model.SearchOptions;
 import com.sandsoft.acefx.model.ThemeData;
+import com.sandsoft.acefx.util.JSUtils;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,6 +40,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+
         final Button button = new Button();
         button.setMaxWidth(1e08);
         button.setText("RUN TESTS");
@@ -57,24 +61,30 @@ public class Main extends Application {
 
         root.readyProperty().addListener((event) -> {
             root.getEditor().setFontSize(16);
-            root.getSession().setMode("ace/mode/javascript");
+            root.getSession().setMode("ace/mode/java");
             button.setVisible(true);
 
-            root.setText(
-                    "function foo(items) {\n"
-                    + "    var i;\n"
-                    + "    for (i = 0; i &lt; items.length; i++) {\n"
-                    + "        alert(\"Ace Rocks \" + items[i]);\n"
-                    + "}\n");
+            System.out.println("Scrool speed " + root.getEditor().getScrollSpeed());
+
+            root.setText(GetterSetter.getterAndSetter(
+                    "boolean mGlobal;boolean mIgnoreCase;int mLastIndex;boolean mMultiline;String mSource;"
+                    + "boolean mWrap;boolean mBackwards;private boolean mCaseSensitive;\nString mNeedle;"
+                    + "boolean mUseRE;boolean mSkipCurrent;\nboolean mWholeWord;RegExp mRE;\nRange mStart;"
+                    + "int mRow; int mColumn;"));
         });
     }
 
     ArrayList<ThemeData> list;
 
     public void runTests(final AceEditor editor) {
-        try { 
-            ObjectMapper.MapObject((JSObject)editor.executeScript("ace"));
+        try {
+            //Range range = new Range(0, 0, 5, 0);
+            //ObjectMapper.MapObject(0, JSUtils.getObject(editor.getEditor().getEditorObject(), range));
 
+            editor.getEditor().moveText(new Range(0, 0, 5, 10), new DocPos(12, 12), Boolean.TRUE);
+
+            //editor.getEditor().getSession().getBracketRange(new DocPos(4, 0));
+            //editor.getEditor().moveCursorTo(3, 14);
             //+ "modelist.getModeForPath(path)"));
 //            if (list == null || list.isEmpty()) {
 //                list = editor.getThemeList();

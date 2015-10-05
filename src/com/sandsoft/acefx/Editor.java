@@ -17,9 +17,12 @@ package com.sandsoft.acefx;
 
 import com.sandsoft.acefx.model.DocPos;
 import com.sandsoft.acefx.model.Range;
+import com.sandsoft.acefx.model.SearchOptions;
+import com.sandsoft.acefx.util.JSUtils;
 import java.util.Map;
 import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
+import netscape.javascript.JSUtil;
 
 /**
  *
@@ -33,6 +36,15 @@ public class Editor {
     public Editor(final JSObject editor) throws JSException {
         mEditor = editor;
         mEditSession = new EditSession((JSObject) editor.call("getSession"));
+    }
+
+    /**
+     * Gets the java script object wrapped by this instance.
+     *
+     * @return java script object being wrapped.
+     */
+    public final JSObject getEditorObject() {
+        return mEditor;
     }
 
     /**
@@ -146,9 +158,8 @@ public class Editor {
      * if unsure.
      * @param animate If true animate scrolling. Leave null if unsure.
      */
-    @Deprecated
-    public void find(String needle, JSObject options, Boolean animate) throws JSException {
-        mEditor.call("find", needle, options, animate);
+    public void find(String needle, SearchOptions options, Boolean animate) throws JSException {
+        mEditor.call("find", needle, JSUtils.getObject(mEditor, options), animate);
     }
 
     /**
@@ -159,9 +170,8 @@ public class Editor {
      * @param keeps Required.
      * @return
      */
-    @Deprecated
-    public int findAll(String needle, JSObject options, Boolean keeps) throws JSException {
-        return (int) mEditor.call("findAll", needle, options, keeps);
+    public int findAll(String needle, SearchOptions options, Boolean keeps) throws JSException {
+        return (int) mEditor.call("findAll", needle, JSUtils.getObject(mEditor, options), keeps);
     }
 
     /**
@@ -171,9 +181,8 @@ public class Editor {
      * @param options Required. An object defining various search properties
      * @param animate Required. If true animate scrolling
      */
-    @Deprecated
-    public void findNext(JSObject options, Boolean animate) throws JSException {
-        mEditor.call("findNext", options, animate);
+    public void findNext(SearchOptions options, Boolean animate) throws JSException {
+        mEditor.call("findNext", JSUtils.getObject(mEditor, options), animate);
     }
 
     /**
@@ -183,9 +192,8 @@ public class Editor {
      * @param options Required. An object defining various search properties
      * @param animate Required. If true animate scrolling
      */
-    @Deprecated
-    public void findPrevious(JSObject options, Boolean animate) throws JSException {
-        mEditor.call("findPrevious", options, animate);
+    public void findPrevious(SearchOptions options, Boolean animate) throws JSException {
+        mEditor.call("findPrevious", JSUtils.getObject(mEditor, options), animate);
     }
 
     /**
@@ -324,8 +332,8 @@ public class Editor {
      * @return an object containing all the search options.
      */
     @Deprecated
-    public JSObject getLastSearchOptions() throws JSException {
-        return (JSObject) mEditor.call("getLastSearchOptions");
+    public SearchOptions getLastSearchOptions() throws JSException {
+        return new SearchOptions((JSObject) mEditor.call("getLastSearchOptions"));
     }
 
     /**
@@ -422,8 +430,8 @@ public class Editor {
      * @return the range of currently highlighted selection.
      */
     @Deprecated
-    public Selection getSelection() throws JSException {
-        return new Selection((JSObject) mEditor.call("getSelection"));
+    public Object getSelection() throws JSException {
+        return (mEditor.call("getSelection"));
     }
 
     /**
@@ -431,7 +439,6 @@ public class Editor {
      *
      * @return Range for the selected text
      */
-    @Deprecated
     public Range getSelectionRange() throws JSException {
         return new Range((JSObject) mEditor.call("getSelectionRange"));
     }
@@ -628,15 +635,12 @@ public class Editor {
      *
      * @param pos Required. An object with two properties, row and column
      */
-    @Deprecated
-    public void moveCursorToPosition(JSObject pos) throws JSException {
-        mEditor.call("moveCursorToPosition", pos);
+    public void moveCursorToPosition(DocPos pos) throws JSException {
+        mEditor.call("moveCursorToPosition", JSUtils.getObject(mEditor, pos.toString()));
     }
 
     /**
      * Shifts all the selected lines down one row.
-     *
-     * @return number of lines moved.
      */
     public void moveLinesDown() throws JSException {
         mEditor.call("moveLinesDown");
@@ -644,18 +648,24 @@ public class Editor {
 
     /**
      * Shifts all the selected lines up one row.
-     *
-     * @return number of lines moved.
      */
     public void moveLinesUp() throws JSException {
         mEditor.call("moveLinesUp");
     }
 
     /**
-     * Undocumented
+     * Moves a range of text to a specific position. If copy parameter is true
+     * it will copy the text to that position keeping the original text intact,
+     * otherwise it will remove the original text.
+     *
+     * @param fromRange Range of text which should be moved.
+     * @param toPosition Position in the document where to move.
+     * @param copy True to leave a copy of original text; False otherwise.
      */
-    @Deprecated
-    public void moveText() {
+    public void moveText(Range fromRange, DocPos toPosition, Boolean copy) {
+        mEditor.call("moveText",
+                JSUtils.getObject(mEditor, fromRange),
+                JSUtils.getObject(mEditor, toPosition), copy);
     }
 
     /**
@@ -829,8 +839,8 @@ public class Editor {
      * @param range Required. selection range added with addSelectionMarker().
      */
     @Deprecated
-    public void removeSelectionMarker(JSObject range) throws JSException {
-        mEditor.call("removeSelectionMarker", range);
+    public void removeSelectionMarker(Range range) throws JSException {
+        mEditor.call("removeSelectionMarker", JSUtils.getObject(mEditor, range.toString()));
     }
 
     /**
@@ -864,26 +874,24 @@ public class Editor {
     }
 
     /**
-     * Replaces the first occurance of options.needle with the value in
+     * Replaces the first occurrence of options.needle with the value in
      * replacement.
      *
      ** @param replacement Required. The text to replace with
      * @param options Required. The Search options to use
      */
-    @Deprecated
-    public void replace(String replacement, JSObject options) throws JSException {
-        mEditor.call("replace", replacement, options);
+    public void replace(String replacement, SearchOptions options) throws JSException {
+        mEditor.call("replace", replacement, JSUtils.getObject(mEditor, options));
     }
 
     /**
-     * Replaces all occurances of options.needle with the value in replacement.
+     * Replaces all occurrences of options.needle with the value in replacement.
      *
      * @param replacement Required. The text to replace with
      * @param options Required. The Search options to use
      */
-    @Deprecated
-    public void replaceAll(String replacement, JSObject options) throws JSException {
-        mEditor.call("replaceAll", replacement, options);
+    public void replaceAll(String replacement, SearchOptions options) throws JSException {
+        mEditor.call("replaceAll", replacement, JSUtils.getObject(mEditor, options));
     }
 
     /**
@@ -902,9 +910,8 @@ public class Editor {
      * @param range Required. Range to reveal. replacement.
      * @param animate Required. true to animate.
      */
-    @Deprecated
-    public void revealRange(JSObject range, Boolean animate) throws JSException {
-        mEditor.call("revealRange", range, animate);
+    public void revealRange(Range range, Boolean animate) throws JSException {
+        mEditor.call("revealRange", JSUtils.getObject(mEditor, range), animate);
     }
 
     /**
@@ -933,7 +940,7 @@ public class Editor {
      * @param callback Function to pass
      */
     @Deprecated
-    public void scrollToLine(Integer line, Boolean center, Boolean animate, JSObject callback) {
+    public void scrollToLine(Integer line, Boolean center, Boolean animate, Object callback) {
         mEditor.call("scrollToLine", line, center, animate, callback);
     }
 

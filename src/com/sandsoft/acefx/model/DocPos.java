@@ -26,6 +26,11 @@ public class DocPos {
     private int mRow;
     private int mColumn;
 
+    public DocPos() {
+        mRow = 0;
+        mColumn = 0;
+    }
+
     public DocPos(int row, int column) {
         this.mRow = row;
         this.mColumn = column;

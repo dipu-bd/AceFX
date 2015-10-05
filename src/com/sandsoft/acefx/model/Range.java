@@ -25,7 +25,13 @@ public class Range {
 
     private DocPos mEnd;
     private DocPos mStart;
-
+    
+    public Range()
+    {
+        mEnd = new DocPos();
+        mStart = new DocPos();
+    }
+    
     public Range(int startRow, int startColumn, int endRow, int endColumn) {
         this.mStart = new DocPos(startRow, startColumn);
         this.mEnd = new DocPos(endRow, endColumn);
@@ -54,7 +60,7 @@ public class Range {
 
     @Override
     public String toString() {
-        return String.format("{ start=%s; end=%s; }", mStart, mEnd);
+        return String.format("{start:%s, end:%s}", mStart, mEnd);
     }
 
 }

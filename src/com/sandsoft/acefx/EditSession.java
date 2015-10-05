@@ -17,6 +17,8 @@ package com.sandsoft.acefx;
 
 import com.sandsoft.acefx.model.DocPos;
 import com.sandsoft.acefx.model.Range;
+import com.sandsoft.acefx.util.JSUtils;
+import java.util.ArrayList;
 import java.util.Map;
 import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
@@ -85,8 +87,8 @@ public class EditSession {
      * @return
      */
     @Deprecated
-    public int addMarker(JSObject range, String clazz, String type, Boolean inFront) throws JSException {
-        return (int) mSession.call("addMarker", range.toString(), clazz, type, inFront);
+    public int addMarker(Range range, String clazz, String type, Boolean inFront) throws JSException {
+        return (int) mSession.call("addMarker", JSUtils.getObject(mSession, range), clazz, type, inFront);
     }
 
     public boolean adjustWrapLimit(Integer limit, boolean printMargin) throws JSException {
@@ -183,11 +185,19 @@ public class EditSession {
      * @return Position of either closing or opening bracket.
      */
     @Deprecated
-    public DocPos findMatchingBracket(JSObject position, Character chr) {
-        return new DocPos((JSObject) mSession.call("findMatchingBracket", position, chr));
+    public DocPos findMatchingBracket(DocPos position, Character chr) {
+        return new DocPos((JSObject) mSession.call("findMatchingBracket", JSUtils.getObject(mSession, position), chr));
     }
 
-    @Deprecated
+    /**
+     * Folds all foldable regions between startRow and endRow. The depth is the
+     * maximum number of level of a child fold region to be folded along with
+     * its parent.
+     *
+     * @param startRow Start row to start folding.
+     * @param endRow End row to stop folding.
+     * @param depth Depth of the foldable region.
+     */
     public void foldAll(Integer startRow, Integer endRow, Integer depth) {
         mSession.call("foldAll", startRow, endRow, depth);
     }
@@ -218,8 +228,9 @@ public class EditSession {
     }
 
     @Deprecated
-    public Range getBracketRange(JSObject pos) {
-        return new Range((JSObject) mSession.call("", pos));
+    public Range getBracketRange(DocPos pos) {
+        JSObject obj = (JSObject) mSession.call("getBracketRange", JSUtils.getObject(mSession, pos));
+        return obj == null ? null : new Range(obj);
     }
 
     /**
@@ -239,8 +250,8 @@ public class EditSession {
      * @return
      */
     @Deprecated
-    public JSObject getCommentFoldRange(Integer row, Integer column, Integer dir) {
-        return (JSObject) mSession.call("getCommentFoldRange", row, column, dir);
+    public Range getCommentFoldRange(Integer row, Integer column, Integer dir) {
+        return new Range((JSObject) mSession.call("getCommentFoldRange", row, column, dir));
     }
 
     @Deprecated
@@ -317,13 +328,13 @@ public class EditSession {
     }
 
     @Deprecated
-    public JSObject getFoldsInRange(JSObject range) {
-        return (JSObject) mSession.call("getFoldsInRange", range);
+    public JSObject getFoldsInRange(Range range) {
+        return (JSObject) mSession.call("getFoldsInRange", JSUtils.getObject(mSession, range));
     }
 
     @Deprecated
-    public JSObject getFoldsInRangeList(JSObject range) {
-        return (JSObject) mSession.call("getFoldsInRangeList", range);
+    public JSObject getFoldsInRangeList(ArrayList<Range> range) {
+        return (JSObject) mSession.call("getFoldsInRangeList", JSUtils.getObjectByList(mSession, range));
     }
 
     /**
