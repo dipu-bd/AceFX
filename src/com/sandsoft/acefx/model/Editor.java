@@ -1103,9 +1103,9 @@ public class Editor {
 
     @Deprecated
     public void setOptions(Map<String, Object> opList) throws JSException {
-        opList.forEach((String name, Object value) -> {
-            this.setOption(name, value);
-        });
+        for(String name : opList.keySet()) {
+            this.setOption(name, opList.get(name));
+        }
     }
 
     /**

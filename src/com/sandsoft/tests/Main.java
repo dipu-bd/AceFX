@@ -24,11 +24,12 @@ import java.util.logging.Logger;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.scene.control.Button;
-import javafx.scene.input.KeyEvent;
 import netscape.javascript.JSObject;
 
 /**
@@ -51,44 +52,69 @@ public class Main extends Application {
         button2.setVisible(false);
 
         final AceEditor root = new AceEditor();
-        root.setTop(button1);
-        root.setBottom(button2);
+//        root.setTop(button1);
+//        root.setBottom(button2);
         Scene scene = new Scene(root, 800, 400);
 
         primaryStage.setTitle("Ace Editor Test");
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        button1.setOnAction((event) -> {
-            runTest1(root);
-        });
-        button2.setOnAction((event) -> {
-            runTest2(root);
-        });
- 
-        root.addEventHandler(AceEventProcessor.onChangeEvent, event -> {
-            System.out.println("Hello there!");
+        root.readyProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+
+                root.getEditor().setFontSize(16);
+                root.getSession().setMode("ace/mode/java");
+                root.setText(GetterSetter.getterAndSetter(
+                        "boolean mGlobal;boolean mIgnoreCase;int mLastIndex;boolean mMultiline;String mSource;"
+                        + "boolean mWrap;boolean mBackwards;private boolean mCaseSensitive;\nString mNeedle;"
+                        + "boolean mUseRE;boolean mSkipCurrent;\nboolean mWholeWord;RegExp mRE;\nRange mStart;"
+                        + "int mRow; int mColumn;"));
+
+                button1.setVisible(true);
+                button2.setVisible(true);
+            }
         });
 
-        root.readyProperty().addListener((event) -> {
-            root.getEditor().setFontSize(16);
-            root.getSession().setMode("ace/mode/java");
-            root.setText(GetterSetter.getterAndSetter(
-                    "boolean mGlobal;boolean mIgnoreCase;int mLastIndex;boolean mMultiline;String mSource;"
-                    + "boolean mWrap;boolean mBackwards;private boolean mCaseSensitive;\nString mNeedle;"
-                    + "boolean mUseRE;boolean mSkipCurrent;\nboolean mWholeWord;RegExp mRE;\nRange mStart;"
-                    + "int mRow; int mColumn;"));
+        root.addEventHandler(AceEventProcessor.onChangeEvent, new EventHandler<Event>() {
 
-            button1.setVisible(true);
-            button2.setVisible(true);
+            @Override
+            public void handle(Event t) {
+                System.out.println("Hello there!");
+            }
         });
+
+        root.addEventHandler(AceEventProcessor.onFocusEvent, new EventHandler<Event>() {
+            @Override
+            public void handle(Event t) {
+                focusEvent();
+            }
+        });
+
+        button1.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent t) {
+                runTest1(root);
+            }
+        });
+        button2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                runTest2(root);
+            }
+        });
+    }
+
+    public void focusEvent() {
+        System.out.println("Got focus");
     }
 
     public static final int MAX_LEVEL = 2;
 
     public void runTest1(final AceEditor editor) {
         try {
-
             System.out.println("=================  1st test finished. ================= ");
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);

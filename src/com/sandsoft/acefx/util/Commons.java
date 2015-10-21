@@ -17,6 +17,7 @@ package com.sandsoft.acefx.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import netscape.javascript.JSObject;
 
 /**
@@ -45,9 +46,15 @@ public class Commons {
      * @param object String representation of a valid JavaScript object.
      * @return JSObject created from the given object string.
      */
-    public static JSObject getObjectByList(JSObject parent, Collection<?> object) {
-        String[] data = object.toArray(new String[0]);
-        return (JSObject) parent.eval(String.format("(function() { return [%s]; })()", String.join(",", data)));
+    public static JSObject getObjectByList(JSObject parent, Collection<?> object) { 
+        Iterator<?> it = object.iterator();                
+        StringBuilder sb = new StringBuilder();
+        while(it.hasNext())
+        {
+            if(sb.length() > 0) sb.append(",");
+            sb.append(it.next());
+        }
+        return (JSObject) parent.eval(String.format("(function() { return [%s]; })()", sb.toString()));
     }
  
     /**

@@ -39,7 +39,7 @@ public class EditSession {
      */
     public EditSession(JSObject session) throws JSException {
         mSession = session;
-        JSObject undoManager = (JSObject) session.call("getUndoManager"); 
+        JSObject undoManager = (JSObject) session.call("getUndoManager");
         mUndoManager = new UndoManager(undoManager);
     }
 
@@ -1053,9 +1053,9 @@ public class EditSession {
 
     @Deprecated
     public void setOptions(Map<String, Object> opList) throws JSException {
-        opList.forEach((String name, Object value) -> {
-            this.setOption(name, value);
-        });
+        for (String name : opList.keySet()) {
+            this.setOption(name, opList.get(name));
+        }
     }
 
     /**

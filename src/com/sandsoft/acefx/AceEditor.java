@@ -23,6 +23,7 @@ import com.sandsoft.acefx.model.EditSession;
 import com.sandsoft.acefx.model.ModeData;
 import com.sandsoft.acefx.model.ThemeData;
 import com.sandsoft.acefx.util.Commons;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,7 +35,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.concurrent.Worker; 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.BorderPane;
@@ -94,15 +97,19 @@ public final class AceEditor extends BorderPane {
         mWebEngine.loadContent(getHTML());
 
         // process page loading
-        mWebEngine.getLoadWorker().stateProperty().addListener((event) -> {
-            if (mWebEngine.getLoadWorker().getState() == Worker.State.SUCCEEDED) {
-                mAce = (JSObject) mWebEngine.executeScript("ace");
-                JSObject editor = (JSObject) mAce.call("edit", "editor");
-                mEditor = new Editor(editor);
-                setEventCatchers(editor);
-                mReady.set(true);
+        mWebEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
+            @Override
+            public void changed(ObservableValue<? extends Worker.State> ov, Worker.State t, Worker.State t1) {
+                if (mWebEngine.getLoadWorker().getState() == Worker.State.SUCCEEDED) {
+                    mAce = (JSObject) mWebEngine.executeScript("ace");
+                    JSObject editor = (JSObject) mAce.call("edit", "editor");
+                    mEditor = new Editor(editor);
+                    setEventCatchers(editor);
+                    mReady.set(true);
+                }
             }
-        });
+        }
+        );
     }
 
     /**
@@ -181,7 +188,7 @@ public final class AceEditor extends BorderPane {
         editor.eval("this.getSession().on('changeWrapLimit', function() { editor.mAceEvent.onChangeWrapLimit(); });");
         editor.eval("this.getSession().on('changeWrapMode', function() { editor.mAceEvent.onChangeWrapMode(); });");
         editor.eval("this.getSession().on('tokenizerUpdate', function(e) { editor.mAceEvent.onTokenizerUpadate(e); });");
-    }   
+    }
 
     /**
      * Checks if the editor is ready for interaction.

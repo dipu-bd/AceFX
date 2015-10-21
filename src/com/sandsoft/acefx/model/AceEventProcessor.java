@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Dipu.
+ * Copyright 2015 Sudipto Chandra.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@
 package com.sandsoft.acefx.model;
 
 import com.sandsoft.acefx.AceEditor;
+
 import javafx.event.Event;
 import javafx.event.EventType;
 
 /**
  *
- * @author Dipu
+ * @author Sudipto Chandra
  */
 public class AceEventProcessor {
         
