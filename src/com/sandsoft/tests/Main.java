@@ -16,6 +16,7 @@
 package com.sandsoft.tests;
 
 import com.sandsoft.acefx.AceEditor;
+import com.sandsoft.acefx.model.AceEventProcessor;
 import com.sandsoft.acefx.util.Commons;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -23,7 +24,11 @@ import java.util.logging.Logger;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.application.Application;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyEvent;
 import netscape.javascript.JSObject;
 
 /**
@@ -60,6 +65,10 @@ public class Main extends Application {
         button2.setOnAction((event) -> {
             runTest2(root);
         });
+ 
+        root.addEventHandler(AceEventProcessor.onChangeEvent, event -> {
+            System.out.println("Hello there!");
+        });
 
         root.readyProperty().addListener((event) -> {
             root.getEditor().setFontSize(16);
@@ -75,11 +84,10 @@ public class Main extends Application {
         });
     }
 
-    public static final int MAX_LEVEL =2;
+    public static final int MAX_LEVEL = 2;
 
     public void runTest1(final AceEditor editor) {
-        try { 
-            
+        try {
 
             System.out.println("=================  1st test finished. ================= ");
         } catch (Exception ex) {

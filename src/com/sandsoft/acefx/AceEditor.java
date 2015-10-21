@@ -15,7 +15,7 @@
  */
 package com.sandsoft.acefx;
 
-import com.sandsoft.acefx.model.AceEvent;
+import com.sandsoft.acefx.model.AceEventProcessor;
 import com.sandsoft.acefx.model.Command;
 import com.sandsoft.acefx.model.Editor;
 import com.sandsoft.acefx.model.UndoManager;
@@ -34,7 +34,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.concurrent.Worker;
+import javafx.concurrent.Worker; 
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.BorderPane;
@@ -98,12 +98,12 @@ public final class AceEditor extends BorderPane {
             if (mWebEngine.getLoadWorker().getState() == Worker.State.SUCCEEDED) {
                 mAce = (JSObject) mWebEngine.executeScript("ace");
                 JSObject editor = (JSObject) mAce.call("edit", "editor");
-                editor.setMember("mAceEvent", new AceEvent());
                 mEditor = new Editor(editor);
+                setEventCatchers(editor);
                 mReady.set(true);
             }
         });
-    } 
+    }
 
     /**
      * Gets the HTML content that loads the editor.
@@ -147,6 +147,41 @@ public final class AceEditor extends BorderPane {
                 + "</html>\n";
         return String.format(html, acepath);
     }
+
+    /**
+     * Creates event listener. <br/>
+     * This uses the 'upcall' feature from java-script to java.
+     *
+     * @param editor
+     */
+    private void setEventCatchers(JSObject editor) {
+        //set interface object
+        editor.setMember("mAceEvent", new AceEventProcessor(this));
+
+        //on editor events
+        editor.eval("this.on('blur', function() { editor.mAceEvent.onBlur(); });");
+        editor.eval("this.on('change', function(e) { editor.mAceEvent.onChange(e); });");
+        editor.eval("this.on('changeSelectionStyle', function(e) { editor.mAceEvent.onChangeSelectionStyle(e); });");
+        editor.eval("this.on('changeSession', function(e) { editor.mAceEvent.onChangeSession(e); });");
+        editor.eval("this.on('copy', function(e) { editor.mAceEvent.onCopy(e); });");
+        editor.eval("this.on('focus', function() { editor.mAceEvent.onFocus(); });");
+        editor.eval("this.on('paste', function(e) { editor.mAceEvent.onPaste(e); });");
+
+        //on edit session events
+        editor.eval("this.getSession().on('changeAnnotation', function() { editor.mAceEvent.onChangAnnotation(); });");
+        editor.eval("this.getSession().on('changeBackMarker', function() { editor.mAceEvent.onChangeBackMarker(); });");
+        editor.eval("this.getSession().on('changeBreakpoint', function() { editor.mAceEvent.onChangeBreakpoint(); });");
+        editor.eval("this.getSession().on('changeFold', function() { editor.mAceEvent.onChangeFold(); });");
+        editor.eval("this.getSession().on('changeFrontMarker', function() { editor.mAceEvent.onChangeFrontMarker(); });");
+        editor.eval("this.getSession().on('changeMode', function() { editor.mAceEvent.onChangeMode(); });");
+        editor.eval("this.getSession().on('changeOverwrite', function() { editor.mAceEvent.onChangeOverwrite(); });");
+        editor.eval("this.getSession().on('changeScrollLeft', function(e) { editor.mAceEvent.onChangeScrollLeft(e); });");
+        editor.eval("this.getSession().on('changeScrollTop', function(e) { editor.mAceEvent.onChangeScrollTop(e); });");
+        editor.eval("this.getSession().on('changeTabSize', function() { editor.mAceEvent.onChangeTabSize(); });");
+        editor.eval("this.getSession().on('changeWrapLimit', function() { editor.mAceEvent.onChangeWrapLimit(); });");
+        editor.eval("this.getSession().on('changeWrapMode', function() { editor.mAceEvent.onChangeWrapMode(); });");
+        editor.eval("this.getSession().on('tokenizerUpdate', function(e) { editor.mAceEvent.onTokenizerUpadate(e); });");
+    }   
 
     /**
      * Checks if the editor is ready for interaction.

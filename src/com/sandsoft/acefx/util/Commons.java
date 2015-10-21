@@ -49,20 +49,7 @@ public class Commons {
         String[] data = object.toArray(new String[0]);
         return (JSObject) parent.eval(String.format("(function() { return [%s]; })()", String.join(",", data)));
     }
-
-    /**
-     *
-     * @param parent
-     * @param eventName
-     * @param callerMethod
-     * @return
-     */
-    public static void setListener(JSObject parent, String parentName, String eventName, String callerMethod) {
-        parent.eval(String.format(
-                "this.on('%s', function(e) { %s.mAceEvent.%s(); });",
-                eventName, parentName, callerMethod));
-    }
-
+ 
     /**
      * Gets a list of all properties of a JavaScript object.
      *

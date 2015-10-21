@@ -39,8 +39,7 @@ public class EditSession {
      */
     public EditSession(JSObject session) throws JSException {
         mSession = session;
-        JSObject undoManager = (JSObject) (JSObject) session.call("getUndoManager");
-        undoManager.setMember("mAceEvent", session.getMember("mAceEvent"));
+        JSObject undoManager = (JSObject) session.call("getUndoManager"); 
         mUndoManager = new UndoManager(undoManager);
     }
 

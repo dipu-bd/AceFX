@@ -32,12 +32,8 @@ public class Editor {
 
     public Editor(final JSObject editor) throws JSException {
         mEditor = editor;
-        JSObject session = (JSObject) editor.call("getSession");
-        session.setMember("mAceEvent", editor.getMember("mAceEvent"));
+        JSObject session = (JSObject) editor.call("getSession"); 
         mEditSession = new EditSession(session);
-
-        //test
-        Commons.setListener(editor, "editor", "change", "onChange");
     }
 
     /**
