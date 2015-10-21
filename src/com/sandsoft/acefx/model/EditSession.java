@@ -29,7 +29,7 @@ import netscape.javascript.JSObject;
  */
 public class EditSession {
 
-    private JSObject mSession;
+    private final JSObject mSession;
     private UndoManager mUndoManager;
 
     /**
@@ -39,7 +39,9 @@ public class EditSession {
      */
     public EditSession(JSObject session) throws JSException {
         mSession = session;
-        mUndoManager = new UndoManager((JSObject) session.call("getUndoManager"));
+        JSObject undoManager = (JSObject) (JSObject) session.call("getUndoManager");
+        undoManager.setMember("mAceEvent", session.getMember("mAceEvent"));
+        mUndoManager = new UndoManager(undoManager);
     }
 
     /**

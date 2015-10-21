@@ -15,6 +15,7 @@
  */
 package com.sandsoft.acefx;
 
+import com.sandsoft.acefx.model.AceEvent;
 import com.sandsoft.acefx.model.Command;
 import com.sandsoft.acefx.model.Editor;
 import com.sandsoft.acefx.model.UndoManager;
@@ -63,6 +64,7 @@ public final class AceEditor extends BorderPane {
     private File mFilePath;
     //if the editor is ready for interaction
     private BooleanProperty mReady;
+
     //web view where editor is loaded
     private final WebView mWebView;
     //web engine to process java script
@@ -84,8 +86,8 @@ public final class AceEditor extends BorderPane {
         mWebView.setMinWidth(0.0);
         mWebView.setMinHeight(0.0);
         mWebView.setContextMenuEnabled(false);
-        this.setCenter(mWebView);
         mWebView.visibleProperty().bind(mReady);
+        this.setCenter(mWebView);
 
         //load ace 
         mWebEngine = mWebView.getEngine();
@@ -95,11 +97,13 @@ public final class AceEditor extends BorderPane {
         mWebEngine.getLoadWorker().stateProperty().addListener((event) -> {
             if (mWebEngine.getLoadWorker().getState() == Worker.State.SUCCEEDED) {
                 mAce = (JSObject) mWebEngine.executeScript("ace");
-                mEditor = new Editor((JSObject) mAce.call("edit", "editor"));
+                JSObject editor = (JSObject) mAce.call("edit", "editor");
+                editor.setMember("mAceEvent", new AceEvent());
+                mEditor = new Editor(editor);
                 mReady.set(true);
             }
         });
-    }
+    } 
 
     /**
      * Gets the HTML content that loads the editor.
@@ -381,15 +385,10 @@ public final class AceEditor extends BorderPane {
     }
 
     /**
-     * Gets the list of available language modes. returns an empty array on
-     * failure.
+     * Gets a list of all available command and keyboard shortcuts
      *
-     * @return list of available language modes.
+     * @return List of available commands
      */
-    public ArrayList<ModeData> getModeList() {
-        return null;
-    }
-
     public ArrayList<Command> getCommandList() {
         JSObject names = (JSObject) mEditor.getModel().eval("this.commands.byName");
         ArrayList<Command> arr = new ArrayList<>();
@@ -397,5 +396,15 @@ public final class AceEditor extends BorderPane {
             arr.add(new Command((JSObject) names.getMember(str)));
         }
         return arr;
+    }
+
+    /**
+     * Gets the list of available language modes. returns an empty array on
+     * failure.
+     *
+     * @return list of available language modes.
+     */
+    public ArrayList<ModeData> getModeList() {
+        return null;
     }
 }

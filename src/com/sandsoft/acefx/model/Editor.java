@@ -15,14 +15,11 @@
  */
 package com.sandsoft.acefx.model;
 
-import com.sandsoft.acefx.model.DocPos;
-import com.sandsoft.acefx.model.Range;
-import com.sandsoft.acefx.model.SearchOptions;
 import com.sandsoft.acefx.util.Commons;
+import com.sandsoft.tests.Main;
 import java.util.Map;
 import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
-import netscape.javascript.JSUtil;
 
 /**
  *
@@ -35,7 +32,12 @@ public class Editor {
 
     public Editor(final JSObject editor) throws JSException {
         mEditor = editor;
-        mEditSession = new EditSession((JSObject) editor.call("getSession"));
+        JSObject session = (JSObject) editor.call("getSession");
+        session.setMember("mAceEvent", editor.getMember("mAceEvent"));
+        mEditSession = new EditSession(session);
+
+        //test
+        Commons.setListener(editor, "editor", "change", "onChange");
     }
 
     /**

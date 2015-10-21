@@ -16,8 +16,6 @@
 package com.sandsoft.tests;
 
 import com.sandsoft.acefx.AceEditor;
-import com.sandsoft.acefx.model.Command;
-import com.sandsoft.acefx.model.ThemeData;
 import com.sandsoft.acefx.util.Commons;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -80,8 +78,8 @@ public class Main extends Application {
     public static final int MAX_LEVEL =2;
 
     public void runTest1(final AceEditor editor) {
-        try {
-            MapObject(editor.getEditor().getModel().getMember("$options"));
+        try { 
+            
 
             System.out.println("=================  1st test finished. ================= ");
         } catch (Exception ex) {
