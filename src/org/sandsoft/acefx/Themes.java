@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sandsoft.acefx;
+package org.sandsoft.acefx;
 
-import com.sandsoft.acefx.model.ThemeData;
+import org.sandsoft.acefx.model.ThemeData;
 
 /**
  * Contains some pre-defined themes for ace editor.

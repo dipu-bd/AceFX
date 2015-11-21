@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sandsoft.acefx.model;
+package org.sandsoft.acefx.model;
 
-import com.sandsoft.acefx.AceEditor;
+import org.sandsoft.acefx.AceEditor;
 
 /**
  *

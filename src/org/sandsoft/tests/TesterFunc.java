@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sandsoft.tests;
+package org.sandsoft.tests;
 
-import com.sandsoft.acefx.model.ThemeData;
+import org.sandsoft.acefx.model.ThemeData;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

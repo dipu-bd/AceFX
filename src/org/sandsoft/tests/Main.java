@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sandsoft.tests;
+package org.sandsoft.tests;
 
-import com.sandsoft.acefx.AceEditor;
-import com.sandsoft.acefx.Modes;
-import com.sandsoft.acefx.Themes;
-import com.sandsoft.acefx.model.AceEventProcessor;
-import com.sandsoft.acefx.util.Commons;
+import org.sandsoft.acefx.AceEditor;
+import org.sandsoft.acefx.Modes;
+import org.sandsoft.acefx.Themes;
+import org.sandsoft.acefx.model.AceEventProcessor;
+import org.sandsoft.acefx.util.Commons;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;

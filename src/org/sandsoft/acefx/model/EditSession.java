@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sandsoft.acefx.model;
+package org.sandsoft.acefx.model;
 
-import com.sandsoft.acefx.Modes;
-import com.sandsoft.acefx.model.DocPos;
-import com.sandsoft.acefx.model.Range;
-import com.sandsoft.acefx.util.Commons;
+import org.sandsoft.acefx.Modes;
+import org.sandsoft.acefx.model.DocPos;
+import org.sandsoft.acefx.model.Range;
+import org.sandsoft.acefx.util.Commons;
 import java.util.ArrayList;
 import java.util.Map;
 import netscape.javascript.JSException;

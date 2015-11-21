@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sandsoft.acefx.util;
+package org.sandsoft.acefx.util;
 
 import java.util.ArrayList;
 import java.util.Collection;

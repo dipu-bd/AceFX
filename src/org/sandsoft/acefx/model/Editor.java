@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sandsoft.acefx.model;
+package org.sandsoft.acefx.model;
 
-import com.sandsoft.acefx.util.Commons;
-import com.sandsoft.tests.Main;
+import org.sandsoft.acefx.util.Commons;
+import org.sandsoft.tests.Main;
 import java.util.Map;
 import netscape.javascript.JSException;
 import netscape.javascript.JSObject;

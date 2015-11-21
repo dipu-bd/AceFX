@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sandsoft.acefx;
+package org.sandsoft.acefx;
 
-import com.sandsoft.acefx.model.AceEventProcessor;
-import com.sandsoft.acefx.model.Command;
-import com.sandsoft.acefx.model.Editor;
-import com.sandsoft.acefx.model.UndoManager;
-import com.sandsoft.acefx.model.EditSession;
-import com.sandsoft.acefx.model.ModeData;
-import com.sandsoft.acefx.model.ThemeData;
-import com.sandsoft.acefx.util.Commons;
+import org.sandsoft.acefx.model.AceEventProcessor;
+import org.sandsoft.acefx.model.Command;
+import org.sandsoft.acefx.model.Editor;
+import org.sandsoft.acefx.model.UndoManager;
+import org.sandsoft.acefx.model.EditSession;
+import org.sandsoft.acefx.model.ModeData;
+import org.sandsoft.acefx.model.ThemeData;
+import org.sandsoft.acefx.util.Commons;
 
 import java.io.File;
 import java.io.FileNotFoundException;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sandsoft.acefx;
+package org.sandsoft.acefx;
 
 import java.io.File;
 import java.util.Arrays;
