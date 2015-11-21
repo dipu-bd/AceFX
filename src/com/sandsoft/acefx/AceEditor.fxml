@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.web.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?> 
+
+<GridPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.40" 
+         styleClass="ace-editor" prefHeight="400.0" prefWidth="600.0"
+         maxHeight="Infinity" maxWidth="Infinity" minHeight="0" minWidth="0">
+    <rowConstraints>
+        <RowConstraints />
+        <RowConstraints fillHeight="true"  />
+        <RowConstraints />
+    </rowConstraints>
+    <children>
+        <WebView fx:id="webView" styleClass="web-view"
+                 maxHeight="Infinity" maxWidth="Infinity" minHeight="0" minWidth="0"
+                 GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" />
+    </children>
+</GridPane>

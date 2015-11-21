@@ -3,8 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Z:/Projects/GitHub/AceFX/src/com/sandsoft/acefx/AceEditor.java</file>
-            <file>file:/Z:/Projects/GitHub/AceFX/src/com/sandsoft/acefx/model/Editor.java</file>
+            <file>file:/I:/Projects/GitHub/AceFX/src/com/sandsoft/tests/Main.java</file>
+            <file>file:/I:/Projects/GitHub/AceFX/src/com/sandsoft/acefx/Themes.java</file>
+            <file>file:/I:/Projects/GitHub/AceFX/src/com/sandsoft/tests/GetterSetter.java</file>
+            <file>file:/I:/Projects/GitHub/AceFX/src/com/sandsoft/tests/modelist.txt</file>
+            <file>file:/I:/Projects/GitHub/AceFX/src/com/sandsoft/acefx/Modes.java</file>
+            <file>file:/I:/Projects/GitHub/AceFX/src/com/sandsoft/acefx/model/ThemeData.java</file>
+            <file>file:/I:/Projects/GitHub/AceFX/src/com/sandsoft/acefx/AceEditor.fxml</file>
+            <file>file:/I:/Projects/GitHub/AceFX/src/com/sandsoft/acefx/AceEditor.java</file>
+            <file>file:/I:/Projects/GitHub/AceFX/src/com/sandsoft/tests/TesterFunc.java</file>
         </group>
     </open-files>
 </project-private>

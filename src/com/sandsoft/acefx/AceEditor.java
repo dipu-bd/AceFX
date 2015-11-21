@@ -25,9 +25,7 @@ import com.sandsoft.acefx.model.ThemeData;
 import com.sandsoft.acefx.util.Commons;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -38,6 +36,10 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.BorderPane;
@@ -45,12 +47,14 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 /**
+ * A fully functional self-sufficient code editor based on ACE.
  *
  * @author Sudipto Chandra.
  */
@@ -66,35 +70,49 @@ public final class AceEditor extends BorderPane {
     //file path to save code
     private File mFilePath;
     //if the editor is ready for interaction
-    private BooleanProperty mReady;
+    private final BooleanProperty mReady;
 
     //web view where editor is loaded
-    private final WebView mWebView;
+    @FXML
+    private WebView webView;
     //web engine to process java script
-    private final WebEngine mWebEngine;
+    private WebEngine mWebEngine;
 
     /**
      * Constructor a new editor.
+     *
+     * @throws java.io.IOException
      */
-    public AceEditor() {
+    public AceEditor() throws IOException {
         //set default to not ready state
         mReady = new SimpleBooleanProperty(false);
 
-        //setup webview
-        mWebView = new WebView();
-        mWebView.setMaxWidth(Double.MAX_VALUE);
-        mWebView.setMaxHeight(Double.MAX_VALUE);
-        mWebView.setPrefWidth(600.0);
-        mWebView.setPrefHeight(400.0);
-        mWebView.setMinWidth(0.0);
-        mWebView.setMinHeight(0.0);
-        mWebView.setContextMenuEnabled(false);
-        mWebView.visibleProperty().bind(mReady);
-        this.setCenter(mWebView);
+        //init loader           
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource(
+                getClass().getSimpleName() + ".fxml"));
+        loader.setController(this);
 
-        //load ace 
-        mWebEngine = mWebView.getEngine();
-        mWebEngine.loadContent(getHTML());
+        //attach node
+        Node node = (Node) loader.load();
+        BorderPane.setAlignment(node, Pos.CENTER);
+        this.setCenter(node);
+        this.setMinSize(0, 0);
+        this.setPrefSize(600, 400);
+        this.setMaxSize(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+
+        //post load work  
+        this.initialize();
+    }
+
+    private void initialize() {
+        //setup webview        
+        webView.setContextMenuEnabled(false);
+        webView.visibleProperty().bind(mReady);
+
+        //setup WebEngine
+        mWebEngine = webView.getEngine();
+        loadAceEditor();
 
         // process page loading
         mWebEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
@@ -113,13 +131,12 @@ public final class AceEditor extends BorderPane {
     }
 
     /**
-     * Gets the HTML content that loads the editor.
-     *
-     * @return HTML content that loads the editor.
+     * Loads the ACE editor in the web engine.
      */
-    private String getHTML() {
-        String acepath
-                = getClass().getResource(ACE_PATH).toExternalForm();
+    private void loadAceEditor() {
+        //get ace.js path
+        String acepath = getClass().getResource(ACE_PATH).toExternalForm();
+        //html wrapper
         String html
                 = "<!DOCTYPE html>\n"
                 + "<html lang=\"en\">\n"
@@ -152,7 +169,8 @@ public final class AceEditor extends BorderPane {
                 + "</script>\n"
                 + "</body>\n"
                 + "</html>\n";
-        return String.format(html, acepath);
+        //load html
+        mWebEngine.loadContent(String.format(html, acepath));
     }
 
     /**
@@ -191,23 +209,6 @@ public final class AceEditor extends BorderPane {
     }
 
     /**
-     * Checks if the editor is ready for interaction.
-     *
-     * @return true if ready; false otherwise.
-     */
-    public boolean isReady() {
-        return (mReady.get());
-    }
-
-    /**
-     * Reloads the whole editor in WebView.
-     */
-    public void reload() {
-        mReady.set(false);
-        mWebEngine.loadContent(getHTML());
-    }
-
-    /**
      * The property indicates if the editor is loaded and ready for
      * interactions.
      *
@@ -218,20 +219,37 @@ public final class AceEditor extends BorderPane {
     }
 
     /**
-     * Executes a script under the current web engine..
+     * Checks if the editor is ready for interaction.
+     *
+     * @return true if ready; false otherwise.
+     */
+    public boolean isReady() {
+        return (mReady.get());
+    }
+
+    /**
+     * Executes a script on the current web engine.
      *
      * @param script Script to execute.
-     * @return Result of execution
+     * @return
      */
     public Object executeScript(String script) throws JSException {
         return mWebEngine.executeScript(script);
     }
 
     /**
+     * Reloads the whole editor in WebView.
+     */
+    public void reload() {
+        mReady.set(false);
+        loadAceEditor();
+    }
+
+    /**
      * Gets the wrapper class for editor that is associated with this control.
      * It contains various methods to interact with the editor.
      *
-     * @return the editor from this control.
+     * @return the editor attached to this control.
      */
     public Editor getEditor() {
         return mEditor;
@@ -358,12 +376,8 @@ public final class AceEditor extends BorderPane {
      * @throws java.io.FileNotFoundException thrown if file could not be found.
      * @throws java.io.IOException thrown if file could no be read.
      */
-    public void openFile(File file) throws FileNotFoundException, IOException, NullPointerException {
-        try (FileInputStream fis = new FileInputStream(file)) {
-            byte[] data = new byte[(int) file.length()];
-            fis.read(data);
-            setText(new String(data));
-        }
+    public void openFile(File file) throws FileNotFoundException, IOException {
+        setText(FileUtils.readFileToString(file));
     }
 
     /**
@@ -372,9 +386,7 @@ public final class AceEditor extends BorderPane {
      * @throws java.io.IOException thrown if file could no be read.
      */
     public void saveFile() throws IOException, NullPointerException {
-        try (FileOutputStream fos = new FileOutputStream(mFilePath)) {
-            fos.write(getText().getBytes());
-        }
+        FileUtils.writeStringToFile(mFilePath, getText());
     }
 
     /**
@@ -392,8 +404,10 @@ public final class AceEditor extends BorderPane {
      * Returns the list of available themes. An empty list is returned on
      * failure.
      *
-     * @return the list of themes.
+     * @deprecated for internal usage only.
+     * @return list of available themes.
      */
+    @Deprecated
     public ArrayList<ThemeData> getThemeList() {
         ArrayList<ThemeData> list = new ArrayList<>();
         try {
@@ -429,8 +443,10 @@ public final class AceEditor extends BorderPane {
     /**
      * Gets a list of all available command and keyboard shortcuts
      *
-     * @return List of available commands
+     * @deprecated for internal usage only.
+     * @return list of available commands
      */
+    @Deprecated
     public ArrayList<Command> getCommandList() {
         JSObject names = (JSObject) mEditor.getModel().eval("this.commands.byName");
         ArrayList<Command> arr = new ArrayList<>();
@@ -444,9 +460,12 @@ public final class AceEditor extends BorderPane {
      * Gets the list of available language modes. returns an empty array on
      * failure.
      *
+     * @deprecated for internal usage only.
      * @return list of available language modes.
      */
+    @Deprecated
     public ArrayList<ModeData> getModeList() {
+
         return null;
     }
 }

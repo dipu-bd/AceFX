@@ -16,8 +16,10 @@
 package com.sandsoft.tests;
 
 import com.sandsoft.acefx.AceEditor;
+import com.sandsoft.acefx.Modes;
 import com.sandsoft.acefx.model.AceEventProcessor;
 import com.sandsoft.acefx.util.Commons;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,8 +40,17 @@ import netscape.javascript.JSObject;
  */
 public class Main extends Application {
 
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+
+//        TesterFunc.ModeListGenerator();
+        launch(args);
+    }
+
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws IOException {
 
         final Button button1 = new Button();
         button1.setMaxWidth(1e08);
@@ -50,23 +61,23 @@ public class Main extends Application {
         button2.setMaxWidth(1e08);
         button2.setText("RUN TESTS 2nd");
         button2.setVisible(false);
-
-        final AceEditor root = new AceEditor();
+         
+        final AceEditor ace = new AceEditor();
 //        root.setTop(button1);
 //        root.setBottom(button2);
-        Scene scene = new Scene(root, 800, 400);
 
+        Scene scene = new Scene(ace, 800, 400);
         primaryStage.setTitle("Ace Editor Test");
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        root.readyProperty().addListener(new ChangeListener<Boolean>() {
+        ace.readyProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
 
-                root.getEditor().setFontSize(16);
-                root.getSession().setMode("ace/mode/java");
-                root.setText(GetterSetter.getterAndSetter(
+                ace.getEditor().setFontSize(16);
+                ace.getSession().setMode(Modes.Java);
+                ace.setText(GetterSetter.getterAndSetter(
                         "boolean mGlobal;boolean mIgnoreCase;int mLastIndex;boolean mMultiline;String mSource;"
                         + "boolean mWrap;boolean mBackwards;private boolean mCaseSensitive;\nString mNeedle;"
                         + "boolean mUseRE;boolean mSkipCurrent;\nboolean mWholeWord;RegExp mRE;\nRange mStart;"
@@ -77,7 +88,7 @@ public class Main extends Application {
             }
         });
 
-        root.addEventHandler(AceEventProcessor.onChangeEvent, new EventHandler<Event>() {
+        ace.addEventHandler(AceEventProcessor.onChangeEvent, new EventHandler<Event>() {
 
             @Override
             public void handle(Event t) {
@@ -85,7 +96,7 @@ public class Main extends Application {
             }
         });
 
-        root.addEventHandler(AceEventProcessor.onFocusEvent, new EventHandler<Event>() {
+        ace.addEventHandler(AceEventProcessor.onFocusEvent, new EventHandler<Event>() {
             @Override
             public void handle(Event t) {
                 focusEvent();
@@ -96,13 +107,13 @@ public class Main extends Application {
 
             @Override
             public void handle(ActionEvent t) {
-                runTest1(root);
+                runTest1(ace);
             }
         });
         button2.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                runTest2(root);
+                runTest2(ace);
             }
         });
     }
@@ -138,13 +149,6 @@ public class Main extends Application {
         } catch (Exception ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
     }
 
     public static void MapObject(Object obj) {
