@@ -15,11 +15,13 @@
  */
 package com.sandsoft.acefx;
 
+import java.io.File;
 import java.util.Arrays;
 
 /**
+ * Contains some pre-defined syntax higlighting modes for ace editor.
  *
- * @author Sudipto Chandra
+ * @author Sudipto Chandra.
  */
 public final class Modes {
 
@@ -318,5 +320,21 @@ public final class Modes {
             extension = extension.substring(1).toLowerCase();
         }
         return (Arrays.binarySearch(SUPPORTED_EXTS, extension) >= 0);
+    }
+
+    /**
+     * Gets the language mode of a file. If file is not supported mode for
+     * <code>*.txt</code> files is returned.
+     *
+     * @param path Name or location of the file with extension.
+     * @return
+     */
+    public static String getModeFromFile(String path) {
+        String ext = path.substring(path.lastIndexOf(".") + 1);
+        if (isSupported(ext)) {
+            return "ace/mode/" + ext;
+        } else {
+            return "ace/mode/txt";
+        }
     }
 }

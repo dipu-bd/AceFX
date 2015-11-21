@@ -15,6 +15,7 @@
  */
 package com.sandsoft.acefx.model;
 
+import com.sandsoft.acefx.Modes;
 import com.sandsoft.acefx.model.DocPos;
 import com.sandsoft.acefx.model.Range;
 import com.sandsoft.acefx.util.Commons;
@@ -398,11 +399,12 @@ public class EditSession {
     }
 
     /**
-     * @return the current text mode.
+     * Currently enabled language mode.
+     *
+     * @return the current mode.
      */
-    @Deprecated
-    public JSObject getMode() throws JSException {
-        return (JSObject) mSession.call("getMode");
+    public String getMode() throws JSException {
+        return (String) mSession.eval("this.getMode().$id");
     }
 
     /**

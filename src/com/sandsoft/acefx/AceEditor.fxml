@@ -16,7 +16,7 @@
         <RowConstraints />
     </rowConstraints>
     <children>
-        <WebView fx:id="webView" styleClass="web-view"
+        <WebView fx:id="webView"  
                  maxHeight="Infinity" maxWidth="Infinity" minHeight="0" minWidth="0"
                  GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" />
     </children>

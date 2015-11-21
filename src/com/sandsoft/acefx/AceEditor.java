@@ -378,6 +378,7 @@ public final class AceEditor extends BorderPane {
      */
     public void openFile(File file) throws FileNotFoundException, IOException {
         setText(FileUtils.readFileToString(file));
+        setMode(file.getName());
     }
 
     /**
@@ -398,6 +399,50 @@ public final class AceEditor extends BorderPane {
     public void saveAs(File file) throws IOException, NullPointerException {
         mFilePath = file;
         saveFile();
+        setMode(file.getName());
+    }
+
+    /**
+     * Select the syntax highlighting mode for ace-editor. Some pre-defined
+     * supported mode can be found in <code>Modes</code> class.
+     *
+     * @see Modes
+     * @param mode Mode like "ace/mode/java".
+     */
+    public void setMode(String mode) {
+        getSession().setMode(mode);
+    }
+
+    /**
+     * Currently enabled language mode.
+     *
+     * @see EditSession.getMode()
+     * @return the current mode.
+     */
+    public String getMode() {
+        return getSession().getMode();
+    }
+
+    /**
+     * Sets a theme to the editor. Some pre-defined can be found in
+     * <code>Themes</code> class.
+     *
+     * @see Themes
+     * @param theme Theme to set (must contain valid alias).
+     */
+    public void setTheme(ThemeData theme) {
+        getEditor().setTheme(theme.getAlias());
+    }
+
+    /**
+     * Sets a theme to the editor. Some pre-defined can be found in
+     * <code>Themes</code> class.
+     *
+     * @see Themes
+     * @param alias Theme alias to set.
+     */
+    public void setTheme(String alias) {
+        getEditor().setTheme(alias);
     }
 
     /**

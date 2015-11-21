@@ -17,6 +17,7 @@ package com.sandsoft.tests;
 
 import com.sandsoft.acefx.AceEditor;
 import com.sandsoft.acefx.Modes;
+import com.sandsoft.acefx.Themes;
 import com.sandsoft.acefx.model.AceEventProcessor;
 import com.sandsoft.acefx.util.Commons;
 import java.io.IOException;
@@ -44,8 +45,6 @@ public class Main extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-
-//        TesterFunc.ModeListGenerator();
         launch(args);
     }
 
@@ -61,7 +60,7 @@ public class Main extends Application {
         button2.setMaxWidth(1e08);
         button2.setText("RUN TESTS 2nd");
         button2.setVisible(false);
-         
+
         final AceEditor ace = new AceEditor();
 //        root.setTop(button1);
 //        root.setBottom(button2);
@@ -75,16 +74,22 @@ public class Main extends Application {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
 
+                ace.setText(TesterFunc.ThemeListGenerator(ace.getThemeList()));
+                //TesterFunc.ModeListGenerator();
+
                 ace.getEditor().setFontSize(16);
-                ace.getSession().setMode(Modes.Java);
-                ace.setText(GetterSetter.getterAndSetter(
-                        "boolean mGlobal;boolean mIgnoreCase;int mLastIndex;boolean mMultiline;String mSource;"
-                        + "boolean mWrap;boolean mBackwards;private boolean mCaseSensitive;\nString mNeedle;"
-                        + "boolean mUseRE;boolean mSkipCurrent;\nboolean mWholeWord;RegExp mRE;\nRange mStart;"
-                        + "int mRow; int mColumn;"));
+                ace.setTheme(Themes.Ambiance);
+                ace.setMode(Modes.Java);
+//                ace.setText(GetterSetter.getterAndSetter(
+//                        "boolean mGlobal;boolean mIgnoreCase;int mLastIndex;boolean mMultiline;String mSource;"
+//                        + "boolean mWrap;boolean mBackwards;private boolean mCaseSensitive;\nString mNeedle;"
+//                        + "boolean mUseRE;boolean mSkipCurrent;\nboolean mWholeWord;RegExp mRE;\nRange mStart;"
+//                        + "int mRow; int mColumn;"));
 
                 button1.setVisible(true);
                 button2.setVisible(true);
+                
+                MapObject(ace.getEditor().getSession().getMode());
             }
         });
 
