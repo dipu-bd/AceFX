@@ -15,28 +15,23 @@
  */
 package org.sandsoft.acefx;
 
-import org.sandsoft.acefx.model.Command;
-import org.sandsoft.acefx.model.Editor;
-import org.sandsoft.acefx.model.UndoManager;
-import org.sandsoft.acefx.model.EditSession;
-import org.sandsoft.acefx.model.ThemeData;
-import org.sandsoft.acefx.util.Commons;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Worker;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -46,6 +41,12 @@ import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
+import org.sandsoft.acefx.model.Command;
+import org.sandsoft.acefx.model.Editor;
+import org.sandsoft.acefx.model.UndoManager;
+import org.sandsoft.acefx.model.EditSession;
+import org.sandsoft.acefx.model.ThemeData;
+import org.sandsoft.acefx.util.Commons;
 import org.apache.commons.io.FileUtils;
 import org.sandsoft.acefx.model.ModeData;
 
@@ -71,8 +72,6 @@ public final class AceEditor extends BorderPane {
     private Editor mEditor;
     //file path to save code
     private File mFilePath;
-    //if the editor is ready for interaction
-    private final BooleanProperty mReady;
 
     //web view where editor is loaded
     @FXML
@@ -84,13 +83,15 @@ public final class AceEditor extends BorderPane {
     private ComboBox themeListBox;
     @FXML
     private ComboBox modeListBox;
+    @FXML
+    private Button undoButton;
+    @FXML
+    private Button redoButton;
 
     /**
      * Constructor
      */
     public AceEditor() {
-        //set default to not ready state
-        mReady = new SimpleBooleanProperty(false);
     }
 
     /**
@@ -126,13 +127,10 @@ public final class AceEditor extends BorderPane {
     public void initialize() {
         //setup view   
         webView.setContextMenuEnabled(false);
-        webView.visibleProperty().bind(mReady);
-        loadModeList();
-        loadThemeList();
-
-        //setup WebEngine
         mWebEngine = webView.getEngine();
         loadAceEditor();
+        loadModeList();
+        loadThemeList();
 
         // process page loading
         mWebEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<Worker.State>() {
@@ -147,7 +145,6 @@ public final class AceEditor extends BorderPane {
                     setEventCatchers(editor);
                     setTheme(Themes.Chrome);
                     setMode(Modes.Text);
-                    mReady.set(true);
 
                     fireEvent(new Event(AceEvents.onLoadEvent));
                 }
@@ -231,15 +228,14 @@ public final class AceEditor extends BorderPane {
         editor.eval("this.getSession().on('changeWrapLimit', function() { editor.mAceEvent.onChangeWrapLimit(); });");
         editor.eval("this.getSession().on('changeWrapMode', function() { editor.mAceEvent.onChangeWrapMode(); });");
         editor.eval("this.getSession().on('tokenizerUpdate', function(e) { editor.mAceEvent.onTokenizerUpadate(e); });");
-    }
 
-    /**
-     * Checks if the editor is ready for interaction.
-     *
-     * @return true if ready; false otherwise.
-     */
-    public boolean isReady() {
-        return (mReady.get());
+        addEventHandler(AceEvents.onChangeEvent, new EventHandler<Event>() {
+            @Override
+            public void handle(Event event) {
+                undoButton.setDisable(!getUndoManager().hasUndo());
+                redoButton.setDisable(!getUndoManager().hasRedo());
+            }
+        });
     }
 
     /**
@@ -249,9 +245,6 @@ public final class AceEditor extends BorderPane {
      * @return
      */
     public Object executeScript(String script) throws JSException {
-        if (!isReady()) {
-            return null;
-        }
         return mWebEngine.executeScript(script);
     }
 
@@ -273,7 +266,7 @@ public final class AceEditor extends BorderPane {
      * @return the edit session for the editor.
      */
     public EditSession getSession() {
-        return isReady() ? mEditor.getSession() : null;
+        return mEditor.getSession();
     }
 
     /**
@@ -283,7 +276,7 @@ public final class AceEditor extends BorderPane {
      * @return the undo manager for the edit session.
      */
     public UndoManager getUndoManager() {
-        return isReady() ? getSession().getUndoManager() : null;
+        return getSession().getUndoManager();
     }
 
     /**
@@ -293,7 +286,7 @@ public final class AceEditor extends BorderPane {
      * @return Current content in the editor.
      */
     public String getText() {
-        return isReady() ? mEditor.getValue() : "";
+        return mEditor.getValue();
 
     }
 
@@ -303,16 +296,13 @@ public final class AceEditor extends BorderPane {
      * @param text the content to display.
      */
     public void setText(String text) {
-        if (isReady()) {
-            mEditor.setValue(text, 1);
-        }
+        getEditor().setValue(text, 1);
     }
 
     /**
      * Reloads the whole editor in WebView.
      */
     public void doReload() {
-        mReady.set(false);
         loadAceEditor();
     }
 
@@ -320,28 +310,25 @@ public final class AceEditor extends BorderPane {
      * Performs an undo operation. Reverts the changes.
      */
     public void doUndo() {
-        if (isReady()) {
-            mEditor.undo();
-        }
+        getEditor().undo();
+        undoButton.setDisable(!getUndoManager().hasUndo());
+        redoButton.setDisable(!getUndoManager().hasRedo());
     }
 
     /**
      * Performs an redo operation. Re-implements the changes.
      */
     public void doRedo() {
-        if (isReady()) {
-            mEditor.redo();
-        }
-
+        getEditor().redo();
+        undoButton.setDisable(!getUndoManager().hasUndo());
+        redoButton.setDisable(!getUndoManager().hasRedo());
     }
 
     /**
      * Paste text from clipboard after the cursor.
      */
     public void doPaste() {
-        if (isReady()) {
-            mEditor.insert(Clipboard.getSystemClipboard().getString());
-        }
+        getEditor().insert(Clipboard.getSystemClipboard().getString());
     }
 
     /**
@@ -350,14 +337,12 @@ public final class AceEditor extends BorderPane {
      * @return True if performed successfully.
      */
     public boolean doCopy() {
-        if (isReady()) {
-            String copy = mEditor.getCopyText();
-            if (copy != null && !copy.isEmpty()) {
-                ClipboardContent content = new ClipboardContent();
-                content.putString(copy);
-                Clipboard.getSystemClipboard().setContent(content);
-                return true;
-            }
+        String copy = mEditor.getCopyText();
+        if (copy != null && !copy.isEmpty()) {
+            ClipboardContent content = new ClipboardContent();
+            content.putString(copy);
+            Clipboard.getSystemClipboard().setContent(content);
+            return true;
         }
         return false;
     }
@@ -367,7 +352,7 @@ public final class AceEditor extends BorderPane {
      */
     public void doCut() {
         if (doCopy()) {
-            mEditor.insert("");
+            getEditor().insert("");
         }
     }
 
@@ -375,27 +360,21 @@ public final class AceEditor extends BorderPane {
      * Shows the find dialog.
      */
     public void showFind() {
-        if (isReady()) {
-            mEditor.execCommand("find");
-        }
+        getEditor().execCommand("find");
     }
 
     /**
      * Shows the replace dialog.
      */
     public void showReplace() {
-        if (isReady()) {
-            mEditor.execCommand("replace");
-        }
+        getEditor().execCommand("replace");
     }
 
     /**
      * Shows the options pane.
      */
     public void showOptions() {
-        if (isReady()) {
-            mEditor.execCommand("showSettingsMenu");
-        }
+        getEditor().execCommand("showSettingsMenu");
     }
 
     /**
@@ -409,6 +388,9 @@ public final class AceEditor extends BorderPane {
         mFilePath = file;
         setText(FileUtils.readFileToString(file));
         setMode(Modes.getModeFromFile(file.getName()));
+        //getUndoManager().reset(); 
+        undoButton.setDisable(true);
+        redoButton.setDisable(true);
     }
 
     /**
@@ -450,7 +432,7 @@ public final class AceEditor extends BorderPane {
      * @return the current mode.
      */
     public ModeData getMode() {
-        return isReady() ? Modes.getModeByAlias(getSession().getMode()) : null;
+        return Modes.getModeByAlias(getSession().getMode());
     }
 
     /**
@@ -470,7 +452,7 @@ public final class AceEditor extends BorderPane {
      * @return
      */
     public ThemeData getTheme() {
-        return isReady() ? Themes.getThemeByAlias(getEditor().getTheme()) : null;
+        return Themes.getThemeByAlias(getEditor().getTheme());
     }
 
     /**
@@ -481,15 +463,12 @@ public final class AceEditor extends BorderPane {
      */
     @Deprecated
     public ArrayList<Command> getCommandList() {
-        if (isReady()) {
-            JSObject names = (JSObject) mEditor.getModel().eval("this.commands.byName");
-            ArrayList<Command> arr = new ArrayList<>();
-            for (String str : Commons.getAllProperties(names)) {
-                arr.add(new Command((JSObject) names.getMember(str)));
-            }
-            return arr;
+        JSObject names = (JSObject) mEditor.getModel().eval("this.commands.byName");
+        ArrayList<Command> arr = new ArrayList<>();
+        for (String str : Commons.getAllProperties(names)) {
+            arr.add(new Command((JSObject) names.getMember(str)));
         }
-        return null;
+        return arr;
     }
 
     //loads the list of themes in the themeListBox combobox in toolbar
@@ -498,7 +477,7 @@ public final class AceEditor extends BorderPane {
         themeListBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                if (isReady() && oldValue != null && oldValue != newValue) {
+                if (newValue != null && oldValue != newValue) {
                     Object data = themeListBox.getSelectionModel().getSelectedItem();
                     getEditor().setTheme(((ThemeData) data).getAlias());
                 }
@@ -512,7 +491,7 @@ public final class AceEditor extends BorderPane {
         modeListBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                if (isReady() && newValue != null && oldValue != newValue) {
+                if (newValue != null && oldValue != newValue) {
                     Object data = modeListBox.getSelectionModel().getSelectedItem();
                     getEditor().getSession().setMode(((ModeData) data).getAlias());
                 }
@@ -547,7 +526,7 @@ public final class AceEditor extends BorderPane {
                 openFile(file);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -566,7 +545,7 @@ public final class AceEditor extends BorderPane {
                 saveAs(file);
             }
         } catch (IOException | NullPointerException ex) {
-            ex.printStackTrace();
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
         }
     }
 

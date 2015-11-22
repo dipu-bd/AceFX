@@ -28,8 +28,10 @@
                 <Button onAction="#saveButtonOnAction" styleClass="save-button" text="Save" mnemonicParsing="false"/>
                 <Button onAction="#reloadButtonOnAction" styleClass="reload-button" text="Reload" mnemonicParsing="false"/>
                 <Separator orientation="VERTICAL" /> 
-                <Button onAction="#undoButtonOnAction" styleClass="undo-button" text="Undo" mnemonicParsing="false"/>
-                <Button onAction="#redoButtonOnAction" styleClass="redo-button" text="Redo" mnemonicParsing="false"/>
+                <Button fx:id="undoButton" disable="true" onAction="#undoButtonOnAction" 
+                        styleClass="undo-button" text="Undo" mnemonicParsing="false"/>
+                <Button fx:id="redoButton" disable="true" onAction="#redoButtonOnAction" 
+                        styleClass="redo-button" text="Redo" mnemonicParsing="false"/>
                 <Separator orientation="VERTICAL" /> 
                 <Button onAction="#cutButtonOnAction" styleClass="cut-button" text="Cut" mnemonicParsing="false"/>
                 <Button onAction="#copyButtonOnAction" styleClass="copy-button" text="Copy" mnemonicParsing="false"/>

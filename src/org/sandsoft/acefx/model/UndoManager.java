@@ -69,8 +69,8 @@ public class UndoManager {
         return (boolean) mUndoManager.call("isClean");
     }
 
-    public boolean markClean() throws JSException {
-        return (boolean) mUndoManager.call("markClean");
+    public void markClean() throws JSException {
+        mUndoManager.call("markClean");
     }
 
     /**

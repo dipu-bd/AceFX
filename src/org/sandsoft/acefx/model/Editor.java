@@ -1217,11 +1217,13 @@ public class Editor {
     /**
      * Sets the current document to value.
      *
+     * @deprecated Use AceEditor.setText() instead.
      * @param val Required. The new value to set for the document.
      * @param cursorPos Required. Where to set the new value. undefined or 0 is
      * selectAll, -1 is at the document start, and 1 is at the end
      * @return
      */
+    @Deprecated
     public String setValue(String val, Integer cursorPos) throws JSException {
         return (String) mEditor.call("setValue", val, cursorPos);
     }
