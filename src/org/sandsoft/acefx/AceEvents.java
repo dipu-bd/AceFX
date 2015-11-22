@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sandsoft.acefx.model;
-
-import org.sandsoft.acefx.AceEditor;
+package org.sandsoft.acefx;
 
 import javafx.event.Event;
 import javafx.event.EventType;
@@ -24,16 +22,17 @@ import javafx.event.EventType;
  *
  * @author Sudipto Chandra
  */
-public class AceEventProcessor {
-        
+public class AceEvents {
+
     //object which event to be fired
     private final AceEditor mAceEditor;
 
     /**
      * Creates a new event processor for ace editor session.
+     *
      * @param ace AceEditor which event to be fired.
      */
-    public AceEventProcessor(final AceEditor ace) {
+    public AceEvents(final AceEditor ace) {
         mAceEditor = ace;
     }
 
@@ -48,7 +47,7 @@ public class AceEventProcessor {
     public static final EventType<? extends Event> onCopyEvent = new EventType<>("onCopy");
     public static final EventType<? extends Event> onFocusEvent = new EventType<>("onFocus");
     public static final EventType<? extends Event> onPasteEvent = new EventType<>("onPaste");
-    
+
     //Edit Session event types
     public static final EventType<? extends Event> onChangAnnotationEvent = new EventType<>("onChangAnnotation");
     public static final EventType<? extends Event> onChangeBackMarkerEvent = new EventType<>("onChangeBackMarker");
@@ -68,33 +67,33 @@ public class AceEventProcessor {
     // Editor Events
     //
     public void onBlur() {
-        mAceEditor.fireEvent(new Event(AceEventProcessor.onBlurEvent));
+        mAceEditor.fireEvent(new Event(AceEvents.onBlurEvent));
     }
 
     public void onChange(Object data) {
-        mAceEditor.fireEvent(new Event(AceEventProcessor.onChangeEvent));
+        mAceEditor.fireEvent(new Event(AceEvents.onChangeEvent));
     }
 
     public void onChangeSelectionStyle(Object data) {
-        mAceEditor.fireEvent(new Event(AceEventProcessor.onChangeSelectionStyleEvent));
+        mAceEditor.fireEvent(new Event(AceEvents.onChangeSelectionStyleEvent));
     }
 
     public void onChangeSession(Object e) {
-        mAceEditor.fireEvent(new Event(AceEventProcessor.onChangeSessionEvent));
+        mAceEditor.fireEvent(new Event(AceEvents.onChangeSessionEvent));
 
     }
 
     public void onCopy(String text) {
-        mAceEditor.fireEvent(new Event(AceEventProcessor.onCopyEvent));
+        mAceEditor.fireEvent(new Event(AceEvents.onCopyEvent));
     }
 
     public void onFocus() {
-        mAceEditor.fireEvent(new Event(AceEventProcessor.onFocusEvent));
+        mAceEditor.fireEvent(new Event(AceEvents.onFocusEvent));
 
     }
 
     public void onPaste(Object e) {
-        mAceEditor.fireEvent(new Event(AceEventProcessor.onPasteEvent));
+        mAceEditor.fireEvent(new Event(AceEvents.onPasteEvent));
 
     }
 
@@ -102,66 +101,66 @@ public class AceEventProcessor {
     // Edit Session Events
     //
     public void onChangAnnotation() {
-        mAceEditor.fireEvent(new Event(AceEventProcessor.onChangAnnotationEvent));
+        mAceEditor.fireEvent(new Event(AceEvents.onChangAnnotationEvent));
 
     }
 
     public void onChangeBackMarker() {
-        mAceEditor.fireEvent(new Event(AceEventProcessor.onChangeBackMarkerEvent));
+        mAceEditor.fireEvent(new Event(AceEvents.onChangeBackMarkerEvent));
 
     }
 
     public void onChangeBreakpoint() {
-        mAceEditor.fireEvent(new Event(AceEventProcessor.onChangeBreakpointEvent));
+        mAceEditor.fireEvent(new Event(AceEvents.onChangeBreakpointEvent));
 
     }
 
     public void onChangeFold() {
-        mAceEditor.fireEvent(new Event(AceEventProcessor.onChangeFoldEvent));
+        mAceEditor.fireEvent(new Event(AceEvents.onChangeFoldEvent));
 
     }
 
     public void onChangeFrontMarker() {
-        mAceEditor.fireEvent(new Event(AceEventProcessor.onChangeFrontMarkerEvent));
+        mAceEditor.fireEvent(new Event(AceEvents.onChangeFrontMarkerEvent));
 
     }
 
     public void onChangeMode() {
-        mAceEditor.fireEvent(new Event(AceEventProcessor.onChangeModeEvent));
+        mAceEditor.fireEvent(new Event(AceEvents.onChangeModeEvent));
 
     }
 
     public void onChangeOverwrite() {
-        mAceEditor.fireEvent(new Event(AceEventProcessor.onChangeOverwriteEvent));
+        mAceEditor.fireEvent(new Event(AceEvents.onChangeOverwriteEvent));
 
     }
 
     public void onChangeScrollLeft(Integer scrollLeft) {
-        mAceEditor.fireEvent(new Event(AceEventProcessor.onChangeScrollLeftEvent));
+        mAceEditor.fireEvent(new Event(AceEvents.onChangeScrollLeftEvent));
 
     }
 
     public void onChangeScrollTop(Integer scrollTop) {
-        mAceEditor.fireEvent(new Event(AceEventProcessor.onChangeScrollTopEvent));
+        mAceEditor.fireEvent(new Event(AceEvents.onChangeScrollTopEvent));
 
     }
 
     public void onChangeTabSize() {
-        mAceEditor.fireEvent(new Event(AceEventProcessor.onChangeTabSizeEvent));
+        mAceEditor.fireEvent(new Event(AceEvents.onChangeTabSizeEvent));
 
     }
 
     public void onChangeWrapLimit() {
-        mAceEditor.fireEvent(new Event(AceEventProcessor.onChangeWrapLimitEvent));
+        mAceEditor.fireEvent(new Event(AceEvents.onChangeWrapLimitEvent));
 
     }
 
     public void onChangeWrapMode() {
-        mAceEditor.fireEvent(new Event(AceEventProcessor.onChangeWrapModeEvent));
+        mAceEditor.fireEvent(new Event(AceEvents.onChangeWrapModeEvent));
     }
 
     public void onTokenizerUpadate(Object e) {
-        mAceEditor.fireEvent(new Event(AceEventProcessor.onTokenizerUpadateEvent));
+        mAceEditor.fireEvent(new Event(AceEvents.onTokenizerUpadateEvent));
 
     }
 }

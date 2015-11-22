@@ -3,10 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/I:/Projects/GitHub/AceFX/src/com/sandsoft/tests/Main.java</file>
-            <file>file:/I:/Projects/GitHub/AceFX/src/com/sandsoft/tests/GetterSetter.java</file>
-            <file>file:/I:/Projects/GitHub/AceFX/src/com/sandsoft/acefx/model/Editor.java</file>
-            <file>file:/I:/Projects/GitHub/AceFX/src/com/sandsoft/acefx/AceEditor.java</file>
+            <file>file:/I:/Projects/GitHub/AceFX/src/org/sandsoft/acefx/AceEditor.java</file>
+            <file>file:/I:/Projects/GitHub/AceFX/src/org/sandsoft/tests/GetterSetter.java</file>
+            <file>file:/I:/Projects/GitHub/AceFX/src/org/sandsoft/acefx/model/Editor.java</file>
+            <file>file:/I:/Projects/GitHub/AceFX/src/org/sandsoft/tests/Main.java</file>
         </group>
     </open-files>
 </project-private>

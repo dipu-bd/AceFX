@@ -15,7 +15,6 @@
  */
 package org.sandsoft.acefx;
 
-import org.sandsoft.acefx.model.AceEventProcessor;
 import org.sandsoft.acefx.model.Command;
 import org.sandsoft.acefx.model.Editor;
 import org.sandsoft.acefx.model.UndoManager;
@@ -181,7 +180,7 @@ public final class AceEditor extends BorderPane {
      */
     private void setEventCatchers(JSObject editor) {
         //set interface object
-        editor.setMember("mAceEvent", new AceEventProcessor(this));
+        editor.setMember("mAceEvent", new AceEvents(this));
 
         //on editor events
         editor.eval("this.on('blur', function() { editor.mAceEvent.onBlur(); });");
@@ -444,47 +443,7 @@ public final class AceEditor extends BorderPane {
     public void setTheme(String alias) {
         getEditor().setTheme(alias);
     }
-
-    /**
-     * Returns the list of available themes. An empty list is returned on
-     * failure.
-     *
-     * @deprecated for internal usage only.
-     * @return list of available themes.
-     */
-    @Deprecated
-    public ArrayList<ThemeData> getThemeList() {
-        ArrayList<ThemeData> list = new ArrayList<>();
-        try {
-            InputStream is = getClass().getResourceAsStream("resource/themelist");
-            String data = IOUtils.toString(is);
-
-            JSONParser parser = new JSONParser();
-            JSONArray array = (JSONArray) parser.parse(data);
-
-            for (int i = 0; i < array.size(); ++i) {
-                JSONArray item = (JSONArray) array.get(i);
-                int siz = item.size();
-                if (siz == 0) {
-                    continue;
-                }
-
-                ThemeData theme = new ThemeData((String) item.get(0));
-                if (siz >= 2) {
-                    theme.setAlias("ace/theme/" + (String) item.get(1));
-                }
-                if (siz >= 3) {
-                    theme.setDark("dark".equals((String) item.get(2)));
-                }
-                list.add(theme);
-            }
-
-        } catch (IOException | ParseException ex) {
-            Logger.getLogger(getClass().getSimpleName()).log(Level.SEVERE, null, ex);
-        }
-        return list;
-    }
-
+ 
     /**
      * Gets a list of all available command and keyboard shortcuts
      *
@@ -499,18 +458,5 @@ public final class AceEditor extends BorderPane {
             arr.add(new Command((JSObject) names.getMember(str)));
         }
         return arr;
-    }
-
-    /**
-     * Gets the list of available language modes. returns an empty array on
-     * failure.
-     *
-     * @deprecated for internal usage only.
-     * @return list of available language modes.
-     */
-    @Deprecated
-    public ArrayList<ModeData> getModeList() {
-
-        return null;
-    }
+    } 
 }
