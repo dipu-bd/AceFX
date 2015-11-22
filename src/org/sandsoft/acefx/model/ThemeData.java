@@ -132,6 +132,6 @@ public class ThemeData {
      */
     @Override
     public String toString() {
-        return String.format("[%s,%s,%s]", mName, mAlias, (mDark ? "dark" : "light"));
+        return String.format("%s (%s)", mName, (mDark ? "dark" : "light"));
     }
 }

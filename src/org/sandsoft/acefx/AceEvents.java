@@ -39,6 +39,8 @@ public class AceEvents {
     //
     // Event type declarations
     //
+    //AceEditor custom events    
+    public static final EventType<? extends Event> onLoadEvent = new EventType<>("onLoad");
     //Editor event types
     public static final EventType<? extends Event> onBlurEvent = new EventType<>("onBlur");
     public static final EventType<? extends Event> onChangeEvent = new EventType<>("onChange");
@@ -64,37 +66,44 @@ public class AceEvents {
     public static final EventType<? extends Event> onTokenizerUpadateEvent = new EventType<>("onTokenizerUpadate");
 
     //
+    // Ace Editor custom event
+    //
+    public void onLoad() {
+        mAceEditor.fireEvent(new Event(AceEvents.onLoadEvent));
+    }
+
+    //
     // Editor Events
     //
     public void onBlur() {
         mAceEditor.fireEvent(new Event(AceEvents.onBlurEvent));
     }
-
+    
     public void onChange(Object data) {
         mAceEditor.fireEvent(new Event(AceEvents.onChangeEvent));
     }
-
+    
     public void onChangeSelectionStyle(Object data) {
         mAceEditor.fireEvent(new Event(AceEvents.onChangeSelectionStyleEvent));
     }
-
+    
     public void onChangeSession(Object e) {
         mAceEditor.fireEvent(new Event(AceEvents.onChangeSessionEvent));
-
+        
     }
-
+    
     public void onCopy(String text) {
         mAceEditor.fireEvent(new Event(AceEvents.onCopyEvent));
     }
-
+    
     public void onFocus() {
         mAceEditor.fireEvent(new Event(AceEvents.onFocusEvent));
-
+        
     }
-
+    
     public void onPaste(Object e) {
         mAceEditor.fireEvent(new Event(AceEvents.onPasteEvent));
-
+        
     }
 
     //
@@ -102,65 +111,65 @@ public class AceEvents {
     //
     public void onChangAnnotation() {
         mAceEditor.fireEvent(new Event(AceEvents.onChangAnnotationEvent));
-
+        
     }
-
+    
     public void onChangeBackMarker() {
         mAceEditor.fireEvent(new Event(AceEvents.onChangeBackMarkerEvent));
-
+        
     }
-
+    
     public void onChangeBreakpoint() {
         mAceEditor.fireEvent(new Event(AceEvents.onChangeBreakpointEvent));
-
+        
     }
-
+    
     public void onChangeFold() {
         mAceEditor.fireEvent(new Event(AceEvents.onChangeFoldEvent));
-
+        
     }
-
+    
     public void onChangeFrontMarker() {
         mAceEditor.fireEvent(new Event(AceEvents.onChangeFrontMarkerEvent));
-
+        
     }
-
+    
     public void onChangeMode() {
         mAceEditor.fireEvent(new Event(AceEvents.onChangeModeEvent));
-
+        
     }
-
+    
     public void onChangeOverwrite() {
         mAceEditor.fireEvent(new Event(AceEvents.onChangeOverwriteEvent));
-
+        
     }
-
+    
     public void onChangeScrollLeft(Integer scrollLeft) {
         mAceEditor.fireEvent(new Event(AceEvents.onChangeScrollLeftEvent));
-
+        
     }
-
+    
     public void onChangeScrollTop(Integer scrollTop) {
         mAceEditor.fireEvent(new Event(AceEvents.onChangeScrollTopEvent));
-
+        
     }
-
+    
     public void onChangeTabSize() {
         mAceEditor.fireEvent(new Event(AceEvents.onChangeTabSizeEvent));
-
+        
     }
-
+    
     public void onChangeWrapLimit() {
         mAceEditor.fireEvent(new Event(AceEvents.onChangeWrapLimitEvent));
-
+        
     }
-
+    
     public void onChangeWrapMode() {
         mAceEditor.fireEvent(new Event(AceEvents.onChangeWrapModeEvent));
     }
-
+    
     public void onTokenizerUpadate(Object e) {
         mAceEditor.fireEvent(new Event(AceEvents.onTokenizerUpadateEvent));
-
+        
     }
 }

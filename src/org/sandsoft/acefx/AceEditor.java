@@ -19,41 +19,44 @@ import org.sandsoft.acefx.model.Command;
 import org.sandsoft.acefx.model.Editor;
 import org.sandsoft.acefx.model.UndoManager;
 import org.sandsoft.acefx.model.EditSession;
-import org.sandsoft.acefx.model.ModeData;
 import org.sandsoft.acefx.model.ThemeData;
 import org.sandsoft.acefx.util.Commons;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.concurrent.Worker;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.ComboBox;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.FileChooser;
 import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.sandsoft.acefx.model.ModeData;
 
 /**
- * A fully functional self-sufficient code editor based on ACE.
+ * A fully functional self-sufficient code editor based on ACE. <br/><br/>
+ * <b>Hints</b>:
+ * <ul>
+ * <li>To create a new editor: <code>AceEditor.createNew()</code></li>
+ * <li>To listen to events:
+ * <code>addEventHandler(AceEvents.YOUR_EVENT, YOUR_EVENT_HANDLER)</code></li>
+ * </ul>
  *
  * @author Sudipto Chandra.
  */
@@ -77,37 +80,55 @@ public final class AceEditor extends BorderPane {
     //web engine to process java script
     private WebEngine mWebEngine;
 
+    @FXML
+    private ComboBox themeListBox;
+    @FXML
+    private ComboBox modeListBox;
+
     /**
-     * Constructor a new editor.
-     *
-     * @throws java.io.IOException
+     * Constructor
      */
-    public AceEditor() throws IOException {
+    public AceEditor() {
         //set default to not ready state
         mReady = new SimpleBooleanProperty(false);
+    }
 
+    /**
+     * Creates a new instance of the ace editor.
+     *
+     * @return
+     * @throws java.io.IOException
+     */
+    public static AceEditor createNew() throws IOException {
         //init loader           
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource(
-                getClass().getSimpleName() + ".fxml"));
-        loader.setController(this);
+        loader.setLocation(AceEditor.class.getResource(
+                AceEditor.class.getSimpleName() + ".fxml"));
 
         //attach node
         Node node = (Node) loader.load();
         BorderPane.setAlignment(node, Pos.CENTER);
-        this.setCenter(node);
-        this.setMinSize(0, 0);
-        this.setPrefSize(600, 400);
-        this.setMaxSize(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+        AceEditor ace = (AceEditor) loader.getController();
+        ace.setCenter(node);
+        ace.setMinSize(0, 0);
+        ace.setPrefSize(600, 400);
+        ace.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
         //post load work  
-        this.initialize();
+        ace.initialize();
+
+        return ace;
     }
 
-    private void initialize() {
-        //setup webview        
+    /**
+     * Initializes view and controls after FXML is loaded.
+     */
+    public void initialize() {
+        //setup view   
         webView.setContextMenuEnabled(false);
         webView.visibleProperty().bind(mReady);
+        loadModeList();
+        loadThemeList();
 
         //setup WebEngine
         mWebEngine = webView.getEngine();
@@ -118,15 +139,20 @@ public final class AceEditor extends BorderPane {
             @Override
             public void changed(ObservableValue<? extends Worker.State> ov, Worker.State t, Worker.State t1) {
                 if (mWebEngine.getLoadWorker().getState() == Worker.State.SUCCEEDED) {
+                    //extract javascript objects
                     mAce = (JSObject) mWebEngine.executeScript("ace");
                     JSObject editor = (JSObject) mAce.call("edit", "editor");
                     mEditor = new Editor(editor);
+
                     setEventCatchers(editor);
+                    setTheme(Themes.Chrome);
+                    setMode(Modes.Text);
                     mReady.set(true);
+
+                    fireEvent(new Event(AceEvents.onLoadEvent));
                 }
             }
-        }
-        );
+        });
     }
 
     /**
@@ -208,16 +234,6 @@ public final class AceEditor extends BorderPane {
     }
 
     /**
-     * The property indicates if the editor is loaded and ready for
-     * interactions.
-     *
-     * @return the Ready property.
-     */
-    public BooleanProperty readyProperty() {
-        return mReady;
-    }
-
-    /**
      * Checks if the editor is ready for interaction.
      *
      * @return true if ready; false otherwise.
@@ -233,15 +249,10 @@ public final class AceEditor extends BorderPane {
      * @return
      */
     public Object executeScript(String script) throws JSException {
+        if (!isReady()) {
+            return null;
+        }
         return mWebEngine.executeScript(script);
-    }
-
-    /**
-     * Reloads the whole editor in WebView.
-     */
-    public void reload() {
-        mReady.set(false);
-        loadAceEditor();
     }
 
     /**
@@ -262,7 +273,7 @@ public final class AceEditor extends BorderPane {
      * @return the edit session for the editor.
      */
     public EditSession getSession() {
-        return mEditor.getSession();
+        return isReady() ? mEditor.getSession() : null;
     }
 
     /**
@@ -272,7 +283,7 @@ public final class AceEditor extends BorderPane {
      * @return the undo manager for the edit session.
      */
     public UndoManager getUndoManager() {
-        return getSession().getUndoManager();
+        return isReady() ? getSession().getUndoManager() : null;
     }
 
     /**
@@ -298,25 +309,38 @@ public final class AceEditor extends BorderPane {
     }
 
     /**
+     * Reloads the whole editor in WebView.
+     */
+    public void doReload() {
+        mReady.set(false);
+        loadAceEditor();
+    }
+
+    /**
      * Performs an undo operation. Reverts the changes.
      */
-    public void Undo() {
-        mEditor.undo();
+    public void doUndo() {
+        if (isReady()) {
+            mEditor.undo();
+        }
     }
 
     /**
      * Performs an redo operation. Re-implements the changes.
      */
-    public void Redo() {
-        mEditor.redo();
+    public void doRedo() {
+        if (isReady()) {
+            mEditor.redo();
+        }
+
     }
 
     /**
-     * Removes the selected text and copy it to clipboard.
+     * Paste text from clipboard after the cursor.
      */
-    public void Cut() {
-        if (Copy()) {
-            mEditor.insert("");
+    public void doPaste() {
+        if (isReady()) {
+            mEditor.insert(Clipboard.getSystemClipboard().getString());
         }
     }
 
@@ -325,7 +349,7 @@ public final class AceEditor extends BorderPane {
      *
      * @return True if performed successfully.
      */
-    public boolean Copy() {
+    public boolean doCopy() {
         if (isReady()) {
             String copy = mEditor.getCopyText();
             if (copy != null && !copy.isEmpty()) {
@@ -339,33 +363,39 @@ public final class AceEditor extends BorderPane {
     }
 
     /**
-     * Paste text from clipboard after the cursor.
+     * Removes the selected text and copy it to clipboard.
      */
-    public void Paste() {
-        if (isReady()) {
-            mEditor.insert(Clipboard.getSystemClipboard().getString());
+    public void doCut() {
+        if (doCopy()) {
+            mEditor.insert("");
         }
     }
 
     /**
      * Shows the find dialog.
      */
-    public void ShowFind() {
-        mEditor.execCommand("find");
+    public void showFind() {
+        if (isReady()) {
+            mEditor.execCommand("find");
+        }
     }
 
     /**
      * Shows the replace dialog.
      */
-    public void ShowReplace() {
-        mEditor.execCommand("replace");
+    public void showReplace() {
+        if (isReady()) {
+            mEditor.execCommand("replace");
+        }
     }
 
     /**
      * Shows the options pane.
      */
-    public void ShowOptions() {
-        mEditor.execCommand("showSettingsMenu");
+    public void showOptions() {
+        if (isReady()) {
+            mEditor.execCommand("showSettingsMenu");
+        }
     }
 
     /**
@@ -376,8 +406,9 @@ public final class AceEditor extends BorderPane {
      * @throws java.io.IOException thrown if file could no be read.
      */
     public void openFile(File file) throws FileNotFoundException, IOException {
+        mFilePath = file;
         setText(FileUtils.readFileToString(file));
-        setMode(file.getName());
+        setMode(Modes.getModeFromFile(file.getName()));
     }
 
     /**
@@ -398,7 +429,7 @@ public final class AceEditor extends BorderPane {
     public void saveAs(File file) throws IOException, NullPointerException {
         mFilePath = file;
         saveFile();
-        setMode(file.getName());
+        setMode(Modes.getModeFromFile(file.getName()));
     }
 
     /**
@@ -408,8 +439,8 @@ public final class AceEditor extends BorderPane {
      * @see Modes
      * @param mode Mode like "ace/mode/java".
      */
-    public void setMode(String mode) {
-        getSession().setMode(mode);
+    public void setMode(ModeData mode) {
+        modeListBox.getSelectionModel().select(mode);
     }
 
     /**
@@ -418,8 +449,8 @@ public final class AceEditor extends BorderPane {
      * @see EditSession.getMode()
      * @return the current mode.
      */
-    public String getMode() {
-        return getSession().getMode();
+    public ModeData getMode() {
+        return isReady() ? Modes.getModeByAlias(getSession().getMode()) : null;
     }
 
     /**
@@ -430,20 +461,18 @@ public final class AceEditor extends BorderPane {
      * @param theme Theme to set (must contain valid alias).
      */
     public void setTheme(ThemeData theme) {
-        getEditor().setTheme(theme.getAlias());
+        themeListBox.getSelectionModel().select(theme);
     }
 
     /**
-     * Sets a theme to the editor. Some pre-defined can be found in
-     * <code>Themes</code> class.
+     * Gets the current theme.
      *
-     * @see Themes
-     * @param alias Theme alias to set.
+     * @return
      */
-    public void setTheme(String alias) {
-        getEditor().setTheme(alias);
+    public ThemeData getTheme() {
+        return isReady() ? Themes.getThemeByAlias(getEditor().getTheme()) : null;
     }
- 
+
     /**
      * Gets a list of all available command and keyboard shortcuts
      *
@@ -452,11 +481,138 @@ public final class AceEditor extends BorderPane {
      */
     @Deprecated
     public ArrayList<Command> getCommandList() {
-        JSObject names = (JSObject) mEditor.getModel().eval("this.commands.byName");
-        ArrayList<Command> arr = new ArrayList<>();
-        for (String str : Commons.getAllProperties(names)) {
-            arr.add(new Command((JSObject) names.getMember(str)));
+        if (isReady()) {
+            JSObject names = (JSObject) mEditor.getModel().eval("this.commands.byName");
+            ArrayList<Command> arr = new ArrayList<>();
+            for (String str : Commons.getAllProperties(names)) {
+                arr.add(new Command((JSObject) names.getMember(str)));
+            }
+            return arr;
         }
-        return arr;
-    } 
+        return null;
+    }
+
+    //loads the list of themes in the themeListBox combobox in toolbar
+    private void loadThemeList() {
+        themeListBox.setItems(FXCollections.observableArrayList(Themes.SUPPORTED_THEMES));
+        themeListBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                if (isReady() && oldValue != null && oldValue != newValue) {
+                    Object data = themeListBox.getSelectionModel().getSelectedItem();
+                    getEditor().setTheme(((ThemeData) data).getAlias());
+                }
+            }
+        });
+    }
+
+    //loads the list of modes in the modeListBox combobox in toolbar
+    private void loadModeList() {
+        modeListBox.setItems(FXCollections.observableArrayList(Modes.SUPPORTED_MODES));
+        modeListBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                if (isReady() && newValue != null && oldValue != newValue) {
+                    Object data = modeListBox.getSelectionModel().getSelectedItem();
+                    getEditor().getSession().setMode(((ModeData) data).getAlias());
+                }
+            }
+        });
+    }
+
+    //load file extension filters
+    private void attachFilters(FileChooser fileChooser) {
+        FileChooser.ExtensionFilter def
+                = new FileChooser.ExtensionFilter("All Files", "*.*");
+        fileChooser.getExtensionFilters().add(def);
+        fileChooser.setSelectedExtensionFilter(def);
+        for (ModeData md : Modes.SUPPORTED_MODES) {
+            fileChooser.getExtensionFilters().add(md.getExtensionFilter());
+        }
+    }
+
+    //toolbar buttons on action
+    @FXML
+    private void openButtonOnAction() {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Open file");
+            attachFilters(fileChooser);
+            if (mFilePath != null) {
+                fileChooser.setInitialFileName(mFilePath.getName());
+                fileChooser.setInitialDirectory(mFilePath.getParentFile());
+            }
+            File file = fileChooser.showOpenDialog(this.getScene().getWindow());
+            if (file != null) {
+                openFile(file);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void saveButtonOnAction() {
+        try {
+            if (mFilePath != null) {
+                saveFile();
+                return;
+            }
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save file");
+            attachFilters(fileChooser);
+            File file = fileChooser.showSaveDialog(this.getScene().getWindow());
+            if (file != null) {
+                saveAs(file);
+            }
+        } catch (IOException | NullPointerException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void reloadButtonOnAction() {
+        doReload();
+    }
+
+    @FXML
+    private void cutButtonOnAction() {
+        doCut();
+    }
+
+    @FXML
+    private void copyButtonOnAction() {
+        doCopy();
+    }
+
+    @FXML
+    private void pasteButtonOnAction() {
+        doPaste();
+    }
+
+    @FXML
+    private void undoButtonOnAction() {
+        doUndo();
+    }
+
+    @FXML
+    private void redoButtonOnAction() {
+        doRedo();
+    }
+
+    @FXML
+    private void findButtonOnAction() {
+        showFind();
+    }
+
+    @FXML
+    private void replaceButtonOnAction() {
+        showReplace();
+    }
+
+    @FXML
+    private void optionsButtonOnAction() {
+        showOptions();
+    }
+
 }

@@ -7,21 +7,52 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane maxHeight="Infinity" maxWidth="Infinity" minHeight="0" minWidth="0" prefHeight="400.0" prefWidth="600.0" styleClass="ace-editor" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.40" 
+          maxHeight="Infinity" maxWidth="Infinity" minHeight="0" minWidth="0"
+          prefHeight="400.0" prefWidth="600.0" styleClass="ace-editor" stylesheets="@styles.css"
+          fx:controller="org.sandsoft.acefx.AceEditor">          
     <rowConstraints>
         <RowConstraints />
-        <RowConstraints fillHeight="true" />
         <RowConstraints />
+        <RowConstraints fillHeight="true" />
     </rowConstraints>
+    <columnConstraints>
+        <ColumnConstraints />
+    </columnConstraints>
     <children>
-      <ToolBar prefHeight="40.0" prefWidth="200.0">
-        <items>
-          <Button mnemonicParsing="false" text="Button" />
-        </items>
-      </ToolBar>
-        <WebView fx:id="webView" maxHeight="Infinity" maxWidth="Infinity" minHeight="0" minWidth="0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
+        <ToolBar styleClass="top-toolbar" GridPane.rowIndex="0" 
+                 maxWidth="Infinity" maxHeight="Infinity"
+                 GridPane.vgrow="ALWAYS" GridPane.hgrow="ALWAYS">
+            <items>
+                <Button onAction="#openButtonOnAction" styleClass="open-button" text="Open" mnemonicParsing="false" />
+                <Button onAction="#saveButtonOnAction" styleClass="save-button" text="Save" mnemonicParsing="false"/>
+                <Button onAction="#reloadButtonOnAction" styleClass="reload-button" text="Reload" mnemonicParsing="false"/>
+                <Separator orientation="VERTICAL" /> 
+                <Button onAction="#undoButtonOnAction" styleClass="undo-button" text="Undo" mnemonicParsing="false"/>
+                <Button onAction="#redoButtonOnAction" styleClass="redo-button" text="Redo" mnemonicParsing="false"/>
+                <Separator orientation="VERTICAL" /> 
+                <Button onAction="#cutButtonOnAction" styleClass="cut-button" text="Cut" mnemonicParsing="false"/>
+                <Button onAction="#copyButtonOnAction" styleClass="copy-button" text="Copy" mnemonicParsing="false"/>
+                <Button onAction="#pasteButtonOnAction" styleClass="paste-button" text="Paste" mnemonicParsing="false"/>
+                <Separator orientation="VERTICAL" /> 
+                <Button onAction="#findButtonOnAction" styleClass="find-button" text="Find" mnemonicParsing="false"/>
+                <Button onAction="#replaceButtonOnAction" styleClass="replace-button" text="Replace" mnemonicParsing="false"/>
+                <Separator orientation="VERTICAL" /> 
+                <Button onAction="#optionsButtonOnAction" styleClass="options-button" text="Options" mnemonicParsing="false"/>
+            </items>
+        </ToolBar>        
+        <ToolBar styleClass="bottom-toolbar" GridPane.rowIndex="1"  
+                 maxWidth="Infinity" maxHeight="Infinity"
+                 GridPane.vgrow="ALWAYS" GridPane.hgrow="ALWAYS">
+            <items>
+                <Label text="Language:" />
+                <ComboBox fx:id="modeListBox" styleClass="mode-list" />
+                <Label text="Theme:" />
+                <ComboBox fx:id="themeListBox" styleClass="theme-list" />                   
+            </items>
+        </ToolBar>     
+        <WebView fx:id="webView" GridPane.rowIndex="2"  
+                 maxWidth="Infinity" maxHeight="Infinity"
+                 GridPane.vgrow="ALWAYS" GridPane.hgrow="ALWAYS" />     
     </children>
-   <columnConstraints>
-      <ColumnConstraints />
-   </columnConstraints>
 </GridPane>

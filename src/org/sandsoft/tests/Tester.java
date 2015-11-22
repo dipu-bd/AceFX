@@ -15,7 +15,6 @@
  */
 package org.sandsoft.tests;
 
-import org.sandsoft.acefx.model.ThemeData;
 import java.util.ArrayList;
 import java.util.Comparator;
 import netscape.javascript.JSObject;
@@ -99,41 +98,28 @@ public class Tester {
                 if (line.isEmpty() || !line.contains(":") || !line.contains("[")) {
                     continue;
                 }
-                String pre = "public static final String";
+
                 String name = line.substring(0, line.indexOf(":")).trim();
-                modenames.add(name);
                 String data = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
-                String comment = "";
-                for (String term : data.split("\\|")) {
-                    support.add(term);
-                    sb.append(comment).append(pre).append(" ").append(name);
-                    sb.append(" = \"ace/mode/").append(term).append("\";\n");
-                    comment = "//";
-                }
+
+                modenames.add(name);
+                sb.append("public static final ModeData ").append(name);
+                sb.append(" = new ModeData(\"").append(name.replace("_", " ")).append("\", ");
+                sb.append("\"ace/mode/").append(name.toLowerCase()).append("\""); //alias                
+                sb.append(", \"").append(data).append("\");\n");
             }
 
-            modenames.sort(STRING_COMP);
             support.sort(STRING_COMP);
 
             int cnt = 1;
-            sb.append("\npublic static final String[] SUPPORTED_MODES = { \n");
-            for (String term : modenames) {
-                sb.append("\"").append(term).append("\", ");
+            sb.append("\npublic static final ModeData[] SUPPORTED_MODES = {\n");
+            for (String key : modenames) {
                 if (cnt++ % 8 == 0) {
                     sb.append("\n");
                 }
+                sb.append(key).append(", ");
             }
-            sb.append("};\n");
-
-            cnt = 1;
-            sb.append("\n\npublic static final String[] SUPPORTED_EXTS = { \n");
-            for (String term : support) {
-                sb.append("\"").append(term).append("\", ");
-                if (cnt++ % 8 == 0) {
-                    sb.append("\n");
-                }
-            }
-            sb.append("};\n");
+            sb.append("\n};\n");
 
             return sb.toString();
 

@@ -15,9 +15,6 @@
  */
 package org.sandsoft.acefx.model;
 
-import org.sandsoft.acefx.Modes;
-import org.sandsoft.acefx.model.DocPos;
-import org.sandsoft.acefx.model.Range;
 import org.sandsoft.acefx.util.Commons;
 import java.util.ArrayList;
 import java.util.Map;
@@ -403,6 +400,7 @@ public class EditSession {
      *
      * @return the current mode.
      */
+    @Deprecated
     public String getMode() throws JSException {
         return (String) mSession.eval("this.getMode().$id");
     }
@@ -1034,9 +1032,10 @@ public class EditSession {
      *
      * @param mode Required. Mode to set.
      */
-    public void setMode(String mode) {
+    @Deprecated
+    public void setMode(String mode) { 
         mSession.call("setMode", mode);
-    }
+    } 
 
     /**
      * Sets the new line mode.

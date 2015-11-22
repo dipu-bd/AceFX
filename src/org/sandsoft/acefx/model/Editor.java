@@ -16,7 +16,6 @@
 package org.sandsoft.acefx.model;
 
 import org.sandsoft.acefx.util.Commons;
-import org.sandsoft.tests.Main;
 import java.util.Map;
 import netscape.javascript.JSException;
 import netscape.javascript.JSObject;
@@ -32,7 +31,7 @@ public class Editor {
 
     public Editor(final JSObject editor) throws JSException {
         mEditor = editor;
-        JSObject session = (JSObject) editor.call("getSession"); 
+        JSObject session = (JSObject) editor.call("getSession");
         mEditSession = new EditSession(session);
     }
 
@@ -491,6 +490,7 @@ public class Editor {
      *
      * @return
      */
+    @Deprecated
     public String getTheme() throws JSException {
         return (String) mEditor.call("getTheme");
     }
@@ -1103,7 +1103,7 @@ public class Editor {
 
     @Deprecated
     public void setOptions(Map<String, Object> opList) throws JSException {
-        for(String name : opList.keySet()) {
+        for (String name : opList.keySet()) {
             this.setOption(name, opList.get(name));
         }
     }
@@ -1209,6 +1209,7 @@ public class Editor {
      *
      * @param theme Required. The path to a theme.
      */
+    @Deprecated
     public void setTheme(String theme) throws JSException {
         mEditor.call("setTheme", theme);
     }

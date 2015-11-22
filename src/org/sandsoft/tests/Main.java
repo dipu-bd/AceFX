@@ -19,21 +19,12 @@ import org.sandsoft.acefx.AceEditor;
 import org.sandsoft.acefx.Modes;
 import org.sandsoft.acefx.Themes;
 import org.sandsoft.acefx.AceEvents;
-import org.sandsoft.acefx.util.Commons;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import netscape.javascript.JSObject;
 
 /**
  *
@@ -50,8 +41,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
- 
-        final AceEditor ace = new AceEditor();
+
+        final AceEditor ace = AceEditor.createNew();
 //        root.setTop(button1);
 //        root.setBottom(button2);
 
@@ -60,35 +51,18 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        ace.readyProperty().addListener(new ChangeListener<Boolean>() {
+        ace.addEventHandler(AceEvents.onLoadEvent, new EventHandler<Event>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
-
+            public void handle(Event t) {
                 ace.getEditor().setFontSize(16);
                 ace.setTheme(Themes.Ambiance);
-                ace.setMode(Modes.Java); 
-                
-                ace.setText(Tester.ThemeListGenerator());
-//                ace.setText(Tester.ModeListGenerator());                
-//                ace.setText(Tester.MapObject(ace.getEditor().getSession().getMode())); 
+                ace.setMode(Modes.Java);
 
+//                ace.setText(Tester.ThemeListGenerator());
+                ace.setText(Tester.ModeListGenerator());
+//                ace.setText(Tester.MapObject(ace.getThemeData()));  
             }
-        });
-
-        ace.addEventHandler(AceEvents.onChangeEvent, new EventHandler<Event>() {
-
-            @Override
-            public void handle(Event t) {
-                System.out.println("Hello there!");
-            }
-        });
-
-        ace.addEventHandler(AceEvents.onFocusEvent, new EventHandler<Event>() {
-            @Override
-            public void handle(Event t) {
-                System.out.println("Got focus");
-            }
-        });
+        });  
 
     }
 }

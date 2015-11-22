@@ -15,299 +15,158 @@
  */
 package org.sandsoft.acefx;
 
-import java.io.File;
-import java.util.Arrays;
+import org.sandsoft.acefx.model.ModeData;
 
 /**
- * Contains some pre-defined syntax higlighting modes for ace editor.
+ * Contains some pre-defined syntax highlighting modes for ace editor.
  *
  * @author Sudipto Chandra.
  */
 public final class Modes {
 
-    public static final String ABAP = "ace/mode/abap";
-    public static final String ABC = "ace/mode/abc";
-    public static final String ActionScript = "ace/mode/as";
-    public static final String ADA = "ace/mode/ada";
-    //public static final String ADA = "ace/mode/adb";
-    public static final String Apache_Conf = "ace/mode/^htaccess";
-    //public static final String Apache_Conf = "ace/mode/^htgroups";
-    //public static final String Apache_Conf = "ace/mode/^htpasswd";
-    //public static final String Apache_Conf = "ace/mode/^conf";
-    //public static final String Apache_Conf = "ace/mode/htaccess";
-    //public static final String Apache_Conf = "ace/mode/htgroups";
-    //public static final String Apache_Conf = "ace/mode/htpasswd";
-    public static final String AsciiDoc = "ace/mode/asciidoc";
-    //public static final String AsciiDoc = "ace/mode/adoc";
-    public static final String Assembly_x86 = "ace/mode/asm";
-    //public static final String Assembly_x86 = "ace/mode/a";
-    public static final String AutoHotKey = "ace/mode/ahk";
-    public static final String BatchFile = "ace/mode/bat";
-    //public static final String BatchFile = "ace/mode/cmd";
-    public static final String C_Cpp = "ace/mode/cpp";
-    //public static final String C_Cpp = "ace/mode/c";
-    //public static final String C_Cpp = "ace/mode/cc";
-    //public static final String C_Cpp = "ace/mode/cxx";
-    //public static final String C_Cpp = "ace/mode/h";
-    //public static final String C_Cpp = "ace/mode/hh";
-    //public static final String C_Cpp = "ace/mode/hpp";
-    //public static final String C_Cpp = "ace/mode/ino";
-    public static final String C9Search = "ace/mode/c9search_results";
-    public static final String Cirru = "ace/mode/cirru";
-    //public static final String Cirru = "ace/mode/cr";
-    public static final String Clojure = "ace/mode/clj";
-    //public static final String Clojure = "ace/mode/cljs";
-    public static final String Cobol = "ace/mode/CBL";
-    //public static final String Cobol = "ace/mode/COB";
-    public static final String coffee = "ace/mode/coffee";
-    //public static final String coffee = "ace/mode/cf";
-    //public static final String coffee = "ace/mode/cson";
-    //public static final String coffee = "ace/mode/^Cakefile";
-    public static final String ColdFusion = "ace/mode/cfm";
-    public static final String CSharp = "ace/mode/cs";
-    public static final String CSS = "ace/mode/css";
-    public static final String Curly = "ace/mode/curly";
-    public static final String D = "ace/mode/d";
-    //public static final String D = "ace/mode/di";
-    public static final String Dart = "ace/mode/dart";
-    public static final String Diff = "ace/mode/diff";
-    //public static final String Diff = "ace/mode/patch";
-    public static final String Dockerfile = "ace/mode/^Dockerfile";
-    public static final String Dot = "ace/mode/dot";
-    public static final String Dummy = "ace/mode/dummy";
-    public static final String DummySyntax = "ace/mode/dummy";
-    public static final String Eiffel = "ace/mode/e";
-    //public static final String Eiffel = "ace/mode/ge";
-    public static final String EJS = "ace/mode/ejs";
-    public static final String Elixir = "ace/mode/ex";
-    //public static final String Elixir = "ace/mode/exs";
-    public static final String Elm = "ace/mode/elm";
-    public static final String Erlang = "ace/mode/erl";
-    //public static final String Erlang = "ace/mode/hrl";
-    public static final String Forth = "ace/mode/frt";
-    //public static final String Forth = "ace/mode/fs";
-    //public static final String Forth = "ace/mode/ldr";
-    public static final String FTL = "ace/mode/ftl";
-    public static final String Gcode = "ace/mode/gcode";
-    public static final String Gherkin = "ace/mode/feature";
-    public static final String Gitignore = "ace/mode/^.gitignore";
-    public static final String Glsl = "ace/mode/glsl";
-    //public static final String Glsl = "ace/mode/frag";
-    //public static final String Glsl = "ace/mode/vert";
-    public static final String golang = "ace/mode/go";
-    public static final String Groovy = "ace/mode/groovy";
-    public static final String HAML = "ace/mode/haml";
-    public static final String Handlebars = "ace/mode/hbs";
-    //public static final String Handlebars = "ace/mode/handlebars";
-    //public static final String Handlebars = "ace/mode/tpl";
-    //public static final String Handlebars = "ace/mode/mustache";
-    public static final String Haskell = "ace/mode/hs";
-    public static final String haXe = "ace/mode/hx";
-    public static final String HTML = "ace/mode/html";
-    //public static final String HTML = "ace/mode/htm";
-    //public static final String HTML = "ace/mode/xhtml";
-    public static final String HTML_Ruby = "ace/mode/erb";
-    //public static final String HTML_Ruby = "ace/mode/rhtml";
-    //public static final String HTML_Ruby = "ace/mode/html.erb";
-    public static final String HTML_Elixir = "ace/mode/eex";
-    //public static final String HTML_Elixir = "ace/mode/html.eex";
-    public static final String INI = "ace/mode/ini";
-    //public static final String INI = "ace/mode/conf";
-    //public static final String INI = "ace/mode/cfg";
-    //public static final String INI = "ace/mode/prefs";
-    public static final String Io = "ace/mode/io";
-    public static final String Jack = "ace/mode/jack";
-    public static final String Jade = "ace/mode/jade";
-    public static final String Java = "ace/mode/java";
-    public static final String JavaScript = "ace/mode/js";
-    //public static final String JavaScript = "ace/mode/jsm";
-    //public static final String JavaScript = "ace/mode/jsx";
-    public static final String JSON = "ace/mode/json";
-    public static final String JSONiq = "ace/mode/jq";
-    public static final String JSP = "ace/mode/jsp";
-    public static final String JSX = "ace/mode/jsx";
-    public static final String Julia = "ace/mode/jl";
-    public static final String LaTeX = "ace/mode/tex";
-    //public static final String LaTeX = "ace/mode/latex";
-    //public static final String LaTeX = "ace/mode/ltx";
-    //public static final String LaTeX = "ace/mode/bib";
-    public static final String Lean = "ace/mode/lean";
-    //public static final String Lean = "ace/mode/hlean";
-    public static final String LESS = "ace/mode/less";
-    public static final String Liquid = "ace/mode/liquid";
-    public static final String Lisp = "ace/mode/lisp";
-    public static final String LiveScript = "ace/mode/ls";
-    public static final String LogiQL = "ace/mode/logic";
-    //public static final String LogiQL = "ace/mode/lql";
-    public static final String LSL = "ace/mode/lsl";
-    public static final String Lua = "ace/mode/lua";
-    public static final String LuaPage = "ace/mode/lp";
-    public static final String Lucene = "ace/mode/lucene";
-    public static final String Makefile = "ace/mode/^Makefile";
-    //public static final String Makefile = "ace/mode/^GNUmakefile";
-    //public static final String Makefile = "ace/mode/^makefile";
-    //public static final String Makefile = "ace/mode/^OCamlMakefile";
-    //public static final String Makefile = "ace/mode/make";
-    public static final String Markdown = "ace/mode/md";
-    //public static final String Markdown = "ace/mode/markdown";
-    public static final String Mask = "ace/mode/mask";
-    public static final String MATLAB = "ace/mode/matlab";
-    public static final String Maze = "ace/mode/mz";
-    public static final String MEL = "ace/mode/mel";
-    public static final String MUSHCode = "ace/mode/mc";
-    //public static final String MUSHCode = "ace/mode/mush";
-    public static final String MySQL = "ace/mode/mysql";
-    public static final String Nix = "ace/mode/nix";
-    public static final String ObjectiveC = "ace/mode/m";
-    //public static final String ObjectiveC = "ace/mode/mm";
-    public static final String OCaml = "ace/mode/ml";
-    //public static final String OCaml = "ace/mode/mli";
-    public static final String Pascal = "ace/mode/pas";
-    //public static final String Pascal = "ace/mode/p";
-    public static final String Perl = "ace/mode/pl";
-    //public static final String Perl = "ace/mode/pm";
-    public static final String pgSQL = "ace/mode/pgsql";
-    public static final String PHP = "ace/mode/php";
-    //public static final String PHP = "ace/mode/phtml";
-    //public static final String PHP = "ace/mode/shtml";
-    //public static final String PHP = "ace/mode/php3";
-    //public static final String PHP = "ace/mode/php4";
-    //public static final String PHP = "ace/mode/php5";
-    //public static final String PHP = "ace/mode/phps";
-    //public static final String PHP = "ace/mode/phpt";
-    //public static final String PHP = "ace/mode/aw";
-    //public static final String PHP = "ace/mode/ctp";
-    public static final String Powershell = "ace/mode/ps1";
-    public static final String Praat = "ace/mode/praat";
-    //public static final String Praat = "ace/mode/praatscript";
-    //public static final String Praat = "ace/mode/psc";
-    //public static final String Praat = "ace/mode/proc";
-    public static final String Prolog = "ace/mode/plg";
-    //public static final String Prolog = "ace/mode/prolog";
-    public static final String Properties = "ace/mode/properties";
-    public static final String Protobuf = "ace/mode/proto";
-    public static final String Python = "ace/mode/py";
-    public static final String R = "ace/mode/r";
-    public static final String RDoc = "ace/mode/Rd";
-    public static final String RHTML = "ace/mode/Rhtml";
-    public static final String Ruby = "ace/mode/rb";
-    //public static final String Ruby = "ace/mode/ru";
-    //public static final String Ruby = "ace/mode/gemspec";
-    //public static final String Ruby = "ace/mode/rake";
-    //public static final String Ruby = "ace/mode/^Guardfile";
-    //public static final String Ruby = "ace/mode/^Rakefile";
-    //public static final String Ruby = "ace/mode/^Gemfile";
-    public static final String Rust = "ace/mode/rs";
-    public static final String SASS = "ace/mode/sass";
-    public static final String SCAD = "ace/mode/scad";
-    public static final String Scala = "ace/mode/scala";
-    public static final String Scheme = "ace/mode/scm";
-    //public static final String Scheme = "ace/mode/sm";
-    //public static final String Scheme = "ace/mode/rkt";
-    //public static final String Scheme = "ace/mode/oak";
-    //public static final String Scheme = "ace/mode/scheme";
-    public static final String SCSS = "ace/mode/scss";
-    public static final String SH = "ace/mode/sh";
-    //public static final String SH = "ace/mode/bash";
-    //public static final String SH = "ace/mode/^.bashrc";
-    public static final String SJS = "ace/mode/sjs";
-    public static final String Smarty = "ace/mode/smarty";
-    //public static final String Smarty = "ace/mode/tpl";
-    public static final String snippets = "ace/mode/snippets";
-    public static final String Soy_Template = "ace/mode/soy";
-    public static final String Space = "ace/mode/space";
-    public static final String SQL = "ace/mode/sql";
-    public static final String SQLServer = "ace/mode/sqlserver";
-    public static final String Stylus = "ace/mode/styl";
-    //public static final String Stylus = "ace/mode/stylus";
-    public static final String SVG = "ace/mode/svg";
-    public static final String Swift = "ace/mode/swift";
-    public static final String Tcl = "ace/mode/tcl";
-    public static final String Tex = "ace/mode/tex";
-    public static final String Text = "ace/mode/txt";
-    public static final String Textile = "ace/mode/textile";
-    public static final String Toml = "ace/mode/toml";
-    public static final String Twig = "ace/mode/twig";
-    //public static final String Twig = "ace/mode/swig";
-    public static final String Typescript = "ace/mode/ts";
-    //public static final String Typescript = "ace/mode/typescript";
-    //public static final String Typescript = "ace/mode/str";
-    public static final String Vala = "ace/mode/vala";
-    public static final String VBScript = "ace/mode/vbs";
-    //public static final String VBScript = "ace/mode/vb";
-    public static final String Velocity = "ace/mode/vm";
-    public static final String Verilog = "ace/mode/v";
-    //public static final String Verilog = "ace/mode/vh";
-    //public static final String Verilog = "ace/mode/sv";
-    //public static final String Verilog = "ace/mode/svh";
-    public static final String VHDL = "ace/mode/vhd";
-    //public static final String VHDL = "ace/mode/vhdl";
-    public static final String XML = "ace/mode/xml";
-    //public static final String XML = "ace/mode/rdf";
-    //public static final String XML = "ace/mode/rss";
-    //public static final String XML = "ace/mode/wsdl";
-    //public static final String XML = "ace/mode/xslt";
-    //public static final String XML = "ace/mode/atom";
-    //public static final String XML = "ace/mode/mathml";
-    //public static final String XML = "ace/mode/mml";
-    //public static final String XML = "ace/mode/xul";
-    //public static final String XML = "ace/mode/xbl";
-    //public static final String XML = "ace/mode/xaml";
-    public static final String XQuery = "ace/mode/xq";
-    public static final String YAML = "ace/mode/yaml";
-    //public static final String YAML = "ace/mode/yml";
-    public static final String Django = "ace/mode/html";
+    public static final ModeData ABAP = new ModeData("ABAP", "ace/mode/abap", "abap");
+    public static final ModeData ABC = new ModeData("ABC", "ace/mode/abc", "abc");
+    public static final ModeData ActionScript = new ModeData("ActionScript", "ace/mode/actionscript", "as");
+    public static final ModeData ADA = new ModeData("ADA", "ace/mode/ada", "ada|adb");
+    public static final ModeData Apache_Conf = new ModeData("Apache Conf", "ace/mode/apache_conf", "^htaccess|^htgroups|^htpasswd|^conf|htaccess|htgroups|htpasswd");
+    public static final ModeData AsciiDoc = new ModeData("AsciiDoc", "ace/mode/asciidoc", "asciidoc|adoc");
+    public static final ModeData Assembly_x86 = new ModeData("Assembly x86", "ace/mode/assembly_x86", "asm|a");
+    public static final ModeData AutoHotKey = new ModeData("AutoHotKey", "ace/mode/autohotkey", "ahk");
+    public static final ModeData BatchFile = new ModeData("BatchFile", "ace/mode/batchfile", "bat|cmd");
+    public static final ModeData C_Cpp = new ModeData("C and C++", "ace/mode/c_cpp", "cpp|c|cc|cxx|h|hh|hpp|ino");
+    public static final ModeData C9Search = new ModeData("C9Search", "ace/mode/c9search", "c9search_results");
+    public static final ModeData Cirru = new ModeData("Cirru", "ace/mode/cirru", "cirru|cr");
+    public static final ModeData Clojure = new ModeData("Clojure", "ace/mode/clojure", "clj|cljs");
+    public static final ModeData Cobol = new ModeData("Cobol", "ace/mode/cobol", "CBL|COB");
+    public static final ModeData coffee = new ModeData("CoffeeScript", "ace/mode/coffee", "coffee|cf|cson|^Cakefile");
+    public static final ModeData ColdFusion = new ModeData("ColdFusion", "ace/mode/coldfusion", "cfm");
+    public static final ModeData CSharp = new ModeData("C#", "ace/mode/csharp", "cs");
+    public static final ModeData CSS = new ModeData("CSS", "ace/mode/css", "css");
+    public static final ModeData Curly = new ModeData("Curly", "ace/mode/curly", "curly");
+    public static final ModeData D = new ModeData("D", "ace/mode/d", "d|di");
+    public static final ModeData Dart = new ModeData("Dart", "ace/mode/dart", "dart");
+    public static final ModeData Diff = new ModeData("Diff", "ace/mode/diff", "diff|patch");
+    public static final ModeData Dockerfile = new ModeData("Dockerfile", "ace/mode/dockerfile", "^Dockerfile");
+    public static final ModeData Dot = new ModeData("Dot", "ace/mode/dot", "dot");
+    public static final ModeData Dummy = new ModeData("Dummy", "ace/mode/dummy", "dummy");
+    public static final ModeData DummySyntax = new ModeData("DummySyntax", "ace/mode/dummysyntax", "dummy");
+    public static final ModeData Eiffel = new ModeData("Eiffel", "ace/mode/eiffel", "e|ge");
+    public static final ModeData EJS = new ModeData("EJS", "ace/mode/ejs", "ejs");
+    public static final ModeData Elixir = new ModeData("Elixir", "ace/mode/elixir", "ex|exs");
+    public static final ModeData Elm = new ModeData("Elm", "ace/mode/elm", "elm");
+    public static final ModeData Erlang = new ModeData("Erlang", "ace/mode/erlang", "erl|hrl");
+    public static final ModeData Forth = new ModeData("Forth", "ace/mode/forth", "frt|fs|ldr");
+    public static final ModeData FTL = new ModeData("FreeMarker", "ace/mode/ftl", "ftl");
+    public static final ModeData Gcode = new ModeData("Gcode", "ace/mode/gcode", "gcode");
+    public static final ModeData Gherkin = new ModeData("Gherkin", "ace/mode/gherkin", "feature");
+    public static final ModeData Gitignore = new ModeData("Gitignore", "ace/mode/gitignore", "^.gitignore");
+    public static final ModeData Glsl = new ModeData("Glsl", "ace/mode/glsl", "glsl|frag|vert");
+    public static final ModeData golang = new ModeData("Go", "ace/mode/golang", "go");
+    public static final ModeData Groovy = new ModeData("Groovy", "ace/mode/groovy", "groovy");
+    public static final ModeData HAML = new ModeData("HAML", "ace/mode/haml", "haml");
+    public static final ModeData Handlebars = new ModeData("Handlebars", "ace/mode/handlebars", "hbs|handlebars|tpl|mustache");
+    public static final ModeData Haskell = new ModeData("Haskell", "ace/mode/haskell", "hs");
+    public static final ModeData haXe = new ModeData("haXe", "ace/mode/haxe", "hx");
+    public static final ModeData HTML = new ModeData("HTML", "ace/mode/html", "html|htm|xhtml");
+    public static final ModeData HTML_Ruby = new ModeData("HTML (Ruby)", "ace/mode/html_ruby", "erb|rhtml|html.erb");
+    public static final ModeData INI = new ModeData("INI", "ace/mode/ini", "ini|conf|cfg|prefs");
+    public static final ModeData Io = new ModeData("Io", "ace/mode/io", "io");
+    public static final ModeData Jack = new ModeData("Jack", "ace/mode/jack", "jack");
+    public static final ModeData Jade = new ModeData("Jade", "ace/mode/jade", "jade");
+    public static final ModeData Java = new ModeData("Java", "ace/mode/java", "java");
+    public static final ModeData JavaScript = new ModeData("JavaScript", "ace/mode/javascript", "js|jsm");
+    public static final ModeData JSON = new ModeData("JSON", "ace/mode/json", "json");
+    public static final ModeData JSONiq = new ModeData("JSONiq", "ace/mode/jsoniq", "jq");
+    public static final ModeData JSP = new ModeData("JSP", "ace/mode/jsp", "jsp");
+    public static final ModeData JSX = new ModeData("JSX", "ace/mode/jsx", "jsx");
+    public static final ModeData Julia = new ModeData("Julia", "ace/mode/julia", "jl");
+    public static final ModeData LaTeX = new ModeData("LaTeX", "ace/mode/latex", "tex|latex|ltx|bib");
+    public static final ModeData Lean = new ModeData("Lean", "ace/mode/lean", "lean|hlean");
+    public static final ModeData LESS = new ModeData("LESS", "ace/mode/less", "less");
+    public static final ModeData Liquid = new ModeData("Liquid", "ace/mode/liquid", "liquid");
+    public static final ModeData Lisp = new ModeData("Lisp", "ace/mode/lisp", "lisp");
+    public static final ModeData LiveScript = new ModeData("LiveScript", "ace/mode/livescript", "ls");
+    public static final ModeData LogiQL = new ModeData("LogiQL", "ace/mode/logiql", "logic|lql");
+    public static final ModeData LSL = new ModeData("LSL", "ace/mode/lsl", "lsl");
+    public static final ModeData Lua = new ModeData("Lua", "ace/mode/lua", "lua");
+    public static final ModeData LuaPage = new ModeData("LuaPage", "ace/mode/luapage", "lp");
+    public static final ModeData Lucene = new ModeData("Lucene", "ace/mode/lucene", "lucene");
+    public static final ModeData Makefile = new ModeData("Makefile", "ace/mode/makefile", "^Makefile|^GNUmakefile|^makefile|^OCamlMakefile|make");
+    public static final ModeData Markdown = new ModeData("Markdown", "ace/mode/markdown", "md|markdown");
+    public static final ModeData Mask = new ModeData("Mask", "ace/mode/mask", "mask");
+    public static final ModeData MATLAB = new ModeData("MATLAB", "ace/mode/matlab", "matlab");
+    public static final ModeData Maze = new ModeData("Maze", "ace/mode/maze", "mz");
+    public static final ModeData MEL = new ModeData("MEL", "ace/mode/mel", "mel");
+    public static final ModeData MUSHCode = new ModeData("MUSHCode", "ace/mode/mushcode", "mc|mush");
+    public static final ModeData MySQL = new ModeData("MySQL", "ace/mode/mysql", "mysql");
+    public static final ModeData Nix = new ModeData("Nix", "ace/mode/nix", "nix");
+    public static final ModeData ObjectiveC = new ModeData("Objective-C", "ace/mode/objectivec", "m|mm");
+    public static final ModeData OCaml = new ModeData("OCaml", "ace/mode/ocaml", "ml|mli");
+    public static final ModeData Pascal = new ModeData("Pascal", "ace/mode/pascal", "pas|p");
+    public static final ModeData Perl = new ModeData("Perl", "ace/mode/perl", "pl|pm");
+    public static final ModeData pgSQL = new ModeData("pgSQL", "ace/mode/pgsql", "pgsql");
+    public static final ModeData PHP = new ModeData("PHP", "ace/mode/php", "php|phtml|shtml|php3|php4|php5|phps|phpt|aw|ctp");
+    public static final ModeData Powershell = new ModeData("Powershell", "ace/mode/powershell", "ps1");
+    public static final ModeData Praat = new ModeData("Praat", "ace/mode/praat", "praat|praatscript|psc|proc");
+    public static final ModeData Prolog = new ModeData("Prolog", "ace/mode/prolog", "plg|prolog");
+    public static final ModeData Properties = new ModeData("Properties", "ace/mode/properties", "properties");
+    public static final ModeData Protobuf = new ModeData("Protobuf", "ace/mode/protobuf", "proto");
+    public static final ModeData Python = new ModeData("Python", "ace/mode/python", "py");
+    public static final ModeData R = new ModeData("R", "ace/mode/r", "r");
+    public static final ModeData RDoc = new ModeData("RDoc", "ace/mode/rdoc", "Rd");
+    public static final ModeData RHTML = new ModeData("RHTML", "ace/mode/rhtml", "Rhtml");
+    public static final ModeData Ruby = new ModeData("Ruby", "ace/mode/ruby", "rb|ru|gemspec|rake|^Guardfile|^Rakefile|^Gemfile");
+    public static final ModeData Rust = new ModeData("Rust", "ace/mode/rust", "rs");
+    public static final ModeData SASS = new ModeData("SASS", "ace/mode/sass", "sass");
+    public static final ModeData SCAD = new ModeData("SCAD", "ace/mode/scad", "scad");
+    public static final ModeData Scala = new ModeData("Scala", "ace/mode/scala", "scala");
+    public static final ModeData Scheme = new ModeData("Scheme", "ace/mode/scheme", "scm|sm|rkt|oak|scheme");
+    public static final ModeData SCSS = new ModeData("SCSS", "ace/mode/scss", "scss");
+    public static final ModeData SH = new ModeData("SH", "ace/mode/sh", "sh|bash|^.bashrc");
+    public static final ModeData SJS = new ModeData("SJS", "ace/mode/sjs", "sjs");
+    public static final ModeData Smarty = new ModeData("Smarty", "ace/mode/smarty", "smarty|tpl");
+    public static final ModeData snippets = new ModeData("snippets", "ace/mode/snippets", "snippets");
+    public static final ModeData Soy_Template = new ModeData("Soy Template", "ace/mode/soy_template", "soy");
+    public static final ModeData Space = new ModeData("Space", "ace/mode/space", "space");
+    public static final ModeData SQL = new ModeData("SQL", "ace/mode/sql", "sql");
+    public static final ModeData SQLServer = new ModeData("SQLServer", "ace/mode/sqlserver", "sqlserver");
+    public static final ModeData Stylus = new ModeData("Stylus", "ace/mode/stylus", "styl|stylus");
+    public static final ModeData SVG = new ModeData("SVG", "ace/mode/svg", "svg");
+    public static final ModeData Swift = new ModeData("Swift", "ace/mode/swift", "swift");
+    public static final ModeData Tcl = new ModeData("Tcl", "ace/mode/tcl", "tcl");
+    public static final ModeData Tex = new ModeData("Tex", "ace/mode/tex", "tex");
+    public static final ModeData Text = new ModeData("Text", "ace/mode/text", "txt");
+    public static final ModeData Textile = new ModeData("Textile", "ace/mode/textile", "textile");
+    public static final ModeData Toml = new ModeData("Toml", "ace/mode/toml", "toml");
+    public static final ModeData Twig = new ModeData("Twig", "ace/mode/twig", "twig|swig");
+    public static final ModeData Typescript = new ModeData("Typescript", "ace/mode/typescript", "ts|typescript|str");
+    public static final ModeData Vala = new ModeData("Vala", "ace/mode/vala", "vala");
+    public static final ModeData VBScript = new ModeData("VBScript", "ace/mode/vbscript", "vbs|vb");
+    public static final ModeData Velocity = new ModeData("Velocity", "ace/mode/velocity", "vm");
+    public static final ModeData Verilog = new ModeData("Verilog", "ace/mode/verilog", "v|vh|sv|svh");
+    public static final ModeData VHDL = new ModeData("VHDL", "ace/mode/vhdl", "vhd|vhdl");
+    public static final ModeData XML = new ModeData("XML", "ace/mode/xml", "xml|rdf|rss|wsdl|xslt|atom|mathml|mml|xul|xbl|xaml");
+    public static final ModeData XQuery = new ModeData("XQuery", "ace/mode/xquery", "xq");
+    public static final ModeData YAML = new ModeData("YAML", "ace/mode/yaml", "yaml|yml");
+    public static final ModeData Django = new ModeData("Django", "ace/mode/django", "html");
 
-    public static final String[] SUPPORTED_MODES = {
-        "ABAP", "ABC", "ADA", "ActionScript", "Apache_Conf", "AsciiDoc", "Assembly_x86", "AutoHotKey",
-        "BatchFile", "C9Search", "CSS", "CSharp", "C_Cpp", "Cirru", "Clojure", "Cobol",
-        "ColdFusion", "Curly", "D", "Dart", "Diff", "Django", "Dockerfile", "Dot",
-        "Dummy", "DummySyntax", "EJS", "Eiffel", "Elixir", "Elm", "Erlang", "FTL",
-        "Forth", "Gcode", "Gherkin", "Gitignore", "Glsl", "Groovy", "HAML", "HTML",
-        "HTML_Elixir", "HTML_Ruby", "Handlebars", "Haskell", "INI", "Io", "JSON", "JSONiq",
-        "JSP", "JSX", "Jack", "Jade", "Java", "JavaScript", "Julia", "LESS",
-        "LSL", "LaTeX", "Lean", "Liquid", "Lisp", "LiveScript", "LogiQL", "Lua",
-        "LuaPage", "Lucene", "MATLAB", "MEL", "MUSHCode", "Makefile", "Markdown", "Mask",
-        "Maze", "MySQL", "Nix", "OCaml", "ObjectiveC", "PHP", "Pascal", "Perl",
-        "Powershell", "Praat", "Prolog", "Properties", "Protobuf", "Python", "R", "RDoc",
-        "RHTML", "Ruby", "Rust", "SASS", "SCAD", "SCSS", "SH", "SJS",
-        "SQL", "SQLServer", "SVG", "Scala", "Scheme", "Smarty", "Soy_Template", "Space",
-        "Stylus", "Swift", "Tcl", "Tex", "Text", "Textile", "Toml", "Twig",
-        "Typescript", "VBScript", "VHDL", "Vala", "Velocity", "Verilog", "XML", "XQuery",
-        "YAML", "coffee", "golang", "haXe", "pgSQL", "snippets"
-    };
-
-    public static final String[] SUPPORTED_EXTS = {
-        "CBL", "COB", "Rd", "Rhtml", "^.bashrc", "^.gitignore", "^Cakefile", "^Dockerfile",
-        "^GNUmakefile", "^Gemfile", "^Guardfile", "^Makefile", "^OCamlMakefile", "^Rakefile", "^conf", "^htaccess",
-        "^htgroups", "^htpasswd", "^makefile", "a", "abap", "abc", "ada", "adb",
-        "adoc", "ahk", "as", "asciidoc", "asm", "atom", "aw", "bash",
-        "bat", "bib", "c", "c9search_results", "cc", "cf", "cfg", "cfm",
-        "cirru", "clj", "cljs", "cmd", "coffee", "conf", "cpp", "cr",
-        "cs", "cson", "css", "ctp", "curly", "cxx", "d", "dart",
-        "di", "diff", "dot", "dummy", "dummy", "e", "eex", "ejs",
-        "elm", "erb", "erl", "ex", "exs", "feature", "frag", "frt",
-        "fs", "ftl", "gcode", "ge", "gemspec", "glsl", "go", "groovy",
-        "h", "haml", "handlebars", "hbs", "hh", "hlean", "hpp", "hrl",
-        "hs", "htaccess", "htgroups", "htm", "html", "html", "html.eex", "html.erb",
-        "htpasswd", "hx", "ini", "ino", "io", "jack", "jade", "java",
-        "jl", "jq", "js", "jsm", "json", "jsp", "jsx", "jsx",
-        "latex", "ldr", "lean", "less", "liquid", "lisp", "logic", "lp",
-        "lql", "ls", "lsl", "ltx", "lua", "lucene", "m", "make",
-        "markdown", "mask", "mathml", "matlab", "mc", "md", "mel", "ml",
-        "mli", "mm", "mml", "mush", "mustache", "mysql", "mz", "nix",
-        "oak", "p", "pas", "patch", "pgsql", "php", "php3", "php4",
-        "php5", "phps", "phpt", "phtml", "pl", "plg", "pm", "praat",
-        "praatscript", "prefs", "proc", "prolog", "properties", "proto", "ps1", "psc",
-        "py", "r", "rake", "rb", "rdf", "rhtml", "rkt", "rs",
-        "rss", "ru", "sass", "scad", "scala", "scheme", "scm", "scss",
-        "sh", "shtml", "sjs", "sm", "smarty", "snippets", "soy", "space",
-        "sql", "sqlserver", "str", "styl", "stylus", "sv", "svg", "svh",
-        "swift", "swig", "tcl", "tex", "tex", "textile", "toml", "tpl",
-        "tpl", "ts", "twig", "txt", "typescript", "v", "vala", "vb",
-        "vbs", "vert", "vh", "vhd", "vhdl", "vm", "wsdl", "xaml",
-        "xbl", "xhtml", "xml", "xq", "xslt", "xul", "yaml", "yml"
-    };
+    public static final ModeData[] SUPPORTED_MODES = {
+        ABAP, ABC, ActionScript, ADA, Apache_Conf, AsciiDoc, Assembly_x86,
+        AutoHotKey, BatchFile, C_Cpp, C9Search, Cirru, Clojure, Cobol, coffee,
+        ColdFusion, CSharp, CSS, Curly, D, Dart, Diff, Dockerfile,
+        Dot, Dummy, DummySyntax, Eiffel, EJS, Elixir, Elm, Erlang,
+        Forth, FTL, Gcode, Gherkin, Gitignore, Glsl, golang, Groovy,
+        HAML, Handlebars, Haskell, haXe, HTML, HTML_Ruby, INI, Io,
+        Jack, Jade, Java, JavaScript, JSON, JSONiq, JSP, JSX,
+        Julia, LaTeX, Lean, LESS, Liquid, Lisp, LiveScript, LogiQL,
+        LSL, Lua, LuaPage, Lucene, Makefile, Markdown, Mask, MATLAB,
+        Maze, MEL, MUSHCode, MySQL, Nix, ObjectiveC, OCaml, Pascal,
+        Perl, pgSQL, PHP, Powershell, Praat, Prolog, Properties, Protobuf,
+        Python, R, RDoc, RHTML, Ruby, Rust, SASS, SCAD,
+        Scala, Scheme, SCSS, SH, SJS, Smarty, snippets, Soy_Template,
+        Space, SQL, SQLServer, Stylus, SVG, Swift, Tcl, Tex,
+        Text, Textile, Toml, Twig, Typescript, Vala, VBScript, Velocity,
+        Verilog, VHDL, XML, XQuery, YAML, Django,};
 
     /**
      * Checks whether an extension is supported by the editor or not.
@@ -316,10 +175,42 @@ public final class Modes {
      * @return
      */
     public static boolean isSupported(String extension) {
-        if (extension.startsWith(".")) {
-            extension = extension.substring(1).toLowerCase();
+        for (ModeData md : SUPPORTED_MODES) {
+            if (md.supportsFile(extension)) {
+                return true;
+            }
         }
-        return (Arrays.binarySearch(SUPPORTED_EXTS, extension) >= 0);
+        return false;
+    }
+
+    /**
+     * Gets the mode to set by its name
+     *
+     * @param name Mode name.
+     * @return
+     */
+    public static ModeData getModeByName(String name) {
+        for (ModeData mode : SUPPORTED_MODES) {
+            if (mode.getName().equals(name)) {
+                return mode;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets the name of the mode
+     *
+     * @param alias alias of the mode like <code>"ace/mode/java"</code>
+     * @return
+     */
+    public static ModeData getModeByAlias(String alias) {
+        for (ModeData md : SUPPORTED_MODES) {
+            if (md.getAlias().equals(alias)) {
+                return md;
+            }
+        }
+        return null;
     }
 
     /**
@@ -329,12 +220,12 @@ public final class Modes {
      * @param path Name or location of the file with extension.
      * @return
      */
-    public static String getModeFromFile(String path) {
-        String ext = path.substring(path.lastIndexOf(".") + 1);
-        if (isSupported(ext)) {
-            return "ace/mode/" + ext;
-        } else {
-            return "ace/mode/txt";
+    public static ModeData getModeFromFile(String path) {
+        for (ModeData md : SUPPORTED_MODES) {
+            if (md.supportsFile(path)) {
+                return md;
+            }
         }
+        return null;
     }
 }
